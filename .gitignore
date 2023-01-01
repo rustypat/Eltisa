@@ -349,3 +349,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 rundata/log.txt
+rundata/citizen.xml
+rundata/citizen.xml
