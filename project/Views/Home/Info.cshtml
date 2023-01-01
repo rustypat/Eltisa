@@ -1,0 +1,21 @@
+@using Eltisa.Source.Server;
+@using Eltisa.Source.Administration;
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Server Info</title>
+		<meta charset="utf-8">
+	</head>
+
+	<body>
+		<span style="white-space: pre-wrap">@Configuration.GetDescription()</span>
+		<span style="white-space: pre-wrap">@ActorStore.GetDescription()</span>
+		<span style="white-space: pre-wrap">@World.GetDescription()</span>
+	</body>
+</html>
+
+
+

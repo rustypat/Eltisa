@@ -1,0 +1,14 @@
+﻿<ArrayOfCitizen>
+  <Citizen>
+    <Name>child</Name>
+    <Password>easy</Password>
+    <ActorType>Citizen</ActorType>
+    <Color>4259584</Color>
+  </Citizen>
+  <Citizen>
+    <Name>admin</Name>
+    <Password>IamTheMaster</Password>
+    <ActorType>Administrator</ActorType>
+    <Color>16777215</Color>
+  </Citizen>
+</ArrayOfCitizen>

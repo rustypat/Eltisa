@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Eltisa Download</title>
+		<meta charset="utf-8">		
+	</head>
+
+	<body>
+
+		<h1>Run your own Eltisa Server</h1>
+
+		This page explains how you can set up you own public Eltisa Server. It is not that easy but it is possible :-)
+		Eltisa is a block game similar to the construction mode of minecraft. It is freeware and still under development.<br>
+		WARNING: You must not install it in any security relevant environment. It runs a webserver which has not passed a security audit.<br>
+		If you encounter a problem you can contact me at <a href="mailto:patrick@informatrix.ch">patrick</a> 
+		And please send me a note with the url of your server, so we can come to visit you :-)
+
+		<h3>Prerequisits</h3>
+		- A windows server connected to the internet<br>
+		- An installed .net 6 runtime system. You can get this from microsoft<br>
+		- A security certificate that is installed in the store 'My' on 'localmachine'. You can get one for example from https://letsencrypt.org/ <br>
+		- The latest chrome or firefox browser<br>
+		
+		<h3>Download</h3>
+		Download the zip archive from here: <a href="https://eltisa.ch/html/eltisa025.zip">eltisa.zip</a><br>
+		Extract the archive in the directory of your choice, for example in C:\programs<br>
+
+		<h3>Configure</h3>
+		Open the file C:\programs\eltisa\rundata\citizen.xml and configure some users according to your needs.<br> 
+		WARNING: Since passwords are stored unencripted do not use any passwords that are used somewhere else!
+		Open the file C:\programs\eltisa\rundata\config.xml and change the property 'CertificateName' to the name of your certificate.
+		If you change the property 'Mode' from 'Server' to 'Home' then everybody can modify your world and you don't need to configure any users. Otherwise
+		only users can add and remove blocks and visitors can only watch.
+
+		<h3>Run</h3>
+		Open a console in administrator mode and switch to C:\programs\eltisa\release<br>
+		Execute the comand: 'dotnet eltisa.dll'<br>
+		Your eltisa server is now running and you and your friends can connect via browser by entering the url of your server.<br>
+		If you want to stop the server, do it with Control-C. Do not just close the shell window. Otherwise changed data might not be stored or even get corrupted.
+
+		<h3>Import</h3>
+		You can import your own world from minecraft. But don't do this while the eltisa server is running!<br>
+		The eltisa world is stored in C:\programs\eltisa\regions. If you delete the files in that directory you are left with the plain ocean. 
+		Then in the directory C:\programs\eltisa\import you find some examples how you can import minecraft *.mca files.
+
+		<h3>Create</h3>
+		So far there is no dotnet api dll to create a world via programming language. If you are interested in such an api, let me know.
+
+
+	</body>
+
+</html>

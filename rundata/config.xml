@@ -1,0 +1,9 @@
+﻿<Config>
+  <CertificateName>localhost</CertificateName>
+  <MaxVisitors>100</MaxVisitors>
+  <MaxStoredChatMessages>100</MaxStoredChatMessages>
+  <WebSocketKeepAliveSeconds>120</WebSocketKeepAliveSeconds>
+  <RegionReleaseTime>1800000</RegionReleaseTime>
+  <RegionStoreTime>3600000</RegionStoreTime>
+  <Mode>Develop</Mode>
+</Config>
