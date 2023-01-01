@@ -348,6 +348,12 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+
+# eltisa
 rundata/log.txt
 rundata/citizen.xml
-rundata/citizen.xml
+*.rgn
+rundata/*
+resources/*
+regions/*
