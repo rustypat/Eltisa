@@ -1,5 +1,4 @@
-﻿// Copyright (C) 2018 Patrick Hippenmeyer - All Rights Reserved
-using System;
+﻿using System;
 using System.Net;
 using System.Collections.Generic;
 using System.IO;

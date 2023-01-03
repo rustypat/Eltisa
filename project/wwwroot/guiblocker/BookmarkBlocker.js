@@ -1,4 +1,3 @@
-'Copyright (C) 2018 Patrick Hippenmeyer - All Rights Reserved';
 'use strict';
 
 function BookmarkBlocker(body, activateGame, deactivateGame) {
@@ -23,7 +22,7 @@ function BookmarkBlocker(body, activateGame, deactivateGame) {
     GuiTools.createLineBreak(panel, 3);
     GuiTools.createText(panel, 'or send a link to your friend:');    
     GuiTools.createLineBreak(panel, 2);
-    const mail = GuiTools.createLink(panel, "Eltisa Mail", "mailto:patrick@informatrix.ch?subject=Look what I have build&body=Hello" );
+    const mail = GuiTools.createLink(panel, "Eltisa Mail", "mailto:eltisa@mailinator.com?subject=Look what I have build&body=Hello" );
     GuiTools.createLineBreak(panel, 2);
     GuiTools.createButton(panel, "close", exitAction);
 

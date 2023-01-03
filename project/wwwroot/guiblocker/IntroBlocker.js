@@ -1,4 +1,3 @@
-'Copyright (C) 2018 Patrick Hippenmeyer - All Rights Reserved';
 'use strict';
 
 function IntroBlocker(body, activateGame, deactivateGame, server) {
@@ -99,7 +98,7 @@ function IntroBlocker(body, activateGame, deactivateGame, server) {
     GuiTools.createLineBreak(helpDiv, 2);
     GuiTools.createText(helpDiv, "None of the above have any relationship to this project.");
     GuiTools.createLineBreak(helpDiv);
-    GuiTools.createText(helpDiv, 'Eltisa coding by <a href="mailto:patrick@informatrix.ch">patrick</a>, © 2018');
+    GuiTools.createText(helpDiv, 'Eltisa coding by rustypat, © 2018');
     GuiTools.createLineBreak(helpDiv);
     GuiTools.createText(helpDiv, "Version " + Config.version);
     if( Config.debug ) GuiTools.createText(helpDiv, ", debug");

@@ -1,4 +1,3 @@
-'Copyright (C) 2018 Patrick Hippenmeyer - All Rights Reserved';
 'use strict';
 
 function BlockBlocker(body, activateGame, deactivateGame, carousel) {

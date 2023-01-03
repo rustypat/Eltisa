@@ -1,6 +1,5 @@
 using System;
 
-
 namespace Eltisa.Source.Models {
 
     public class ChatMessage {

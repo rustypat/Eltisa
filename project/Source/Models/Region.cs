@@ -1,4 +1,3 @@
-// Copyright (C) 2018 Patrick Hippenmeyer - All Rights Reserved
 using System;
 using System.Text;
 using System.Collections.Generic;
