@@ -1,0 +1,4 @@
+05.01.23 21:39:37 INFO:  Eltisa Server 0.25  Debug
+05.01.23 21:39:37 INFO:  start web host
+05.01.23 21:39:37 WARNING:certificate localhost not found on local machine
+05.01.23 21:40:18 INFO:  q logged in

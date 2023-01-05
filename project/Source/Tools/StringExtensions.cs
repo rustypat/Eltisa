@@ -42,6 +42,7 @@ namespace Eltisa.Source.Tools {
 
 
         static public bool IsUndefined(this string str) => String.IsNullOrEmpty(str);
+        static public bool IsDefined(this string str) => !String.IsNullOrEmpty(str);
     }
 
 }

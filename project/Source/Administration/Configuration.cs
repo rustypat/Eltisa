@@ -6,13 +6,14 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using static System.String;
 using static System.Diagnostics.Debug;
+using static System.IO.Directory;
 
 using Eltisa.Source.Models;
 using Eltisa.Source.Communication;
 using static Eltisa.Source.Tools.Tools;
 using static Eltisa.Source.Tools.StringExtensions;
 using static Eltisa.Source.Administration.Configuration;
-
+using System.Linq;
 
 namespace Eltisa.Source.Administration {
 
@@ -22,20 +23,19 @@ namespace Eltisa.Source.Administration {
 
         public const string Version              = "0.25";
 
+        public const string DataDirectoryName    = "worldData";
+
+        public static readonly string DataDirectory        = FindWorldDataDirectory();
+        public static readonly string RegionDirectory      = DataDirectory + "regions\\";
+        public static readonly string ResourceDirectory    = DataDirectory + "resources\\";
+        public static readonly string LogFile              = DataDirectory + "rundata\\log.txt";
+        public static readonly string CitizenFile          = DataDirectory + "rundata\\citizen.xml";
+        public static readonly string ConfigFile           = DataDirectory + "rundata\\config.xml";
+
         #if DEBUG
             public const string VersionType      = "Debug";
-            public const string RegionDirectory  = "C:\\develop\\eltisa\\regions\\";
-            public const string ResourceDirectory= "C:\\develop\\eltisa\\resources\\";
-            public const string LogFile          = "C:\\develop\\eltisa\\rundata\\log.txt";
-            public const string CitizenFile      = "C:\\develop\\eltisa\\rundata\\citizen.xml";
-            public const string ConfigFile       = "C:\\develop\\eltisa\\rundata\\config.xml";
         #else
             public const string VersionType      = "Release";
-            public const string RegionDirectory  = "..\\regions\\";
-            public const string ResourceDirectory= "..\\resources\\";
-            public const string LogFile          = "..\\rundata\\log.txt";
-            public const string CitizenFile      = "..\\rundata\\citizen.xml";
-            public const string ConfigFile       = "..\\rundata\\config.xml";
         #endif
 
         public const int RegionSize              = 16;
@@ -93,6 +93,25 @@ namespace Eltisa.Source.Administration {
             #pragma warning restore
         }
 
+
+        public static string FindWorldDataDirectory()
+        {
+            var path = Environment.CurrentDirectory;
+
+            do
+            {
+                if(EnumerateDirectories(path).Any(d => d.EndsWith(DataDirectoryName))) 
+                {
+                    Console.Out.WriteLine("found worldData directory in " + path);
+                    return path + "\\" + DataDirectoryName + "\\";
+                }
+                path = GetParent(path).FullName;
+            }while(path.IsDefined());
+
+            Console.Out.WriteLine("could not find worldData directory!");
+            Environment.Exit(1);
+            return null;
+        }
     }
 
 
