@@ -29,14 +29,14 @@ function ScriptureBlocker(body, activateGame, deacitvateGame, server) {
         }
         server.requestSaveBlockResource(blockPos, Block.Scripture, text); 
         body.removeChild(baseDiv);      
-        document.removeEventListener("keypress", keypressHandler);
+        document.removeEventListener("keydown", keypressHandler);
         activateGame();     
     }
 
 
     function cancelAction()  {
         body.removeChild(baseDiv);       
-        document.removeEventListener("keypress", keypressHandler);
+        document.removeEventListener("keydown", keypressHandler);
         activateGame();     
     }
 
@@ -69,7 +69,7 @@ function ScriptureBlocker(body, activateGame, deacitvateGame, server) {
             body.appendChild(baseDiv);
         }
         textArea.value       = "";
-        document.addEventListener("keypress", keypressHandler);
+        document.addEventListener("keydown", keypressHandler);
         noKeyPressed         = true;
         saveButton.disabled  = true;
         
