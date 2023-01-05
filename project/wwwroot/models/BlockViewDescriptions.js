@@ -150,8 +150,6 @@ function initializeBlockViewDescriptions() {
     ViewInfo.addBasicBlock(Block.Tetris,        157);
     ViewInfo.addBasicBlock(Block.LavaPink,      158);
     ViewInfo.addBasicBlock(Block.LavaBrown,     159);
-    ViewInfo.addBasicBlock(Block.Music,         124);
-
     ViewInfo.addBasicBlock(Block.Camera,        202);
 
 
@@ -178,7 +176,8 @@ function initializeBlockViewDescriptions() {
     ViewInfo.addVerticalBlock(Block.Waterlily,      26,  26, 154);
     ViewInfo.addVerticalBlock(Block.Dirt_5,        178,  14, 179);
     ViewInfo.addVerticalBlock(Block.Caldron,       180, 181, 182); 
-    ViewInfo.addVerticalBlock(Block.Caldron_On,    183, 181, 184);         
+    ViewInfo.addVerticalBlock(Block.Caldron_On,    183, 181, 184);
+    ViewInfo.addVerticalBlock(Block.Music,         124, 125);         
     
     ViewInfo.addToppleableLog(Block.Log_1, 31, 32);
     ViewInfo.addToppleableLog(Block.Log_2, 33, 34);
