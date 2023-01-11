@@ -21,7 +21,7 @@ namespace Eltisa.Source.Administration {
 
     public static class Configuration {
 
-        public const string Version              = "0.25";
+        public const string Version              = "0.27";
 
         public const string DataDirectoryName    = "worldData";
 
