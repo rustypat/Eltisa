@@ -7,6 +7,7 @@ using Eltisa.Source.Administration;
 using Eltisa.Source.Server;
 using Eltisa.Source.Tools;
 using Eltisa.Source.Models;
+using static Eltisa.Source.Tools.ArgumentsExtensions;
 
 
 public static class Program  {
@@ -116,104 +117,6 @@ public static class Program  {
     }
 
 
-
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    // comand line arguments access
-    ///////////////////////////////////////////////////////////////////////////////////////////
-
-    static private bool Has(this string[] args, string attributeName) {
-        if( args == null ) {
-            return false;
-        }
-        foreach( var s in args ) {
-            if( s.StartsWith(attributeName )) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    static private string Get(this string[] args, string attributeName) {
-        if( args == null ) {
-            throw new Exception("required attribute " + attributeName + " is missing");
-        }
-        foreach( var s in args ) {
-            if (s.StartsWith(attributeName + ":")) {
-                return s.TrimStart(attributeName + ":").Trim();
-            }
-        }
-        throw new Exception("required attribute " + attributeName + " is missing");
-    }
-
-
-    static private string Get(this string[] args, string attributeName, string defaultValue) {
-        if( args == null ) {
-            return defaultValue;
-        }
-        foreach( var s in args ) {
-            if( s.StartsWith(attributeName + ":") ) {
-                return s.TrimStart(attributeName + ":").Trim();
-            }
-        }
-        return defaultValue;
-    }
-
-
-    static private int GetInt(this string[] args, string attributeName, int defaultValue) {
-        if( args == null ) {
-            return defaultValue;
-        }
-        foreach( var s in args ) {
-            if( s.StartsWith(attributeName + ":") ) {
-                string value = s.TrimStart(attributeName + ":").Trim();
-                return int.Parse(value);
-            }
-        }
-        return defaultValue;
-    }
-
-
-    static private int GetInt(this string[] args, string attributeName) {
-        if( args == null ) {
-            throw new Exception("required attribute " + attributeName + " is missing");
-        }
-        foreach( var s in args ) {
-            if (s.StartsWith(attributeName + ":")) {
-                string value = s.TrimStart(attributeName + ":").Trim();
-                return int.Parse(value);
-            }
-        }
-        throw new Exception("required attribute " + attributeName + " is missing");
-    }
-
-
-    static private ushort GetUshort(this string[] args, string attributeName, ushort defaultValue) {
-        if( args == null ) {
-            return defaultValue;
-        }
-        foreach( var s in args ) {
-            if( s.StartsWith(attributeName + ":") ) {
-                string value = s.TrimStart(attributeName + ":").Trim();
-                return ushort.Parse(value);
-            }
-        }
-        return defaultValue;
-    }
-
-
-    static private ushort GetUshort(this string[] args, string attributeName) {
-        if( args == null ) {
-            throw new Exception("required attribute " + attributeName + " is missing");
-        }
-        foreach( var s in args ) {
-            if( s.StartsWith(attributeName + ":") ) {
-                string value = s.TrimStart(attributeName + ":").Trim();
-                return ushort.Parse(value);
-            }
-        }
-        throw new Exception("required attribute " + attributeName + " is missing");
-    }
 
 
 }
