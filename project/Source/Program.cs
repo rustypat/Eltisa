@@ -12,16 +12,19 @@ using static Eltisa.Source.Tools.ArgumentsExtensions;
 
 public static class Program  {
 
-
-    public static void Main(string[] args)  {
-        Configuration.Read(Configuration.ConfigFile);
+    public static void Main(string[] args)  {        
+        Log.Info("Eltisa " + Configuration.Version + "  " + Configuration.VersionType);
         
-        if( args.Length == 0 ) { Log.SetLogFile(Configuration.LogFile); }
-
-        Log.Info("Eltisa Server " + Configuration.Version + "  " + Configuration.VersionType);
-        Log.Trace("working directory is " + Directory.GetCurrentDirectory());
-
-        if( args.Has("import") ) {
+        if( args.Length == 0 ) {
+            // start Eltisa web server game
+            Console.CancelKeyPress     += delegate { WebHost.Stop(); };
+            Configuration.Read(Configuration.ConfigFile);
+            CitizenStore.ReadCitizen();
+            Log.SetLogFile(Configuration.LogFile);
+            WebHost.Start();
+        }
+        else if( args.Has("import") ) {
+            // import a world (-part) from a mindcraft file
             string mcWorlDirectory = args.Get("import");
             int    xFrom           = args.GetInt("xFrom", int.MinValue);
             int    xTo             = args.GetInt("xTo", int.MaxValue);
@@ -41,6 +44,7 @@ public static class Program  {
             WorldAdmin.Store();
         }
         else if( args.Get("create", "") == "SeaPit" ) {
+            // create a hole in the sea 
             int    xFrom           = args.GetInt("xFrom");
             int    xTo             = args.GetInt("xTo");
             int    zFrom           = args.GetInt("zFrom");
@@ -50,6 +54,7 @@ public static class Program  {
             WorldAdmin.Store();
         }
         else if( args.Get("create", "") == "Coast" ) {
+            // create a coast line around a square island
             int    xFrom           = args.GetInt("xFrom");
             int    xTo             = args.GetInt("xTo");
             int    zFrom           = args.GetInt("zFrom");
@@ -58,6 +63,7 @@ public static class Program  {
             WorldAdmin.Store();
         }
         else if( args.Get("create", "") == "Planet" ) {
+            // create a planet ( a sphere)
             int    xCenter         = args.GetInt("xCenter");
             int    yCenter         = args.GetInt("yCenter");
             int    zCenter         = args.GetInt("zCenter");
@@ -69,6 +75,7 @@ public static class Program  {
             WorldAdmin.Store();
         }
         else if( args.Get("create", "") == "Cube" ) {
+            // create a cube
             int    xFrom           = args.GetInt("xFrom");
             int    xTo             = args.GetInt("xTo");
             int    yFrom           = args.GetInt("yFrom");
@@ -80,6 +87,7 @@ public static class Program  {
             WorldAdmin.Store();
         }
         else if( args.Get("clear", "") == "Cube" ) {
+            // delete a cubic region
             int    xFrom           = args.GetInt("xFrom");
             int    xTo             = args.GetInt("xTo");
             int    yFrom           = args.GetInt("yFrom");
@@ -90,17 +98,14 @@ public static class Program  {
             WorldAdmin.Store();
         }
         else if( args.Get("shift", "") == "World" ) {
+            // move the whole world by an offset
             int    xShift          = args.GetInt("xShift");
             int    zShift          = args.GetInt("zShift");
             WorldAdmin.ShiftWorld(xShift, zShift);
         }
         else if( args.Get("validate", "") == "World" ) {
+            // validate, if the stored blocks are still consistent
             WorldAdmin.ValidateWorld();
-        }
-        else if( args.Length == 0 ) {
-            Console.CancelKeyPress     += delegate { WebHost.Stop(); };
-            CitizenStore.ReadCitizen();
-            WebHost.Start();
         }
         else {
             Log.Info("unknown argument, possible arguments are");
@@ -115,9 +120,6 @@ public static class Program  {
             Log.Info("WARNING: misspelled optional arguments are ignored!");
         }
     }
-
-
-
 
 }
 
