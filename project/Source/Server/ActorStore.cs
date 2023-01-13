@@ -1,140 +1,131 @@
+namespace Eltisa.Source.Server; 
+
 using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using static System.String;
-using static System.Diagnostics.Debug;
-
 using Eltisa.Source.Models;
 using Eltisa.Source.Communication;
 using Eltisa.Source.Administration;
-using static Eltisa.Source.Tools.Tools;
 using static Eltisa.Source.Tools.StringExtensions;
-using static Eltisa.Source.Administration.Configuration;
 
 
-namespace Eltisa.Source.Server {
+public static class ActorStore {
+
+    private static readonly ConcurrentDictionary<string, Actor>   actors         = new ConcurrentDictionary<string, Actor>();
+
+    static private int actorId          = 0;
+
+    static private Object lockObject    = new Object();
 
 
-    public static class ActorStore {
-
-        private static readonly ConcurrentDictionary<string, Actor>   actors         = new ConcurrentDictionary<string, Actor>();
-
-        static private int actorId          = 0;
-
-        static private Object lockObject    = new Object();
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    // Actor methods
+    ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Actor methods
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-        public static (Actor, string) CreateActor(string name, string password, HomeSocket homeSocket) {
-            
-            if(IsNullOrEmpty(password)) {
-                // to many connections
-                if(actors.Count > Configuration.MaxVisitors) return (null, "to many visitors");
-
-                actorId++;
-                // empty name
-                name = name.LimitLength(20);                
-                if(IsNullOrEmpty(name) ) {
-                    name = "visitor" + actorId;
-                }
-                // name allready in use
-                else if(ActorStore.GetActor(name) != null) {
-                    name = name + actorId;
-                }
-                // name is same as a citizen name
-                else if(CitizenStore.GetCitizen(name) != null) {
-                    name = name + actorId;
-                }
-
-                Actor actor = new Actor(actorId, name, password, homeSocket, Actor.Type.Visitor, 0xaaaaaa);
-                actors[name] = actor;
-                return (actor, "login ok");
-            }
-            else {
-                Actor connectedActor = ActorStore.GetActor(name, password);
-                if(connectedActor != null ) return (null, name + " is already logged in");
-                if(IsNullOrEmpty(name))          return (null, "name missing");
-                Citizen citizen = CitizenStore.GetCitizen(name);
-                if(citizen == null)              return (null, "unknown citizen");
-                if(password != citizen.Password) return (null, "wrong password");
-                if(actors.ContainsKey(name))     return (null, "citizen already logged in");
-
-                Actor actor = new Actor(++actorId, name, password, homeSocket, citizen.ActorType, citizen.Color, citizen);
-                actors[name] = actor;
-                return (actor, "login ok");
-            }
-        }
-
+    public static (Actor, string) CreateActor(string name, string password, HomeSocket homeSocket) {
         
-        public static void RemoveActor(Actor actor) {
-            WorldPoint oldPos    = new WorldPoint(actor.PositionX, actor.PositionY, actor.PositionZ);
-            Region     oldRegion = World.GetRegion(oldPos);
-            oldRegion?.RemoveActor(actor);
-            Actor dummy;
-            actors.TryRemove(actor.Name, out dummy);
-        }   
+        if(IsNullOrEmpty(password)) {
+            // to many connections
+            if(actors.Count > Configuration.MaxVisitors) return (null, "to many visitors");
 
-
-        public static Actor GetActor(string name) {
-            Actor actor;
-            actors.TryGetValue(name, out actor);   
-            return actor;         
-            
-        }
-
-
-        public static Actor GetActor(string name, string password) {
-            Actor actor;
-            actors.TryGetValue(name, out actor);   
-
-            if(actor != null && actor.Password == password) {
-                return actor;
+            actorId++;
+            // empty name
+            name = name.LimitLength(20);                
+            if(IsNullOrEmpty(name) ) {
+                name = "visitor" + actorId;
             }
-            else {
-                return null;
+            // name allready in use
+            else if(ActorStore.GetActor(name) != null) {
+                name = name + actorId;
             }
-        }
-
-
-        public static (IEnumerable<Actor>, int)  GetActorsAndCount() {
-            lock(lockObject) {
-                return (actors.Values, actors.Count);
-            }
-        }
-
-
-        public static IEnumerable<Actor>  GetActors() {
-            return actors.Values;
-        }
-
-
-        public static string GetDescription() {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine();
-            sb.AppendLine("Actors connected: " + actors.Count);
-
-            foreach(var actor in actors.Values) {
-                string position = Math.Floor(actor.PositionX) + "/" + Math.Floor(actor.PositionY) + "/" + Math.Floor(actor.PositionZ);
-                sb.AppendLine("      " + actor.ID + "  " + actor.Name + "  " + actor.ActorType + "  " + position);
+            // name is same as a citizen name
+            else if(CitizenStore.GetCitizen(name) != null) {
+                name = name + actorId;
             }
 
-            return sb.ToString();
+            Actor actor = new Actor(actorId, name, password, homeSocket, Actor.Type.Visitor, 0xaaaaaa);
+            actors[name] = actor;
+            return (actor, "login ok");
         }
+        else {
+            Actor connectedActor = ActorStore.GetActor(name, password);
+            if(connectedActor != null ) return (null, name + " is already logged in");
+            if(IsNullOrEmpty(name))          return (null, "name missing");
+            Citizen citizen = CitizenStore.GetCitizen(name);
+            if(citizen == null)              return (null, "unknown citizen");
+            if(password != citizen.Password) return (null, "wrong password");
+            if(actors.ContainsKey(name))     return (null, "citizen already logged in");
+
+            Actor actor = new Actor(++actorId, name, password, homeSocket, citizen.ActorType, citizen.Color, citizen);
+            actors[name] = actor;
+            return (actor, "login ok");
+        }
+    }
+
+    
+    public static void RemoveActor(Actor actor) {
+        WorldPoint oldPos    = new WorldPoint(actor.PositionX, actor.PositionY, actor.PositionZ);
+        Region     oldRegion = World.GetRegion(oldPos);
+        oldRegion?.RemoveActor(actor);
+        Actor dummy;
+        actors.TryRemove(actor.Name, out dummy);
+    }   
 
 
-        public static void sendMessageToAll(byte[] message) {
-            foreach(var actor in actors.Values) {
-                actor.Socket.sendMessageAsync(message);
-            }
-        }
+    public static Actor GetActor(string name) {
+        Actor actor;
+        actors.TryGetValue(name, out actor);   
+        return actor;         
         
     }
 
 
+    public static Actor GetActor(string name, string password) {
+        Actor actor;
+        actors.TryGetValue(name, out actor);   
+
+        if(actor != null && actor.Password == password) {
+            return actor;
+        }
+        else {
+            return null;
+        }
+    }
+
+
+    public static (IEnumerable<Actor>, int)  GetActorsAndCount() {
+        lock(lockObject) {
+            return (actors.Values, actors.Count);
+        }
+    }
+
+
+    public static IEnumerable<Actor>  GetActors() {
+        return actors.Values;
+    }
+
+
+    public static string GetDescription() {
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine();
+        sb.AppendLine("Actors connected: " + actors.Count);
+
+        foreach(var actor in actors.Values) {
+            string position = Math.Floor(actor.PositionX) + "/" + Math.Floor(actor.PositionY) + "/" + Math.Floor(actor.PositionZ);
+            sb.AppendLine("      " + actor.ID + "  " + actor.Name + "  " + actor.ActorType + "  " + position);
+        }
+
+        return sb.ToString();
+    }
+
+
+    public static void sendMessageToAll(byte[] message) {
+        foreach(var actor in actors.Values) {
+            actor.Socket.sendMessageAsync(message);
+        }
+    }
+    
 }
