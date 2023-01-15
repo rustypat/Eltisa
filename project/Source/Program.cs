@@ -70,7 +70,7 @@ public static class Program  {
             int    radius          = args.GetInt("radius");
             int    radiusInner     = args.GetInt("radiusInner", 0);
             int    radiusCore      = args.GetInt("radiusCore", 0);
-            ushort block           = args.GetUshort("block", Block.Stone_2);
+            ushort block           = args.GetUshort("block", BlockTypes.Stone_2);
             WorldAdmin.CreatePlanet(xCenter, yCenter, zCenter, radius, radiusInner, radiusCore, block);   // recommendation for radius 50,30,6 or 100,0,0
             WorldAdmin.Store();
         }

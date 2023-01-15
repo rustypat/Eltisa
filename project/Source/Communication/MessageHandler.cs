@@ -145,7 +145,7 @@ public static class MessageHandler {
 
     static void HandleAddBlock(HomeSocket socket, byte[] inBuffer) {
         var inMessage = InMessage.ToAddBlockMessage(inBuffer);
-        if(inMessage.BlockInfo >= Block.MaxBlockDefinition) return;
+        if(inMessage.BlockInfo >= BlockTypes.MaxBlockDefinition) return;
         var position = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
         if( !Policy.CanModifyBlock(socket.GetActor(), position)) return;
         

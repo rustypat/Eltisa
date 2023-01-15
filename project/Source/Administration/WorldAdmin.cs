@@ -30,7 +30,7 @@ public static class WorldAdmin {
             for(int z=zFrom; z > zFrom-coastWidth; z--) {
                 int y = DefaultWorld.SeaLevel;
                 while(World.HasSolidBlockAt(new WorldPoint(x, y+1, z))) {
-                    World.AddBlock(new WorldPoint(x, y, z-1), Block.Stone);
+                    World.AddBlock(new WorldPoint(x, y, z-1), BlockTypes.Stone);
                     y++;
                 }
             }
@@ -40,7 +40,7 @@ public static class WorldAdmin {
             for(int x=xFrom; x > xFrom-coastWidth; x--) {
                 int y = DefaultWorld.SeaLevel;
                 while(World.HasSolidBlockAt(new WorldPoint(x, y+1, z))) {
-                    World.AddBlock(new WorldPoint(x-1, y, z), Block.Stone);
+                    World.AddBlock(new WorldPoint(x-1, y, z), BlockTypes.Stone);
                     y++;
                 }
             }
@@ -50,7 +50,7 @@ public static class WorldAdmin {
             for(int z=zTo; z <= zTo+coastWidth; z++) {
                 int y = DefaultWorld.SeaLevel;
                 while(World.HasSolidBlockAt(new WorldPoint(x, y+1, z))) {
-                    World.AddBlock(new WorldPoint(x, y, z+1), Block.Stone);
+                    World.AddBlock(new WorldPoint(x, y, z+1), BlockTypes.Stone);
                     y++;
                 }
             }
@@ -60,7 +60,7 @@ public static class WorldAdmin {
             for(int x=xTo; x <= xTo+coastWidth; x++) {
                 int y = DefaultWorld.SeaLevel;
                 while(World.HasSolidBlockAt(new WorldPoint(x, y+1, z))) {
-                    World.AddBlock(new WorldPoint(x+1, y, z), Block.Stone);
+                    World.AddBlock(new WorldPoint(x+1, y, z), BlockTypes.Stone);
                     y++;
                 }
             }
@@ -69,14 +69,14 @@ public static class WorldAdmin {
     }
 
 
-    public static void CreatePlanet(int xCenter, int yCenter, int zCenter, int radius, int radiusInner=0, int radiusCore=0, ushort block=Block.Stone_2) {
+    public static void CreatePlanet(int xCenter, int yCenter, int zCenter, int radius, int radiusInner=0, int radiusCore=0, ushort block=BlockTypes.Stone_2) {
         Log.Info("create planet start");
         int radiusSquare           = radius * radius;
         int innerRadiusSquare      = radiusInner * radiusInner;
         int coreRadiusSquare       = radiusCore * radiusCore;
 
         var centerPosition = new WorldPoint(xCenter, yCenter, zCenter);
-        Block centerBlock = World.AddBlock(centerPosition, Block.Gem_3);
+        Block centerBlock = World.AddBlock(centerPosition, BlockTypes.Gem_3);
         for(int x=-radius; x <= radius; x++) {
             for(int y=-radius; y <= radius; y++) {
                 for(int z=-radius; z <= radius; z++) {
@@ -87,7 +87,7 @@ public static class WorldAdmin {
                     }
                     else if ( distanceSquare < radiusCore ) {
                         var pos = new WorldPoint(xCenter + x, yCenter+y, zCenter+z);
-                        World.AddBlock(pos, Block.Goldblock);
+                        World.AddBlock(pos, BlockTypes.Goldblock);
                     }
                 }
             }

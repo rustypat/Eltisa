@@ -28,7 +28,7 @@ static public class World {
 
 
     public static Block AddBlock(WorldPoint pos, ushort blockInfo) {    
-        if(pos.IsNotAPoint())  return Block.NotABlock;
+        if(pos.IsNotAPoint())  return BlockTypes.NotABlock;
         Region      region      = GetRegion(pos);
         Chunk       chunk       = region.GetChunk(pos);
         lock(changeLock) {
@@ -44,7 +44,7 @@ static public class World {
 
 
     public static Block RemoveVisibleBlock(WorldPoint pos) {    
-        if(pos.IsNotAPoint())  return Block.NotABlock;
+        if(pos.IsNotAPoint())  return BlockTypes.NotABlock;
         Region      region      = GetRegion(pos);
         Chunk       chunk       = region.GetChunk(pos);
         lock(changeLock) {
@@ -59,7 +59,7 @@ static public class World {
 
 
     public static Block ChangeStateOfVisibleBlock(WorldPoint pos, ushort blockInfo) {    
-        if(pos.IsNotAPoint())  return Block.NotABlock;
+        if(pos.IsNotAPoint())  return BlockTypes.NotABlock;
         Region      region      = GetRegion(pos);
         Chunk       chunk       = region.GetChunk(pos);
         lock(changeLock) {
@@ -75,7 +75,7 @@ static public class World {
 
 
     public static Block AddFace(WorldPoint pos, Block.Faces face) {
-        if(pos.IsNotAPoint())  return Block.NotABlock;
+        if(pos.IsNotAPoint())  return BlockTypes.NotABlock;
         Region      region      = GetRegion(pos);
         Chunk       chunk       = region.GetChunk(pos);
         lock(changeLock) {
@@ -92,7 +92,7 @@ static public class World {
 
 
     public static Block RemoveFace(WorldPoint pos, Block.Faces face) {
-        if(pos.IsNotAPoint())  return Block.NotABlock;
+        if(pos.IsNotAPoint())  return BlockTypes.NotABlock;
         Region      region      = GetRegion(pos);
         Chunk       chunk       = region.GetChunk(pos);
         lock(changeLock) {
@@ -202,7 +202,7 @@ static public class World {
 
 
     public static Block GetBlock(WorldPoint pos) {
-        if(pos.IsNotAPoint())  return Block.NotABlock;
+        if(pos.IsNotAPoint())  return BlockTypes.NotABlock;
         Region region = GetRegion(pos);
         Chunk  chunk  = region.GetChunk(pos);
         if(chunk != null) return chunk.GetBlock(pos.GetBlockPoint());

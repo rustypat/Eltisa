@@ -3,7 +3,7 @@ namespace Eltisa.Source.Import;
 using System;
 using Eltisa.Source.Models;
 using static System.Diagnostics.Debug;
-using static Eltisa.Source.Models.Block;
+using static Eltisa.Source.Models.BlockTypes;
 
 
 /// <summary>
@@ -696,8 +696,8 @@ public static class McMapper {
                     default: throw new Exception("invalid state " + mcState + " for mcType " + mcType);
                 }                    
             }            
-            if( mcType==137 ) return Block.Tresor;  
-            if( mcType==138 ) return Block.Portal;  
+            if( mcType==137 ) return BlockTypes.Tresor;  
+            if( mcType==138 ) return BlockTypes.Portal;  
             if( mcType==139 ) return Wall_2;   // cobblestone wall
             if( mcType==140 ) return FlowerPot;  
             if( mcType==141 ) return Carrots;  
@@ -917,7 +917,7 @@ public static class McMapper {
             if( mcType==173 ) return Stone_5;
             if( mcType==174 ) return Ice;      // packed ice
             if( mcType==175 ) {
-                if(mcState >= 8) return Block.NoBlock;  
+                if(mcState >= 8) return BlockTypes.NoBlock;  
                 switch(mcState) {
                     case 0:  return Sunflower;
                     case 1:  return Lilac;
@@ -1178,7 +1178,7 @@ public static class McMapper {
             if( mcType==207 ) return Beet;
         }
         else if( mcType < 224 ) {
-            if( mcType==208 ) return Block.Path;
+            if( mcType==208 ) return BlockTypes.Path;
             if( mcType==209 ) return Stone_4;
             if( mcType==210 ) return Tresor;
             if( mcType==211 ) return Tresor;
