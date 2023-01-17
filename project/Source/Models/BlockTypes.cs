@@ -1,10 +1,10 @@
 namespace Eltisa.Source.Models;     
 
 using System;
-using static System.Diagnostics.Debug;
 
 
-public static class BlockTypes {
+
+public static class BlockDescription {
 
     public const int    MaxBlockDefinition       = 8192-1;     // for max 16 categories
     public const int    MaxSolidBlockDefinition  = 4096-1;     // for max 8 solid categories

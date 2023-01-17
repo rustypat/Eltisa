@@ -20,10 +20,10 @@ public class Chunk {
     public  BlockList              EmptyBlocks       { get; private set; }
 
 
-    public Chunk(ChunkPoint position, ushort defaultBlockDefinition = BlockTypes.NoBlock) {
+    public Chunk(ChunkPoint position, ushort defaultBlockDefinition = BlockDescription.NoBlock) {
         Position = position;
         this.DefaultBlockDefinition = defaultBlockDefinition;
-        if(defaultBlockDefinition == BlockTypes.NoBlock) BlockCount = 0;
+        if(defaultBlockDefinition == BlockDescription.NoBlock) BlockCount = 0;
         else                                             BlockCount = ChunkVolume;
     }
 
@@ -34,12 +34,12 @@ public class Chunk {
 
 
     public bool IsAdditiv() {
-        return DefaultBlockDefinition == BlockTypes.NoBlock;
+        return DefaultBlockDefinition == BlockDescription.NoBlock;
     }
 
 
     public bool IsSubtractiv()  {
-        return DefaultBlockDefinition != BlockTypes.NoBlock;
+        return DefaultBlockDefinition != BlockDescription.NoBlock;
     }
 
 
@@ -85,10 +85,10 @@ public class Chunk {
         if(block.IsABlock())                                return block;
 
         if(IsAdditiv()) {
-            return BlockTypes.NotABlock;
+            return BlockDescription.NotABlock;
         }
         else {
-            if(EmptyBlocks.ContainsBlock(blockPos))         return BlockTypes.NotABlock;
+            if(EmptyBlocks.ContainsBlock(blockPos))         return BlockDescription.NotABlock;
             else                                            return new Block(blockPos, DefaultBlockDefinition, Block.NoFaces);
         }
     }
@@ -115,7 +115,7 @@ public class Chunk {
         var pos = worldPos.GetBlockPoint();
 
         // check if is allowed
-        if(HasBlockAt(pos) ) return BlockTypes.NotABlock;
+        if(HasBlockAt(pos) ) return BlockDescription.NotABlock;
 
         if(EmptyBlocks.Size() > 0) {
             EmptyBlocks.RemoveBlock(pos);
@@ -155,7 +155,7 @@ public class Chunk {
         if(block.IsABlock()) {
             BlockCount--;
             if(IsSubtractiv()) {
-                InsertEmptyBlock(new Block(pos, BlockTypes.Air, Block.NoFaces));
+                InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
             }
             return block;
         }
@@ -165,14 +165,14 @@ public class Chunk {
         if(block.IsABlock()) {
             BlockCount--;
             if(IsSubtractiv()) {
-                InsertEmptyBlock(new Block(pos, BlockTypes.Air, Block.NoFaces));
+                InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
             }
             // adjust faces and regroup neighbour blocks
             AddVisibleFacesToNeighbours(worldPos, pos);
             return block;
         }
         
-        return BlockTypes.NotABlock;
+        return BlockDescription.NotABlock;
     }
 
 
@@ -184,10 +184,10 @@ public class Chunk {
         if(oldBlock.IsABlock()) {
             var newBlock    = new Block(pos, blockDefinition, oldBlock.BlockFaces);  
             if( oldBlock.GetData() == newBlock.GetData() ) {
-                return BlockTypes.NotABlock;                       
+                return BlockDescription.NotABlock;                       
             }
             if(!oldBlock.EqualsExceptState(newBlock)) {
-                return BlockTypes.NotABlock;   // new block type does not match old block type
+                return BlockDescription.NotABlock;   // new block type does not match old block type
             }
             else {
                 ReplaceBorderBlock(newBlock);
@@ -199,7 +199,7 @@ public class Chunk {
         if(oldBlock.IsABlock()) {
             var newBlock    = new Block(pos, blockDefinition, oldBlock.BlockFaces);            
             if(!oldBlock.EqualsExceptState(newBlock)) {
-                return BlockTypes.NotABlock;
+                return BlockDescription.NotABlock;
             }
             else {
                 ReplaceTransparentBlock(newBlock);
@@ -208,7 +208,7 @@ public class Chunk {
         }
 
         // there was no block to change
-        return BlockTypes.NotABlock;
+        return BlockDescription.NotABlock;
     }
 
 
@@ -348,11 +348,11 @@ public class Chunk {
         if(innerBlock.IsABlock()) return innerBlock;
 
         if(IsAdditiv()) {
-            return BlockTypes.NotABlock;
+            return BlockDescription.NotABlock;
         }
         else {
             if(EmptyBlocks.ContainsBlock(pos)) {
-                return BlockTypes.NotABlock;
+                return BlockDescription.NotABlock;
             }
             else {
                 return new Block(pos, DefaultBlockDefinition, Block.NoFaces);
@@ -387,7 +387,7 @@ public class Chunk {
             }
         }
 
-        return BlockTypes.NotABlock;
+        return BlockDescription.NotABlock;
     }
 
 
@@ -405,7 +405,7 @@ public class Chunk {
             else                                 return DefaultBlockDefinition;        // remain with additiv storage mode
         }
         else {
-            if(EmptyBlocks.Size() > ChunkVolume / 2)    return BlockTypes.NoBlock;          // switch to additiv storage mode
+            if(EmptyBlocks.Size() > ChunkVolume / 2)    return BlockDescription.NoBlock;          // switch to additiv storage mode
             if(defaultBlockCount < InnerBlocks.Size() / 3) return DetermineDefaultBlock(); // switch to other subtractive storage type
             else return DefaultBlockDefinition;                                                // remain
         }
@@ -424,7 +424,7 @@ public class Chunk {
             else                                                        return maxType;
         }
         else {
-            if(EmptyBlocks.Size() >= Math.Max(defaultCount, maxCount) ) return BlockTypes.NoBlock;
+            if(EmptyBlocks.Size() >= Math.Max(defaultCount, maxCount) ) return BlockDescription.NoBlock;
             if(defaultCount > maxCount)                                 return DefaultBlockDefinition;
             else                                                        return maxType;
         }
@@ -432,7 +432,7 @@ public class Chunk {
 
 
     private (ushort, ushort) GetMostCommonInnerBlock() {
-        ushort[] innerHistogram  = new ushort[BlockTypes.MaxSolidBlockDefinition];
+        ushort[] innerHistogram  = new ushort[BlockDescription.MaxSolidBlockDefinition];
 
         // count type occurence of inner blocks
         foreach(Block block in InnerBlocks.GetBlocks()) {
@@ -457,14 +457,14 @@ public class Chunk {
         Log.Trace("ConvertToNewDefaultBlockDefinition chunk " + Position);
         Assert(DefaultBlockDefinition != newDefaultBlockDefinition);
 
-        if(DefaultBlockDefinition == BlockTypes.NoBlock ) {   // change from additiv to subtractiv
+        if(DefaultBlockDefinition == BlockDescription.NoBlock ) {   // change from additiv to subtractiv
             // search and store empty blocks
             for(int x=0; x<ChunkSize; x++) {
                 for(int y=0; y<ChunkSize; y++) {
                     for(int z=0; z<ChunkSize; z++) {
                         BlockPoint pos = new BlockPoint(x, y, z);
                         if(!BorderBlocks.ContainsBlock(pos) && !InnerBlocks.ContainsBlock(pos) && !TransparentBlocks.ContainsBlock(pos)) {
-                            InsertEmptyBlock(new Block(pos, BlockTypes.Air, Block.NoFaces));
+                            InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
                         }
                     }                        
                 }
@@ -474,7 +474,7 @@ public class Chunk {
             InnerBlocks.RemoveAll(block => block.Definition == newDefaultBlockDefinition);
             DefaultBlockDefinition = newDefaultBlockDefinition;
         }
-        else if(newDefaultBlockDefinition == BlockTypes.NoBlock) { // change from subtractiv to additiv
+        else if(newDefaultBlockDefinition == BlockDescription.NoBlock) { // change from subtractiv to additiv
             // search and store default blocks
             for(int x=0; x<ChunkSize; x++) {
                 for(int y=0; y<ChunkSize; y++) {
@@ -536,7 +536,7 @@ public class Chunk {
             Validate( block.IsTransparent(), "block in transparent block list is not transparent: " + block);
         });
         EmptyBlocks.ForAll( block => {
-            Validate( block.Definition == BlockTypes.NoBlock, "block in empty list is not zero: " + block);
+            Validate( block.Definition == BlockDescription.NoBlock, "block in empty list is not zero: " + block);
         });
 
         // validate number of blocks

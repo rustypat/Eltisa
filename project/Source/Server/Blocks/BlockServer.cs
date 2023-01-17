@@ -31,7 +31,7 @@ public class BlockServer : IBlockAccess {
 
 
     public Block ReadBlock(WorldPoint worldPos) {
-        if(worldPos.IsNotAPoint())  return BlockTypes.NotABlock;
+        if(worldPos.IsNotAPoint())  return BlockDescription.NotABlock;
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();

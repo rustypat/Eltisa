@@ -9,7 +9,7 @@ using Eltisa.Source.Server;
 using Eltisa.Source.Tools;
 using static System.Diagnostics.Debug;
 using static Eltisa.Source.Tools.Tools;
-using static Eltisa.Source.Models.BlockTypes;
+using static Eltisa.Source.Models.BlockDescription;
 using static Eltisa.Source.Models.Block;
 using static Eltisa.Source.Models.Block.Faces;
 
@@ -123,7 +123,7 @@ public class McImporter {
                 byte mcBlock = chunkData.blocks[section][i];
                 byte mcState = chunkData.states[section][i];
                 ushort block  = McMapper.ToEltisaBlock(mcBlock, mcState);
-                if(block == BlockTypes.NoBlock) continue;
+                if(block == BlockDescription.NoBlock) continue;
                 
                 if( IsWaterlilyBlock(block) || IsCarpet(mcBlock) ) {
                     WorldPoint lowerPos = pos.Bottom();

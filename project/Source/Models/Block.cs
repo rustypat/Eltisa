@@ -63,7 +63,7 @@ public struct Block {
 
 
     public bool HasResource() {
-        return BlockType == BlockTypes.Scripture_Left;
+        return BlockType == BlockDescription.Scripture_Left;
     }
 
 
@@ -87,12 +87,12 @@ public struct Block {
 
     // methods
     public bool IsABlock() {
-        return data != BlockTypes.NotABlock.data;
+        return data != BlockDescription.NotABlock.data;
     }
 
 
     public bool IsNotABlock() {
-        return data == BlockTypes.NotABlock.data;
+        return data == BlockDescription.NotABlock.data;
     }
 
 

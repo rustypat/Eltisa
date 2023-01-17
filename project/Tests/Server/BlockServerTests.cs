@@ -59,28 +59,28 @@ public class BlockServerTests {
         var blockServer     = new BlockServer(regionCreator);
 
         var block = blockServer.ReadBlock(new WorldPoint(0, 32, 0));
-        Assert.AreEqual(block.Definition, BlockTypes.NoBlock);
+        Assert.AreEqual(block.Definition, BlockDescription.NoBlock);
 
         block = blockServer.ReadBlock(new WorldPoint(0, 31, 0));
-        Assert.AreEqual(block.Definition, BlockTypes.Water);
+        Assert.AreEqual(block.Definition, BlockDescription.Water);
 
         block = blockServer.ReadBlock(new WorldPoint(0, 0, 0));
-        Assert.AreEqual(block.Definition, BlockTypes.Water);
+        Assert.AreEqual(block.Definition, BlockDescription.Water);
 
         block = blockServer.ReadBlock(new WorldPoint(0, 0, 0));
-        Assert.AreEqual(block.Definition, BlockTypes.Water);
+        Assert.AreEqual(block.Definition, BlockDescription.Water);
 
         block = blockServer.ReadBlock(new WorldPoint(0, -1, 0));
-        Assert.AreEqual(block.Definition, BlockTypes.Stone);
+        Assert.AreEqual(block.Definition, BlockDescription.Stone);
 
         block = blockServer.ReadBlock(new WorldPoint(0, -16368, 0));
-        Assert.AreEqual(block.Definition, BlockTypes.Stone);
+        Assert.AreEqual(block.Definition, BlockDescription.Stone);
 
         block = blockServer.ReadBlock(new WorldPoint(0, -16369, 0));
-        Assert.AreEqual(block.Definition, BlockTypes.Lava);
+        Assert.AreEqual(block.Definition, BlockDescription.Lava);
 
         block = blockServer.ReadBlock(new WorldPoint(0, -16384, 0));
-        Assert.AreEqual(block.Definition, BlockTypes.Lava);
+        Assert.AreEqual(block.Definition, BlockDescription.Lava);
     }
 
 

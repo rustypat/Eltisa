@@ -3,7 +3,7 @@ namespace Eltisa.Source.Server;
 using System;
 using Eltisa.Source.Models;
 using Eltisa.Source.Communication;
-using static Eltisa.Source.Models.BlockTypes;
+using static Eltisa.Source.Models.BlockDescription;
 
 
 public static class BlockActions {
@@ -38,7 +38,7 @@ public static class BlockActions {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-    private static ushort[]  switchTable = new ushort[BlockTypes.MaxBlockDefinition];
+    private static ushort[]  switchTable = new ushort[BlockDescription.MaxBlockDefinition];
 
 
     private  static void addSwitch(ushort blockDefinition, ushort blockDefinition1) {

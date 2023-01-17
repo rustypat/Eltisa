@@ -16,12 +16,12 @@ public static class DefaultWorld {
 
 
     public static Block GetBlock(WorldPoint position) {
-        if(position.Y >= SeaLevel  )       return BlockTypes.NotABlock;
-        else if(position.Y == SeaLevel-1)  return new Block(position.GetBlockPoint(), BlockTypes.Water, Block.Faces.Top);
-        else if(position.Y >= SeaBottom )  return new Block(position.GetBlockPoint(), BlockTypes.Water, Block.NoFaces);
-        else if(position.Y >= RockBottom)  return new Block(position.GetBlockPoint(), BlockTypes.Stone, Block.NoFaces);
-        else if(position.Y >= WorldBottom) return new Block(position.GetBlockPoint(), BlockTypes.Lava,  Block.NoFaces);
-        else                               return BlockTypes.NotABlock;
+        if(position.Y >= SeaLevel  )       return BlockDescription.NotABlock;
+        else if(position.Y == SeaLevel-1)  return new Block(position.GetBlockPoint(), BlockDescription.Water, Block.Faces.Top);
+        else if(position.Y >= SeaBottom )  return new Block(position.GetBlockPoint(), BlockDescription.Water, Block.NoFaces);
+        else if(position.Y >= RockBottom)  return new Block(position.GetBlockPoint(), BlockDescription.Stone, Block.NoFaces);
+        else if(position.Y >= WorldBottom) return new Block(position.GetBlockPoint(), BlockDescription.Lava,  Block.NoFaces);
+        else                               return BlockDescription.NotABlock;
     }
 
 
@@ -53,40 +53,40 @@ public static class DefaultWorld {
 
 
     private static Chunk CreateMagmaChunk(ChunkPoint position) {
-        return new Chunk(position, BlockTypes.Lava);
+        return new Chunk(position, BlockDescription.Lava);
     }
 
 
     private static bool IsModifiedMagmaChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockTypes.Lava) return true;
+        if(chunk.DefaultBlockDefinition != BlockDescription.Lava) return true;
         return chunk.IsModified();
     }
 
 
     private static Chunk CreateEarthChunk(ChunkPoint position) {
-        return new Chunk(position, BlockTypes.Stone);
+        return new Chunk(position, BlockDescription.Stone);
     }
 
 
     private static bool IsModifiedEarthChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockTypes.Stone) return true;
+        if(chunk.DefaultBlockDefinition != BlockDescription.Stone) return true;
         return chunk.IsModified();
     }
 
 
     private static Chunk CreateSeaChunk(ChunkPoint position) {
-        return new Chunk(position, BlockTypes.Water);
+        return new Chunk(position, BlockDescription.Water);
     }
 
 
     private static bool IsModifiedSeaChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockTypes.Water) return true;
+        if(chunk.DefaultBlockDefinition != BlockDescription.Water) return true;
         return chunk.IsModified();
     }
 
 
     private static Chunk CreateSeaSurfaceChunk(ChunkPoint position) {
-        Chunk seaChunk = new Chunk(position, BlockTypes.Water);
+        Chunk seaChunk = new Chunk(position, BlockDescription.Water);
 
         int y = ChunkSize - 1;
         for(int x=0; x < ChunkSize; x++) {
@@ -100,7 +100,7 @@ public static class DefaultWorld {
 
 
     private static bool IsModifiedSeaSurfaceChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockTypes.Water) return true;
+        if(chunk.DefaultBlockDefinition != BlockDescription.Water) return true;
         if(chunk.BlockCount != ChunkVolume) return true;
         if(chunk.BorderBlocks.Size() != ChunkSize * ChunkSize) return true;
         if(chunk.InnerBlocks.Size() > 0) return true;
@@ -115,7 +115,7 @@ public static class DefaultWorld {
 
 
     private static bool IsModifiedSkyChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockTypes.NoBlock) return true;
+        if(chunk.DefaultBlockDefinition != BlockDescription.NoBlock) return true;
         return chunk.IsModified();
     }
 
