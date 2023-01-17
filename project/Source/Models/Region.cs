@@ -33,6 +33,21 @@ public class Region {
     }
 
 
+    public override bool Equals(object obj)
+    {
+        var region = obj as Region;
+
+        if (region == null) return false;
+        else                return this.Position == region.Position;
+    }
+
+
+    public override int GetHashCode()
+    {
+        return Position.GetHashCode();
+    }
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////
     // chunks
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -79,20 +94,6 @@ public class Region {
         foreach(Chunk chunk in chunks.Values) {
             chunk.Validate(Position);
         }
-    }
-
-
-    public int CountModifiedChunks() {
-        lastUsed  = DateTime.Now;
-        if(chunks == null) return 0;            
-        
-        int chunkCount = 0;
-        foreach(Chunk chunk in chunks.Values) {
-            if(DefaultWorld.IsModifiedChunk(chunk)) {
-                chunkCount++;
-            }
-        }  
-        return chunkCount;          
     }
 
 

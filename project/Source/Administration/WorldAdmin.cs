@@ -137,13 +137,14 @@ public static class WorldAdmin {
         int z = zShift / 256;
 
         // shift regions
-        DirectoryInfo directoryInfo  = new DirectoryInfo(RegionPersister.GetDirectoryPath());
-        FileInfo[] fileInfos         = directoryInfo.GetFiles();
+        DirectoryInfo directoryInfo     = new DirectoryInfo(Configuration.RegionDirectory);
+        RegionPersister regionPersister = new RegionPersister(Configuration.RegionDirectory);
+        FileInfo[] fileInfos            = directoryInfo.GetFiles();
         foreach(FileInfo fileInfo in fileInfos) {
             if( !fileInfo.Name.EndsWith(RegionPersister.FileType) ) continue;
-            regionPos    = RegionPersister.GetFilePosition(fileInfo.Name);
+            regionPos    = regionPersister.GetFilePosition(fileInfo.Name);
             regionPos    = regionPos.Add(x, y, z);
-            newFullName  = RegionPersister.GetFilePath(regionPos) + "n";
+            newFullName  = regionPersister.GetFilePath(regionPos) + "n";
             File.Move(fileInfo.FullName, newFullName);
         }        
         fileInfos         = directoryInfo.GetFiles();
@@ -178,11 +179,12 @@ public static class WorldAdmin {
 
     public static void ValidateWorld() {
         Log.Info("validate world start");
-        DirectoryInfo directoryInfo  = new DirectoryInfo(RegionPersister.GetDirectoryPath());
-        FileInfo[] fileInfos         = directoryInfo.GetFiles();
+        DirectoryInfo directoryInfo     = new DirectoryInfo(Configuration.RegionDirectory);
+        RegionPersister regionPersister = new RegionPersister(Configuration.RegionDirectory);
+        FileInfo[] fileInfos            = directoryInfo.GetFiles();
         foreach(FileInfo fileInfo in fileInfos) {
             if( !fileInfo.Name.EndsWith(RegionPersister.FileType) ) continue;
-            RegionPoint pos  = RegionPersister.GetFilePosition(fileInfo.Name);
+            RegionPoint pos  = regionPersister.GetFilePosition(fileInfo.Name);
             Region region    = World.GetRegion(pos);
             region.Validate();
         }                    

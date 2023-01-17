@@ -2,25 +2,31 @@ namespace Eltisa.Source.Server;
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
-using Eltisa.Source.Administration;
 using Eltisa.Source.Tools;
 using Eltisa.Source.Models;
 using static System.Diagnostics.Debug;
 
+public class RegionPersister : IRegionAccess {
 
-static public class RegionPersister {
+    public const string      FileType =  ".rgn";
+    private const int        STOREFORMAT_VERSION_1 = 01010101;
+    private readonly string  regionDirectory;      
 
-    private const           int                               STOREFORMAT_VERSION_1 = 01010101;
 
+    public RegionPersister(string regionDirectory) {
+        this.regionDirectory = regionDirectory;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // read and write
     ///////////////////////////////////////////////////////////////////////////////////////////
 
-    public static Region ReadRegion(RegionPoint pos) {
+    public Region ReadRegion(RegionPoint pos) {
         string  fileName = GetFilePath(pos); 
         if(!File.Exists(fileName)) return null;
+        Log.Trace("Read region from " + fileName);
 
         using(FileStream regionStream = File.OpenRead(fileName)) {
             //DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Decompress);
@@ -43,7 +49,7 @@ static public class RegionPersister {
     }
 
 
-    private static Chunk ReadChunk(BinaryReader reader) {
+    private Chunk ReadChunk(BinaryReader reader) {
         ushort posData                  = reader.ReadUInt16();
         ushort defaultBlockDefinition   = reader.ReadUInt16();
         ushort blockCount               = reader.ReadUInt16();
@@ -89,11 +95,10 @@ static public class RegionPersister {
     }
 
 
-    public static void WriteRegion(Region region) {
-        Log.Trace("Store " + region);
-        string filePath = GetDirectoryPath(); 
+    public void WriteRegion(Region region) {
+        Directory.CreateDirectory(regionDirectory);
         string fileName = GetFilePath(region.Position); 
-        Directory.CreateDirectory(filePath);
+        Log.Trace("Store region to " + fileName);
 
         using(FileStream regionStream = File.OpenWrite(fileName)) {
             //DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Compress);
@@ -102,7 +107,7 @@ static public class RegionPersister {
             writer.Write((int)STOREFORMAT_VERSION_1);            
             writer.Write((int)region.Owner);            
             writer.Write((int)region.AccessRights);            
-            writer.Write((int)region.CountModifiedChunks());
+            writer.Write((int)region.GetChunks().Count(chunk => DefaultWorld.IsModifiedChunk(chunk)));
             
             foreach(Chunk chunk in region.GetChunks()) {
                 if(DefaultWorld.IsModifiedChunk(chunk)) {
@@ -121,7 +126,7 @@ static public class RegionPersister {
     }
 
 
-    private static void WriteChunk(BinaryWriter writer, Chunk chunk) {
+    private void WriteChunk(BinaryWriter writer, Chunk chunk) {
         writer.Write((ushort)chunk.Position.Data);
         writer.Write((ushort)chunk.DefaultBlockDefinition);
         writer.Write((ushort)chunk.BlockCount);
@@ -153,19 +158,13 @@ static public class RegionPersister {
     // support methods
     ///////////////////////////////////////////////////////////////////////////////////////////
 
-    public const string FileType =  ".rgn";
 
-    public static string GetFilePath(RegionPoint pos) {
-        return Configuration.RegionDirectory + pos.X + "_" + pos.Y + "_" + pos.Z + FileType;
+    public string GetFilePath(RegionPoint pos) {
+        return regionDirectory + pos.X + "_" + pos.Y + "_" + pos.Z + FileType;
     }
 
 
-    public static string GetDirectoryPath() {
-        return Configuration.RegionDirectory;
-    }
-
-
-    public static RegionPoint GetFilePosition(string fileName) {
+    public RegionPoint GetFilePosition(string fileName) {
         string trimedName    = fileName.TrimEnd(FileType);
         string[] coordinates = trimedName.Split("_");
         int x                = int.Parse(coordinates[0]);
@@ -173,6 +172,5 @@ static public class RegionPersister {
         int z                = int.Parse(coordinates[2]);
         return new RegionPoint(x, y, z);
     }
-
 
 }

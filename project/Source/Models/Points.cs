@@ -130,7 +130,7 @@ public struct ChunkPoint {
 }
 
 
-// coordinates of a region in region coordinates
+// coordinates of a region in the world (in region coordinates)
 public struct RegionPoint {
     private int   data;                           // Y: 8bit signed, Z: 12bit signed, X: 12bit signed
     public  int   Data { get{ return data;} }
@@ -147,6 +147,16 @@ public struct RegionPoint {
         Assert(y >= -RegionRadiusVertical && y < RegionRadiusVertical);
         Assert(z >= -RegionRadius && z < RegionRadius);
         data = (y << 24) | ( (z & 0xFFF) << 12) | (x & 0xFFF);
+    }
+
+
+    public static bool operator == (RegionPoint p1, RegionPoint p2) {
+        return p1.data == p2.data;
+    }
+
+
+    public static bool operator != (RegionPoint p1, RegionPoint p2) {
+        return p1.data != p2.data;
     }
 
 
@@ -221,8 +231,6 @@ public struct RegionPoint {
     }
 
 }
-
-
 
 
 // coordinates of a block in the world

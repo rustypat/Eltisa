@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using Eltisa.Source.Models;
 using Eltisa.Source.Tools;
+using Eltisa.Source.Administration;
 using static System.Diagnostics.Debug;
 using static Eltisa.Source.Administration.Configuration;
-
 
 static public class World {
 
@@ -20,6 +20,8 @@ static public class World {
     });
 
     private static readonly Object changeLock = new Object();
+
+    private static readonly RegionPersister regionPersister = new RegionPersister(Configuration.RegionDirectory);
     
 
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +142,7 @@ static public class World {
         regions.TryGetValue(pos, out region);
         if(region != null) return region;
         
-        Region savedRegion = RegionPersister.ReadRegion(pos);
+        Region savedRegion = regionPersister.ReadRegion(pos);
         if(savedRegion != null) {
             regions[pos] = savedRegion;
             return savedRegion;
@@ -289,7 +291,7 @@ static public class World {
                     #if DEBUG
                         region.Validate();
                     #endif                                                
-                    RegionPersister.WriteRegion(region);
+                    regionPersister.WriteRegion(region);
                     region.SetUnchanged();
                 }
             } 

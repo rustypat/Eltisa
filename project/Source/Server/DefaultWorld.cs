@@ -9,9 +9,25 @@ public static class DefaultWorld {
 
     private static Random rand = new Random();
 
-    public const int SeaLevel   = 32;    // in world coordinates
-    public const int SeaBottom  = 0;
-    public const int RockBottom = -WorldRadiusVertical+16;
+    public const int SeaLevel     = 32;    // in world coordinates
+    public const int SeaBottom    = 0;
+    public const int RockBottom   = -WorldRadiusVertical+16;
+    public const int WorldBottom  = -WorldRadiusVertical;
+
+
+    public static Block GetBlock(WorldPoint position) {
+        if(position.Y >= SeaLevel  )       return BlockTypes.NotABlock;
+        else if(position.Y == SeaLevel-1)  return new Block(position.GetBlockPoint(), BlockTypes.Water, Block.Faces.Top);
+        else if(position.Y >= SeaBottom )  return new Block(position.GetBlockPoint(), BlockTypes.Water, Block.NoFaces);
+        else if(position.Y >= RockBottom)  return new Block(position.GetBlockPoint(), BlockTypes.Stone, Block.NoFaces);
+        else if(position.Y >= WorldBottom) return new Block(position.GetBlockPoint(), BlockTypes.Lava,  Block.NoFaces);
+        else                               return BlockTypes.NotABlock;
+    }
+
+
+    public static bool HasSolidBlock(WorldPoint position) {
+        return position.Y < SeaLevel;
+    }
 
 
     public static Chunk CreateChunk(WorldPoint position) {
@@ -104,17 +120,5 @@ public static class DefaultWorld {
     }
 
 
-    public static Block GetBlock(WorldPoint position) {
-        if(     position.Y == SeaLevel-1) return new Block(position.GetBlockPoint(), BlockTypes.Water, Block.Faces.Top);
-        else if(position.Y >= SeaLevel  ) return BlockTypes.NotABlock;
-        else if(position.Y >= SeaBottom ) return new Block(position.GetBlockPoint(), BlockTypes.Water, Block.NoFaces);
-        else if(position.Y >= RockBottom) return new Block(position.GetBlockPoint(), BlockTypes.Stone, Block.NoFaces);
-        else                              return new Block(position.GetBlockPoint(), BlockTypes.Lava,  Block.NoFaces);
-    }
-
-
-    public static bool HasSolidBlock(WorldPoint position) {
-        return position.Y < SeaLevel;
-    }
 }
 
