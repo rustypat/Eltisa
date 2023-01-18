@@ -5,6 +5,8 @@ using System.Linq;
 using Eltisa.Source.Models;
 using Assert = Eltisa.Source.Tools.Assert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Eltisa.Source.Models.BlockDescription;
+using static Eltisa.Source.Models.Block.Faces;
 
 [TestClass]
 public class BlockServerTests {
@@ -59,28 +61,86 @@ public class BlockServerTests {
         var blockServer     = new BlockServer(regionCreator);
 
         var block = blockServer.ReadBlock(new WorldPoint(0, 32, 0));
-        Assert.AreEqual(block.Definition, BlockDescription.NoBlock);
+        Assert.BlockIs(block, NoBlock);
 
         block = blockServer.ReadBlock(new WorldPoint(0, 31, 0));
-        Assert.AreEqual(block.Definition, BlockDescription.Water);
+        Assert.BlockIs(block, Water);
 
         block = blockServer.ReadBlock(new WorldPoint(0, 0, 0));
-        Assert.AreEqual(block.Definition, BlockDescription.Water);
-
-        block = blockServer.ReadBlock(new WorldPoint(0, 0, 0));
-        Assert.AreEqual(block.Definition, BlockDescription.Water);
+        Assert.BlockIs(block, Water);
 
         block = blockServer.ReadBlock(new WorldPoint(0, -1, 0));
-        Assert.AreEqual(block.Definition, BlockDescription.Stone);
+        Assert.BlockIs(block, Stone);
 
         block = blockServer.ReadBlock(new WorldPoint(0, -16368, 0));
-        Assert.AreEqual(block.Definition, BlockDescription.Stone);
+        Assert.BlockIs(block, Stone);
 
         block = blockServer.ReadBlock(new WorldPoint(0, -16369, 0));
-        Assert.AreEqual(block.Definition, BlockDescription.Lava);
+        Assert.BlockIs(block, Lava);
 
         block = blockServer.ReadBlock(new WorldPoint(0, -16384, 0));
-        Assert.AreEqual(block.Definition, BlockDescription.Lava);
+        Assert.BlockIs(block, Lava);
+    }
+
+
+    [TestMethod]
+    public void AddBlockTest() {
+        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionCreator   = new RegionCreator(regionPersister);
+        var regionCache     = new RegionCache(regionCreator);
+        var blockServer     = new BlockServer(regionCache);
+
+        var pos = new WorldPoint(98, 32, 99);
+        blockServer.CreateBlock(pos, Stone);
+
+        var block = blockServer.ReadBlock(pos);
+        Assert.BlockIs(block, Stone);
+        Assert.BlockHasFaces(block, Top, Left, Right, Front, Back);
+        Assert.BlockHasFacesNot(block, Bottom);
+
+        var blockBelow = blockServer.ReadBlock(new WorldPoint(98, 31, 99));
+        Assert.BlockHasFacesNot(blockBelow, Top, Left, Right, Front, Back, Bottom);
+    }
+
+
+    [TestMethod]
+    public void RemoveBlockTest() {
+        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionCreator   = new RegionCreator(regionPersister);
+        var regionCache     = new RegionCache(regionCreator);
+        var blockServer     = new BlockServer(regionCache);
+
+        var pos = new WorldPoint(0, 31, 0);
+        blockServer.DeleteBlock(pos);
+
+        var block = blockServer.ReadBlock(new WorldPoint(0, 30, 0));
+        Assert.BlockHasFaces(block, Top);
+        Assert.BlockHasFacesNot(block, Left, Right, Front, Back, Bottom);
+
+        block = blockServer.ReadBlock(new WorldPoint(-1, 31, 0));
+        Assert.BlockHasFaces(block, Top, Right);
+        Assert.BlockHasFacesNot(block, Left, Front, Back, Bottom);
+
+        block = blockServer.ReadBlock(new WorldPoint(0, 31, -1));
+        Assert.BlockHasFaces(block, Top, Front);
+        Assert.BlockHasFacesNot(block, Left, Right, Back, Bottom);
+    }
+
+
+    [TestMethod]
+    public void ChangeBlockTest() {
+        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionCreator   = new RegionCreator(regionPersister);
+        var regionCache     = new RegionCache(regionCreator);
+        var blockServer     = new BlockServer(regionCache);
+
+        var pos = new WorldPoint(0, 31, 0);
+        var block = blockServer.ReadBlock(pos);
+        Assert.BlockIs(block, Water);
+
+        blockServer.UpdateBlock(pos, Ice);
+        block = blockServer.ReadBlock(pos);
+        Assert.BlockIs(block, Ice);
     }
 
 

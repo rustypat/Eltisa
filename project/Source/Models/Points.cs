@@ -94,7 +94,7 @@ public struct BlockPoint {
 // coordinates of a chunk in the region
 public struct ChunkPoint {
     private ushort   data;
-    public  ushort   Data { get{ return data;} }
+    public  ushort   Data { get{ return data;} }  // Y: 4bit unsigned, Z: 4bit unsigned, X: 4bit unsigned
 
     public int Y   {  get { return (data >> 8)      ; }  }
     public int Z   {  get { return (data >> 4) & 0xF; }  }

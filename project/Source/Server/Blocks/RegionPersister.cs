@@ -115,7 +115,7 @@ public class RegionPersister : IRegionAccess {
                     // optimize storage 
                     ushort defaultBlockDefinition = chunk.RecommendDefaultBlock();
                     if(defaultBlockDefinition != chunk.DefaultBlockDefinition) {
-                        chunk.ConvertToNewDefaultBlockDefinition(defaultBlockDefinition);
+                        chunk.ConvertToNewDefaultBlockDefinition(defaultBlockDefinition);  // TODO: needs a mutex lock
                     }
                     WriteChunk(writer, chunk);
                 }

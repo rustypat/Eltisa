@@ -110,11 +110,112 @@ public class Chunk {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
 
+    public Block CreateTransparentBlock(BlockPoint pos, ushort blockDefinition, Block.Faces faces) {
+        var block    = new Block(pos, blockDefinition, faces);
+        InsertTransparentBlock(block);
+        BlockCount++;
+        return block;
+    }
+
+
+    public Block CreateSolidBlock(BlockPoint pos, ushort blockDefinition, Block.Faces faces) {
+        var block    = new Block(pos, blockDefinition, faces);
+        if(block.BlockFaces == Block.NoFaces) {                    
+            if(IsAdditiv() || block.Definition != DefaultBlockDefinition) {
+                InsertInnerBlock(block);                
+            }
+        }
+        else {
+            InsertBorderBlock(block);
+        }                
+        BlockCount++;
+        return block;
+    }
+
+
+    /// <summary>
+    /// ATTENTION: must only change from one transparent block to another transparent block state.
+    /// </summary>
+    public Block UpdateTransparentBlock(BlockPoint pos, ushort newBlockDefinition) {
+        var oldBlock = TransparentBlocks.GetBlock(pos);
+        if(oldBlock.IsABlock()) {
+            var newBlock    = new Block(pos, newBlockDefinition, oldBlock.BlockFaces);            
+            if(!oldBlock.EqualsExceptState(newBlock)) {
+                return BlockDescription.NotABlock;
+            }
+            else {
+                ReplaceTransparentBlock(newBlock);
+                return newBlock;
+            }
+        }
+
+        // there was no block to change
+        return BlockDescription.NotABlock;
+    }
+
+
+    /// <summary>
+    /// ATTENTION: must only change from one solid block to another solid block state.
+    /// </summary>
+    public Block UpdateSolidBlock(BlockPoint pos, ushort newBlockDefinition) {
+        var oldBlock    = BorderBlocks.GetBlock(pos);
+        if(oldBlock.IsABlock()) {
+            var newBlock    = new Block(pos, newBlockDefinition, oldBlock.BlockFaces);  
+            if( oldBlock.GetData() == newBlock.GetData() ) {
+                return BlockDescription.NotABlock;   // there is no change                 
+            }
+            if(!oldBlock.EqualsExceptState(newBlock)) {
+                return BlockDescription.NotABlock;   // new block type does not match old block type
+            }
+            else {
+                ReplaceBorderBlock(newBlock);
+                return newBlock;
+            }
+        }
+
+        // there was no block to change
+        return BlockDescription.NotABlock;
+    }
+
+
+    public Block DeleteTransparentBlock(BlockPoint pos) {
+        var block = TransparentBlocks.RemoveBlock(pos);
+        if(block.IsABlock()) {
+            BlockCount--;
+            if(IsSubtractiv()) {
+                InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
+            }
+            return block;
+        }
+        return BlockDescription.NotABlock;
+    }
+
+
+    /// <summary>
+    /// ATTENTION: functionality is only implemented for visible blocks !!!
+    public Block DeleteSolidBlock(BlockPoint pos) {
+        var block = BorderBlocks.RemoveBlock(pos);
+        if(block.IsABlock()) {
+            BlockCount--;
+            if(IsSubtractiv()) {
+                InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
+            }
+            return block;
+        }        
+        return BlockDescription.NotABlock;
+    }
+
+
+
+
+
+
+
     public Block AddBlock(WorldPoint worldPos, ushort blockDefinition) {
         Assert(blockDefinition != 0);
         var pos = worldPos.GetBlockPoint();
 
-        // check if is allowed
+        // check if adding is possible
         if(HasBlockAt(pos) ) return BlockDescription.NotABlock;
 
         if(EmptyBlocks.Size() > 0) {
@@ -142,7 +243,6 @@ public class Chunk {
             BlockCount++;
             return block;
         }
-
     }
 
 
