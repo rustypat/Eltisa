@@ -4,17 +4,17 @@ using System;
 using Eltisa.Source.Models;
 
 
-public readonly record struct ChangedBlock(WorldPoint position, Block newBlock);
+public readonly record struct Changed(WorldPoint Position, Block Block);
 
 
 
 public interface IBlockAccess {
-    ChangedBlock[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockInfo);
+    Changed[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockInfo);
     Block ReadBlock(Actor actor, WorldPoint location);
     Chunk ReadChunk(Actor actor, WorldPoint location);
-    ChangedBlock[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockState);
-    ChangedBlock[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions);
-    ChangedBlock[] DeleteBlock(Actor actor, WorldPoint location);
+    Changed[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockState);
+    Changed[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions);
+    Changed[] DeleteBlock(Actor actor, WorldPoint location);
 }
 
 

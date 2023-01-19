@@ -8,14 +8,16 @@ using Eltisa.Source.Models;
 public class BlockPermit : IBlockAccess {
 
     private readonly IBlockAccess blockAccess;
+    private readonly Changed[] NoChanges = {};
 
     public BlockPermit(IBlockAccess blockAccess) {   
         this.blockAccess = blockAccess;     
     }
 
 
-    public ChangedBlock[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
-        return blockAccess.CreateBlock(actor, worldPos, blockDescription);
+    public Changed[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
+        if(CanModifyBlock(actor, worldPos)) return blockAccess.CreateBlock(actor, worldPos, blockDescription);
+        else                                return NoChanges;
     }
 
 
@@ -24,24 +26,27 @@ public class BlockPermit : IBlockAccess {
     }
 
 
-    public ChangedBlock[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
-        return blockAccess.UpdateBlock(actor, worldPos, newBlockDefinition);
+    public Changed[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
+        if(CanModifyBlock(actor, worldPos)) return blockAccess.UpdateBlock(actor, worldPos, newBlockDefinition);
+        else                                return NoChanges;        
     }
 
 
-    public ChangedBlock[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
+    public Changed[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
         return blockAccess.SwitchBlocks(actor, worldPositions);
     }
 
 
-    public ChangedBlock[] DeleteBlock(Actor actor, WorldPoint worldPos) {
-        return blockAccess.DeleteBlock(actor, worldPos);
+    public Changed[] DeleteBlock(Actor actor, WorldPoint worldPos) {
+        if(CanModifyBlock(actor, worldPos)) return blockAccess.DeleteBlock(actor, worldPos);
+        else                                return NoChanges;                
     }
 
 
     public Chunk ReadChunk(Actor actor, WorldPoint worldPos)  {
         return blockAccess.ReadChunk(actor, worldPos);
     }
+
 
 
     private bool CanModifyBlock(Actor actor, WorldPoint blockPos) {

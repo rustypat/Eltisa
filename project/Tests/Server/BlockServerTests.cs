@@ -199,6 +199,28 @@ public class BlockServerTests {
 
 
     [TestMethod]
+    public void SwitchTest() {
+        var regionCreator   = new RegionCreator(null);
+        var regionCache     = new RegionCache(regionCreator);
+        var blockProvider   = new BlockProvider(regionCache);
+        var blockController = new BlockController(blockProvider);
+
+        var pos = new WorldPoint(0, 32, 0);
+        var changes = blockController.CreateBlock(null, pos, Lamp);
+        Assert.SizeIs(changes, 1);
+        Assert.BlockIs(changes[0].Block, Lamp);
+
+        changes = blockController.SwitchBlocks(null, pos);
+        Assert.SizeIs(changes, 1);
+        Assert.BlockIs(changes[0].Block, Lamp_On);
+
+        changes = blockController.SwitchBlocks(null, pos);
+        Assert.SizeIs(changes, 1);
+        Assert.BlockIs(changes[0].Block, Lamp);
+    }
+
+
+    [TestMethod]
     public void DevelopTest() {
     }
 
