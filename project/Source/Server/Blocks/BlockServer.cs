@@ -153,56 +153,50 @@ public class BlockServer : IBlockAccess {
         
         if(blockPos.IsMostLeft()) {
             var leftPos = worldPos.Left();
-            var nChunk = ReadChunk(leftPos);
-            if( !nChunk.HasSolidBlockAt(leftPos.GetBlockPoint()) )  faces |= Block.Faces.Left;
+            if(!ReadChunk(leftPos).HasSolidBlockAt(leftPos.GetBlockPoint()) )       faces |= Block.Faces.Left;
         }
         else {
-            if(!chunk.HasSolidBlockAt(blockPos.Left())   )  faces |= Block.Faces.Left;
+            if(!chunk.HasSolidBlockAt(blockPos.Left()) )                            faces |= Block.Faces.Left;
         }
 
         if(blockPos.IsMostRight()) {
             var rightPos = worldPos.Left();
-            var nChunk = ReadChunk(rightPos);
-            if( !nChunk.HasSolidBlockAt(rightPos.GetBlockPoint()) )  faces |= Block.Faces.Right;
+            if(!ReadChunk(rightPos).HasSolidBlockAt(rightPos.GetBlockPoint()) )     faces |= Block.Faces.Right;
         }
         else {
-            if(!chunk.HasSolidBlockAt(blockPos.Right())  )  faces |= Block.Faces.Right;
+            if(!chunk.HasSolidBlockAt(blockPos.Right()) )                           faces |= Block.Faces.Right;
         }
 
         if(blockPos.IsMostBack()) {
             var backPos = worldPos.Back();
-            var nChunk = ReadChunk(backPos);
-            if( !nChunk.HasSolidBlockAt(backPos.GetBlockPoint()) )  faces |= Block.Faces.Back;
+            if(!ReadChunk(backPos).HasSolidBlockAt(backPos.GetBlockPoint()) )       faces |= Block.Faces.Back;
         }
         else {
-            if(!chunk.HasSolidBlockAt(blockPos.Back())   )  faces |= Block.Faces.Back;
+            if(!chunk.HasSolidBlockAt(blockPos.Back()) )                            faces |= Block.Faces.Back;
         }
 
         if(blockPos.IsMostFront()) {
             var frontPos = worldPos.Front();
-            var nChunk = ReadChunk(frontPos);
-            if( !nChunk.HasSolidBlockAt(frontPos.GetBlockPoint()) )  faces |= Block.Faces.Front;
+            if(!ReadChunk(frontPos).HasSolidBlockAt(frontPos.GetBlockPoint()) )     faces |= Block.Faces.Front;
         }
         else {
-            if(!chunk.HasSolidBlockAt(blockPos.Front())  )  faces |= Block.Faces.Front;
+            if(!chunk.HasSolidBlockAt(blockPos.Front())  )                          faces |= Block.Faces.Front;
         }
 
         if(blockPos.IsMostBottom()) {
             var bottomPos = worldPos.Bottom();
-            var nChunk = ReadChunk(bottomPos);
-            if( !nChunk.HasSolidBlockAt(bottomPos.GetBlockPoint()) )  faces |= Block.Faces.Bottom;
+            if(!ReadChunk(bottomPos).HasSolidBlockAt(bottomPos.GetBlockPoint()) )   faces |= Block.Faces.Bottom;
         }
         else {
-            if(!chunk.HasSolidBlockAt(blockPos.Bottom()) )  faces |= Block.Faces.Bottom;
+            if(!chunk.HasSolidBlockAt(blockPos.Bottom()) )                          faces |= Block.Faces.Bottom;
         }
 
         if(blockPos.IsMostTop()) {
             var topPos = worldPos.Top();
-            var nChunk = ReadChunk(topPos);
-            if( !nChunk.HasSolidBlockAt(topPos.GetBlockPoint()) )  faces |= Block.Faces.Top;
+            if(!ReadChunk(topPos).HasSolidBlockAt(topPos.GetBlockPoint()) )         faces |= Block.Faces.Top;
         }
         else {
-            if(!chunk.HasSolidBlockAt(blockPos.Top())    )  faces |= Block.Faces.Top;
+            if(!chunk.HasSolidBlockAt(blockPos.Top()) )                             faces |= Block.Faces.Top;
         }
         
         return faces;

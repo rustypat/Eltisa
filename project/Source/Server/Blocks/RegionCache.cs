@@ -7,7 +7,7 @@ using Eltisa.Source.Tools;
 
 public class RegionCache : IRegionAccess {
 
-    private static readonly ConcurrentDictionary<RegionPoint, Region>   regions = new ConcurrentDictionary<RegionPoint, Region>();
+    private readonly ConcurrentDictionary<RegionPoint, Region>   regions = new ConcurrentDictionary<RegionPoint, Region>();
     private readonly IRegionAccess regionCreator;
 
     public RegionCache(IRegionAccess regionPersister) {

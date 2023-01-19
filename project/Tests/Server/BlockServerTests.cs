@@ -145,6 +145,23 @@ public class BlockServerTests {
 
 
     [TestMethod]
+    public void ChangeBlockTestFailing() {
+        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionCreator   = new RegionCreator(regionPersister);
+        var regionCache     = new RegionCache(regionCreator);
+        var blockServer     = new BlockServer(regionCache);
+
+        var pos = new WorldPoint(0, 31, 0);
+        var block = blockServer.ReadBlock(pos);
+        Assert.BlockIs(block, Water);
+
+        blockServer.UpdateBlock(pos, Lava);
+        block = blockServer.ReadBlock(pos);
+        Assert.BlockIs(block, Water);
+    }
+
+
+    [TestMethod]
     public void DevelopTest() {
     }
 
