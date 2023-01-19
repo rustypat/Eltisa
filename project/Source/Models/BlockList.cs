@@ -73,12 +73,12 @@ public static class BlockListExtensions {
 
 
     public static Block GetBlock(this BlockList blockList, BlockPoint blockPosition) {
-        if(blockList == null) return BlockDescription.NotABlock;
+        if(blockList == null) return BlockDescription.NoBlock;
 
         Block descrBlock = new Block(blockPosition);
         int pos = blockList.BinarySearch(descrBlock, comparer);                
         if(pos >= 0) return blockList[pos];
-        else         return BlockDescription.NotABlock;
+        else         return BlockDescription.NoBlock;
     }
 
 
@@ -91,7 +91,7 @@ public static class BlockListExtensions {
 
 
     public static Block RemoveBlock(this BlockList blockList, BlockPoint blockPosition) {
-        if(blockList == null) return BlockDescription.NotABlock;
+        if(blockList == null) return BlockDescription.NoBlock;
 
         Block descrBlock = new Block(blockPosition);
         int i = blockList.BinarySearch(descrBlock, comparer);
@@ -102,14 +102,14 @@ public static class BlockListExtensions {
             return removedBlock;
         }
         else {
-            return BlockDescription.NotABlock;
+            return BlockDescription.NoBlock;
         }
     }
 
 
     // returns the block at blockPosition after adding face
     public static Block AddFace(this BlockList blockList, BlockPoint blockPosition, Block.Faces face) {
-        if(blockList == null) return BlockDescription.NotABlock;
+        if(blockList == null) return BlockDescription.NoBlock;
 
         Block descrBlock = new Block(blockPosition);
         int i = blockList.BinarySearch(descrBlock, comparer);
@@ -120,14 +120,14 @@ public static class BlockListExtensions {
             return block;
         }
         else {
-            return BlockDescription.NotABlock;
+            return BlockDescription.NoBlock;
         }
     }
 
 
     // returns the block at blockPosition after removing face
     public static Block RemoveFace(this BlockList blockList, BlockPoint blockPosition, Block.Faces face) {
-        if(blockList == null) return BlockDescription.NotABlock;
+        if(blockList == null) return BlockDescription.NoBlock;
 
         Block descrBlock = new Block(blockPosition);
         int i = blockList.BinarySearch(descrBlock, comparer);
@@ -138,7 +138,7 @@ public static class BlockListExtensions {
             return block;
         }
         else {
-            return BlockDescription.NotABlock;
+            return BlockDescription.NoBlock;
         }
     }
 

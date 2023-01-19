@@ -16,7 +16,7 @@ public static class McMapper {
         Assert(mcState >= 0 && mcState < 16);
 
         if( mcType < 16 ) {
-            if( mcType==0 ) return NoBlock;   // Air
+            if( mcType==0 ) return Air;   // Air
 
             if( mcType==1 ) {
                 switch(mcState) {
@@ -155,7 +155,7 @@ public static class McMapper {
         else if( mcType < 48 ) {
             if( mcType==32 ) return DryBush;   
             if( mcType==33 ) return TableStone;        // replace piston
-            if( mcType==34 ) return NoBlock;           // piston head
+            if( mcType==34 ) return Air;           // piston head
             if( mcType==35 ) {
                 switch(mcState) {
                     case 0:  return Felt_White;
@@ -177,7 +177,7 @@ public static class McMapper {
                     default: throw new Exception("invalid state " + mcState + " for mcType " + mcType);
                 }
             }
-            if( mcType==36 ) return NoBlock;           // block being moved by piston
+            if( mcType==36 ) return Air;           // block being moved by piston
             if( mcType==37 ) return Flower_2;
             if( mcType==38 )  {
                 switch(mcState) {
@@ -267,7 +267,7 @@ public static class McMapper {
                 }                    
             }
             if( mcType==54 ) return Box_5;   // chest
-            if( mcType==55 ) return NoBlock; // redstone wire
+            if( mcType==55 ) return Air; // redstone wire
             if( mcType==56 ) return Ore_4;
             if( mcType==57 ) return Gem_3;
             if( mcType==58 ) return TableIron;
@@ -654,8 +654,8 @@ public static class McMapper {
             }                                        
             if( mcType==129 ) return Ore_5;
             if( mcType==130 ) return Box_5;
-            if( mcType==131 ) return NoBlock;  // tripwire hock
-            if( mcType==132 ) return NoBlock;  // tripwire
+            if( mcType==131 ) return Air;  // tripwire hock
+            if( mcType==132 ) return Air;  // tripwire
             if( mcType==133 ) return Gem_2;
             if( mcType==134 ){
                 switch(mcState) {
@@ -826,7 +826,7 @@ public static class McMapper {
                 }                    
             }          
             if( mcType==165 ) return Gem_2;     // slime jump block
-            if( mcType==166 ) return NoBlock;   // invisible barrier block                      
+            if( mcType==166 ) return Air;   // invisible barrier block                      
             if( mcType==167 ) {
                 if( (mcState & 0b1000) > 0) {
                     if( (mcState & 0b0100) > 0) {
@@ -917,7 +917,7 @@ public static class McMapper {
             if( mcType==173 ) return Stone_5;
             if( mcType==174 ) return Ice;      // packed ice
             if( mcType==175 ) {
-                if(mcState >= 8) return BlockDescription.NoBlock;  
+                if(mcState >= 8) return Air;  
                 switch(mcState) {
                     case 0:  return Sunflower;
                     case 1:  return Lilac;
@@ -951,7 +951,7 @@ public static class McMapper {
                     default: throw new Exception("invalid state " + mcState + " for mcType " + mcType);
                 }
             }
-            if( mcType==177 ) return NoBlock;           // wall banners not yet implemented
+            if( mcType==177 ) return Air;           // wall banners not yet implemented
             if( mcType==178 ) return WindowBlock_1;
             if( mcType==179 ) return Sand_2;
             if( mcType==180 ){
@@ -1228,8 +1228,8 @@ public static class McMapper {
             if( mcType==250 ) return Glass_Black;
             if( mcType==251 ) return Ashlar;
             if( mcType==252 ) return Ashlar;
-            if( mcType==253 ) return NoBlock;
-            if( mcType==254 ) return NoBlock;
+            if( mcType==253 ) return Air;
+            if( mcType==254 ) return Air;
             if( mcType==255 ) return Mystic_Flower;
         }
 

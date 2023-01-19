@@ -4,28 +4,18 @@ using System;
 using Eltisa.Source.Models;
 
 
-public interface IBlockAccess {
-    Block CreateBlock(WorldPoint worldPos, ushort blockInfo);
-    Block ReadBlock(WorldPoint location);
-    Chunk ReadChunk(WorldPoint location);
-    Block UpdateBlock(WorldPoint worldPos, ushort newBlockDefinition);
-    Block DeleteBlock(WorldPoint location);
-}
-
-
-
-public class BlockServer : IBlockAccess {
+public class BlockProvider {
 
     private readonly IRegionAccess regionAccess;
     private readonly Object changeLock = new Object();
 
-    public BlockServer(IRegionAccess regionAccess) {   
+    public BlockProvider(IRegionAccess regionAccess) {   
         this.regionAccess = regionAccess;     
     }
 
 
     public Block CreateBlock(WorldPoint worldPos, ushort blockDescription) {
-        if(worldPos.IsNotAPoint())  return BlockDescription.NotABlock;
+        if(worldPos.IsNotAPoint())  return BlockDescription.NoBlock;
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();
@@ -40,7 +30,7 @@ public class BlockServer : IBlockAccess {
                 region.SetChunk(chunk);
             }
 
-            if(chunk.HasBlockAt(blockPos) ) return BlockDescription.NotABlock;
+            if(chunk.HasBlockAt(blockPos) ) return BlockDescription.InvalidBlock;
 
             if(Block.IsTransparent(blockDescription)) {
                 var faces = DetermineVisibleFacesOfBlock(chunk, blockPos, worldPos);
@@ -55,7 +45,7 @@ public class BlockServer : IBlockAccess {
 
 
     public Block ReadBlock(WorldPoint worldPos) {
-        if(worldPos.IsNotAPoint())  return BlockDescription.NotABlock;
+        if(worldPos.IsNotAPoint())  return BlockDescription.NoBlock;
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();
@@ -66,7 +56,7 @@ public class BlockServer : IBlockAccess {
 
 
     public Block UpdateBlock(WorldPoint worldPos, ushort newBlockDefinition) {
-        if(worldPos.IsNotAPoint())  return BlockDescription.NotABlock;
+        if(worldPos.IsNotAPoint())  return BlockDescription.NoBlock;
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();
@@ -88,7 +78,7 @@ public class BlockServer : IBlockAccess {
             if(block.IsABlock()) return block;
 
             // change block failed
-            return BlockDescription.NotABlock;
+            return BlockDescription.InvalidBlock;
         }        
     }
 
@@ -97,7 +87,7 @@ public class BlockServer : IBlockAccess {
     /// ATTENTION: can only delete transparent blocks or solid blocks, that are visible
     /// </summary>
     public Block DeleteBlock(WorldPoint worldPos) {
-        if(worldPos.IsNotAPoint())  return BlockDescription.NotABlock;
+        if(worldPos.IsNotAPoint())  return BlockDescription.NoBlock;
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();
@@ -124,12 +114,12 @@ public class BlockServer : IBlockAccess {
             }
 
             // delete block failed
-            return BlockDescription.NotABlock;
+            return BlockDescription.InvalidBlock;
         }        
     }
 
 
-    public Chunk ReadChunk(WorldPoint worldPos) {
+    public Chunk ReadChunk(WorldPoint worldPos)  {
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();

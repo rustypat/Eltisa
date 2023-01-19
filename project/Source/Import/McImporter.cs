@@ -123,7 +123,7 @@ public class McImporter {
                 byte mcBlock = chunkData.blocks[section][i];
                 byte mcState = chunkData.states[section][i];
                 ushort block  = McMapper.ToEltisaBlock(mcBlock, mcState);
-                if(block == BlockDescription.NoBlock) continue;
+                if(block == BlockDescription.Air) continue;
                 
                 if( IsWaterlilyBlock(block) || IsCarpet(mcBlock) ) {
                     WorldPoint lowerPos = pos.Bottom();
@@ -376,9 +376,9 @@ public class McImporter {
                     }
                     else if( block.BlockType == MC_UpperDoor_RightAttached ) {
                         World.RemoveVisibleBlock(pos);
-                        if( adjustedBlock != NoBlock ) World.ChangeStateOfVisibleBlock(pos.Bottom(), adjustedBlock);
+                        if( adjustedBlock != Air ) World.ChangeStateOfVisibleBlock(pos.Bottom(), adjustedBlock);
                     }
-                    else if( adjustedBlock != NoBlock ) {
+                    else if( adjustedBlock != Air ) {
                         World.ChangeStateOfVisibleBlock(pos, adjustedBlock);
                     }
                 }
@@ -491,7 +491,7 @@ public class McImporter {
                 default :  throw new Exception("invalid block " + block.Definition);
             }
         }
-        return NoBlock;
+        return Air;
     }
 
 

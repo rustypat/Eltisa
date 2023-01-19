@@ -16,12 +16,12 @@ public static class DefaultWorld {
 
 
     public static Block GetBlock(WorldPoint position) {
-        if(position.Y >= SeaLevel  )       return BlockDescription.NotABlock;
+        if(position.Y >= SeaLevel  )       return BlockDescription.NoBlock;
         else if(position.Y == SeaLevel-1)  return new Block(position.GetBlockPoint(), BlockDescription.Water, Block.Faces.Top);
         else if(position.Y >= SeaBottom )  return new Block(position.GetBlockPoint(), BlockDescription.Water, Block.NoFaces);
         else if(position.Y >= RockBottom)  return new Block(position.GetBlockPoint(), BlockDescription.Stone, Block.NoFaces);
         else if(position.Y >= WorldBottom) return new Block(position.GetBlockPoint(), BlockDescription.Lava,  Block.NoFaces);
-        else                               return BlockDescription.NotABlock;
+        else                               return BlockDescription.NoBlock;
     }
 
 
@@ -115,7 +115,7 @@ public static class DefaultWorld {
 
 
     private static bool IsModifiedSkyChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockDescription.NoBlock) return true;
+        if(chunk.DefaultBlockDefinition != BlockDescription.Air) return true;
         return chunk.IsModified();
     }
 

@@ -10,8 +10,10 @@ public static class BlockDescription {
     public const int    MaxSolidBlockDefinition  = 4096-1;     // for max 8 solid categories
 
     // category 0: landscape
-    public const ushort NoBlock              = 0;
+
+    // the first type is reserved for special no block values!
     public const ushort Air                  = 0;
+    public const ushort Invalid              = 1;
 
     public const ushort Rock                 = 8;
     public const ushort Gravel               = 8+1;
@@ -621,5 +623,6 @@ public static class BlockDescription {
     public const ushort MC_UpperDoor_RightAttached    = 7184;
     public const ushort MC_UpperDoor_LeftAttached     = 7184+1;
     
-    public static readonly Block NotABlock = default(Block);
+    public static readonly Block NoBlock      = new Block(Air);
+    public static readonly Block InvalidBlock = new Block(Invalid);
 }

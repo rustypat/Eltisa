@@ -56,29 +56,29 @@ public class BlockServerTests {
 
 
     [TestMethod]
-    public void BlockServerDefaultWorldTest() {
+    public void DefaultWorldTest() {
         var regionCreator   = new RegionCreator(null);
-        var blockServer     = new BlockServer(regionCreator);
+        var blockProvider   = new BlockProvider(regionCreator);
 
-        var block = blockServer.ReadBlock(new WorldPoint(0, 32, 0));
-        Assert.BlockIs(block, NoBlock);
+        var block = blockProvider.ReadBlock(new WorldPoint(0, 32, 0));
+        Assert.BlockIs(block, Air);
 
-        block = blockServer.ReadBlock(new WorldPoint(0, 31, 0));
+        block = blockProvider.ReadBlock(new WorldPoint(0, 31, 0));
         Assert.BlockIs(block, Water);
 
-        block = blockServer.ReadBlock(new WorldPoint(0, 0, 0));
+        block = blockProvider.ReadBlock(new WorldPoint(0, 0, 0));
         Assert.BlockIs(block, Water);
 
-        block = blockServer.ReadBlock(new WorldPoint(0, -1, 0));
+        block = blockProvider.ReadBlock(new WorldPoint(0, -1, 0));
         Assert.BlockIs(block, Stone);
 
-        block = blockServer.ReadBlock(new WorldPoint(0, -16368, 0));
+        block = blockProvider.ReadBlock(new WorldPoint(0, -16368, 0));
         Assert.BlockIs(block, Stone);
 
-        block = blockServer.ReadBlock(new WorldPoint(0, -16369, 0));
+        block = blockProvider.ReadBlock(new WorldPoint(0, -16369, 0));
         Assert.BlockIs(block, Lava);
 
-        block = blockServer.ReadBlock(new WorldPoint(0, -16384, 0));
+        block = blockProvider.ReadBlock(new WorldPoint(0, -16384, 0));
         Assert.BlockIs(block, Lava);
     }
 
@@ -88,18 +88,32 @@ public class BlockServerTests {
         var regionPersister = new RegionPersister(".\\RegionData\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
-        var blockServer     = new BlockServer(regionCache);
+        var blockProvider   = new BlockProvider(regionCache);
 
         var pos = new WorldPoint(98, 32, 99);
-        blockServer.CreateBlock(pos, Stone);
+        var createdBlock = blockProvider.CreateBlock(pos, Stone);
 
-        var block = blockServer.ReadBlock(pos);
+        var block = blockProvider.ReadBlock(pos);
         Assert.BlockIs(block, Stone);
         Assert.BlockHasFaces(block, Top, Left, Right, Front, Back);
         Assert.BlockHasFacesNot(block, Bottom);
+        Assert.AreEqual(createdBlock, block);
 
-        var blockBelow = blockServer.ReadBlock(new WorldPoint(98, 31, 99));
+        var blockBelow = blockProvider.ReadBlock(new WorldPoint(98, 31, 99));
         Assert.BlockHasFacesNot(blockBelow, Top, Left, Right, Front, Back, Bottom);
+    }
+
+
+    [TestMethod]
+    public void AddBlockFailingTest() {
+        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionCreator   = new RegionCreator(regionPersister);
+        var regionCache     = new RegionCache(regionCreator);
+        var blockProvider   = new BlockProvider(regionCache);
+
+        var pos = new WorldPoint(98, 20, 99);
+        var result = blockProvider.CreateBlock(pos, Stone);
+        Assert.AreEqual(result, InvalidBlock);
     }
 
 
@@ -108,22 +122,45 @@ public class BlockServerTests {
         var regionPersister = new RegionPersister(".\\RegionData\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
-        var blockServer     = new BlockServer(regionCache);
+        var blockProvider   = new BlockProvider(regionCache);
 
         var pos = new WorldPoint(0, 31, 0);
-        blockServer.DeleteBlock(pos);
+        var deletedBlock = blockProvider.DeleteBlock(pos);
+        Assert.BlockIs(deletedBlock, Water);
 
-        var block = blockServer.ReadBlock(new WorldPoint(0, 30, 0));
+        var block = blockProvider.ReadBlock(pos);
+        Assert.BlockIs(block, Air);
+
+        block = blockProvider.ReadBlock(new WorldPoint(0, 30, 0));
         Assert.BlockHasFaces(block, Top);
         Assert.BlockHasFacesNot(block, Left, Right, Front, Back, Bottom);
 
-        block = blockServer.ReadBlock(new WorldPoint(-1, 31, 0));
+        block = blockProvider.ReadBlock(new WorldPoint(-1, 31, 0));
         Assert.BlockHasFaces(block, Top, Right);
         Assert.BlockHasFacesNot(block, Left, Front, Back, Bottom);
 
-        block = blockServer.ReadBlock(new WorldPoint(0, 31, -1));
+        block = blockProvider.ReadBlock(new WorldPoint(0, 31, -1));
         Assert.BlockHasFaces(block, Top, Front);
         Assert.BlockHasFacesNot(block, Left, Right, Back, Bottom);
+    }
+
+
+    [TestMethod]
+    public void RemoveBlockFailingTest() {
+        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionCreator   = new RegionCreator(regionPersister);
+        var regionCache     = new RegionCache(regionCreator);
+        var blockProvider   = new BlockProvider(regionCache);
+
+        // at 99 there is no block to delete
+        var pos = new WorldPoint(0, 99, 0);
+        var deletedBlock = blockProvider.DeleteBlock(pos);
+        Assert.BlockIs(deletedBlock, Invalid);
+
+        // cannot delete a block, that is not on the visible surface
+        pos = new WorldPoint(0, 0, 0);
+        deletedBlock = blockProvider.DeleteBlock(pos);
+        Assert.BlockIs(deletedBlock, Invalid);
     }
 
 
@@ -132,14 +169,14 @@ public class BlockServerTests {
         var regionPersister = new RegionPersister(".\\RegionData\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
-        var blockServer     = new BlockServer(regionCache);
+        var blockProvider   = new BlockProvider(regionCache);
 
         var pos = new WorldPoint(0, 31, 0);
-        var block = blockServer.ReadBlock(pos);
+        var block = blockProvider.ReadBlock(pos);
         Assert.BlockIs(block, Water);
 
-        blockServer.UpdateBlock(pos, Ice);
-        block = blockServer.ReadBlock(pos);
+        blockProvider.UpdateBlock(pos, Ice);
+        block = blockProvider.ReadBlock(pos);
         Assert.BlockIs(block, Ice);
     }
 
@@ -149,14 +186,14 @@ public class BlockServerTests {
         var regionPersister = new RegionPersister(".\\RegionData\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
-        var blockServer     = new BlockServer(regionCache);
+        var blockProvider   = new BlockProvider(regionCache);
 
         var pos = new WorldPoint(0, 31, 0);
-        var block = blockServer.ReadBlock(pos);
+        var block = blockProvider.ReadBlock(pos);
         Assert.BlockIs(block, Water);
 
-        blockServer.UpdateBlock(pos, Lava);
-        block = blockServer.ReadBlock(pos);
+        blockProvider.UpdateBlock(pos, Flower);
+        block = blockProvider.ReadBlock(pos);
         Assert.BlockIs(block, Water);
     }
 

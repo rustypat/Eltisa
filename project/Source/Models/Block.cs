@@ -58,7 +58,7 @@ public struct Block {
 
 
     public bool IsSolid() {
-        return data != 0 && Category < 8;
+        return data > 7 && Category < 8;
     }
 
 
@@ -87,13 +87,16 @@ public struct Block {
 
     // methods
     public bool IsABlock() {
-        return data != BlockDescription.NotABlock.data;
+        return data > 7;
     }
 
 
     public bool IsNotABlock() {
-        return data == BlockDescription.NotABlock.data;
+        return data < 8;
     }
+
+
+    public bool IsInvalid() => data == BlockDescription.InvalidBlock.data;
 
 
     public override bool Equals(object obj)  {
