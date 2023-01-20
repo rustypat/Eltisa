@@ -13,50 +13,53 @@ public static class ResourcePersister {
 
     private const int  ENDTAG = 01110111;
 
-    static public string ReadText(WorldPoint blockPosition, int requestedType) {
-        string  fileName = GetFilePath(blockPosition); 
-        if(!File.Exists(fileName)) return null;
+        static public string ReadText(WorldPoint blockPosition, int requestedType, string password=null) {
+            string  fileName = GetFilePath(blockPosition); 
+            if(!File.Exists(fileName)) return null;
 
-        string text = null;
-        using(FileStream regionStream = File.OpenRead(fileName)) {
-            DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Decompress);
-            BinaryReader  reader        = new BinaryReader(regionStream);
+            string text = null;
+            using(FileStream regionStream = File.OpenRead(fileName)) {
+                DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Decompress);
+                BinaryReader  reader        = new BinaryReader(regionStream);
 
-            int type          = reader.ReadInt32();  
-            int owner         = reader.ReadInt32();
-            string password   = reader.ReadString();
-            text              = reader.ReadString();
-            int endTag        = reader.ReadInt32();  Assert(endTag == ENDTAG);
-            reader.Close();
-            if( type != requestedType ) return null;
+                int type               = reader.ReadInt32();  
+                int owner              = reader.ReadInt32();
+                string storedPassword  = reader.ReadString();
+                text                   = reader.ReadString();
+                int endTag             = reader.ReadInt32();  Assert(endTag == ENDTAG);
+                reader.Close();
+          
+                if( type != requestedType )              return null;
+                if(storedPassword.IsUndefined())         return text;
+                else if(String.IsNullOrEmpty(password))  return "PASSWORD REQUIRED";
+                else if(password != storedPassword)      return "WRONG PASSWORD";
+                else                                     return text;
+            }
         }
-        return text;
-    }
 
+        static public void WriteText(WorldPoint blockPosition, int type, string text, string password="") {
+            Log.Trace("Store block resource for " + blockPosition);
 
-    static public void WriteText(WorldPoint blockPosition, int type, string text) {
-        Log.Trace("Store block resource for " + blockPosition);
+            if(String.IsNullOrWhiteSpace(text) ) {
+                DeleteText(blockPosition);
+                return;
+            }
+            
+            string filePath = GetDirectoryPath(); 
+            string fileName = GetFilePath(blockPosition); 
+            Directory.CreateDirectory(filePath);
+            using(FileStream resourceStream = File.OpenWrite(fileName)) {
+                DeflateStream deflateStream = new DeflateStream(resourceStream, CompressionMode.Compress);
+                BinaryWriter  writer = new BinaryWriter(resourceStream);
 
-        if(String.IsNullOrWhiteSpace(text) ) {
-            DeleteText(blockPosition);
-            return;
+                writer.Write((int)type);       
+                writer.Write((int)0);         // owner
+                writer.Write((string)password);            
+                writer.Write((string)text);                
+                writer.Write((int)ENDTAG);            
+                writer.Close();
+            }
         }
-        
-        string filePath = GetDirectoryPath(); 
-        string fileName = GetFilePath(blockPosition); 
-        Directory.CreateDirectory(filePath);
-        using(FileStream resourceStream = File.OpenWrite(fileName)) {
-            DeflateStream deflateStream = new DeflateStream(resourceStream, CompressionMode.Compress);
-            BinaryWriter  writer = new BinaryWriter(resourceStream);
-
-            writer.Write((int)type);       
-            writer.Write((int)0);         // owner
-            writer.Write((string)"");            
-            writer.Write((string)text);                
-            writer.Write((int)ENDTAG);            
-            writer.Close();
-        }
-    }
 
 
     static public void DeleteText(WorldPoint blockPosition) {
