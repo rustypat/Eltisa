@@ -76,13 +76,13 @@ public class Chunk {
 
     public Block GetBlock(BlockPoint blockPos) {
         Block block = BorderBlocks.GetBlock(blockPos);
-        if(block.IsABlock())                                return block;
+        if(block.IsBlock())                                return block;
 
         block = TransparentBlocks.GetBlock(blockPos);            
-        if(block.IsABlock())                                return block;
+        if(block.IsBlock())                                return block;
 
         block = InnerBlocks.GetBlock(blockPos);            
-        if(block.IsABlock())                                return block;
+        if(block.IsBlock())                                return block;
 
         if(IsAdditiv()) {
             return BlockDescription.NoBlock;
@@ -183,7 +183,7 @@ public class Chunk {
 
     public Block DeleteTransparentBlock(BlockPoint pos) {
         var block = TransparentBlocks.RemoveBlock(pos);
-        if(block.IsABlock()) {
+        if(block.IsBlock()) {
             BlockCount--;
             if(IsSubtractiv()) {
                 InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
@@ -198,7 +198,7 @@ public class Chunk {
     /// ATTENTION: functionality is only implemented for visible blocks !!!
     public Block DeleteSolidBlock(BlockPoint pos) {
         var block = BorderBlocks.RemoveBlock(pos);
-        if(block.IsABlock()) {
+        if(block.IsBlock()) {
             BlockCount--;
             if(IsSubtractiv()) {
                 InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
@@ -255,7 +255,7 @@ public class Chunk {
 
         // remove transparent block
         block = TransparentBlocks.RemoveBlock(pos);
-        if(block.IsABlock()) {
+        if(block.IsBlock()) {
             BlockCount--;
             if(IsSubtractiv()) {
                 InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
@@ -265,7 +265,7 @@ public class Chunk {
 
         // remove solid block
         block = BorderBlocks.RemoveBlock(pos);
-        if(block.IsABlock()) {
+        if(block.IsBlock()) {
             BlockCount--;
             if(IsSubtractiv()) {
                 InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
@@ -284,7 +284,7 @@ public class Chunk {
         var pos = worldPos.GetBlockPoint();
 
         var oldBlock    = BorderBlocks.GetBlock(pos);
-        if(oldBlock.IsABlock()) {
+        if(oldBlock.IsBlock()) {
             var newBlock    = new Block(pos, blockDefinition, oldBlock.BlockFaces);  
             if( oldBlock.GetData() == newBlock.GetData() ) {
                 return BlockDescription.NoBlock;                       
@@ -299,7 +299,7 @@ public class Chunk {
         }
 
         oldBlock = TransparentBlocks.GetBlock(pos);
-        if(oldBlock.IsABlock()) {
+        if(oldBlock.IsBlock()) {
             var newBlock    = new Block(pos, blockDefinition, oldBlock.BlockFaces);            
             if(!oldBlock.EqualsExceptState(newBlock)) {
                 return BlockDescription.NoBlock;
@@ -444,11 +444,11 @@ public class Chunk {
         }
 
         Block transparentBlock = TransparentBlocks.RemoveFace(pos, face);
-        if(transparentBlock.IsABlock()) return transparentBlock;
+        if(transparentBlock.IsBlock()) return transparentBlock;
 
         // inner and empty blocks have no faces to remove
         Block innerBlock = InnerBlocks.GetBlock(pos);
-        if(innerBlock.IsABlock()) return innerBlock;
+        if(innerBlock.IsBlock()) return innerBlock;
 
         if(IsAdditiv()) {
             return BlockDescription.NoBlock;
@@ -461,17 +461,16 @@ public class Chunk {
                 return new Block(pos, DefaultBlockDefinition, Block.NoFaces);
             }
         }
-
     }
 
 
     // returns the block at pos after adding face
     public Block AddFace(BlockPoint pos, Block.Faces face) {
         Block borderBlock = BorderBlocks.AddFace(pos, face);
-        if(borderBlock.IsABlock()) return borderBlock;
+        if(borderBlock.IsBlock()) return borderBlock;
 
         Block transparentBlock = TransparentBlocks.AddFace(pos, face);
-        if(transparentBlock.IsABlock()) return transparentBlock;
+        if(transparentBlock.IsBlock()) return transparentBlock;
 
         int j = InnerBlocks.FindIndexOfBlock(pos);
         if(j >= 0) {

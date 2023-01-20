@@ -98,7 +98,7 @@ public static class BlockListExtensions {
         if(i >= 0) {
             Block removedBlock = blockList[i];           
             blockList.RemoveAt(i);
-            Assert(removedBlock.IsABlock());
+            Assert(removedBlock.IsBlock());
             return removedBlock;
         }
         else {

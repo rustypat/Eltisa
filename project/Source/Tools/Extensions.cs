@@ -51,4 +51,12 @@ public static class Extensions {
         return false;
     }
 
+
+    public static T[] Add<T>(this T[] oldArray, T value) {
+        T[] newArray = new T[oldArray.Length + 1];
+        Array.Copy(oldArray, newArray, oldArray.Length);
+        newArray[^1] = value;
+        return newArray;
+    }
+
 }

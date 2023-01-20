@@ -1,6 +1,7 @@
 namespace Eltisa.Source.Tools; 
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Eltisa.Source.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,6 +16,15 @@ public static class Assert {
         }
         else {
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expected, actual); 
+        }
+    }
+
+
+    public static void AreEqual<T>(T[] firstArray, T[] secondArray) {
+        if(firstArray.Length != secondArray.Length) throw new AssertFailedException("array have differing length");
+        EqualityComparer<T> comparer = EqualityComparer<T>.Default;
+        for(int i=0; i < firstArray.Length; i++) {
+            if(!comparer.Equals(firstArray[i], secondArray[i])) throw new AssertFailedException("arrays have differing content");
         }
     }
 

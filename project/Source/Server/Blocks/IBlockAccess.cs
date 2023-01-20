@@ -1,10 +1,7 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Source.Server.Blocks; 
 
 using System;
 using Eltisa.Source.Models;
-
-
-public readonly record struct Changed(WorldPoint Position, Block Block);
 
 
 

@@ -1,8 +1,9 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Source.Server.Blocks; 
 
 using System;
 using Eltisa.Source.Models;
-
+using Eltisa.Source.Tools;
+using static Eltisa.Source.Server.Blocks.Constants;
 
 public class BlockProvider {
 
@@ -14,8 +15,8 @@ public class BlockProvider {
     }
 
 
-    public Block CreateBlock(WorldPoint worldPos, ushort blockDescription) {
-        if(worldPos.IsNotAPoint())  return BlockDescription.NoBlock;
+    public Changed[] CreateBlock(WorldPoint worldPos, ushort blockDescription) {
+        if(worldPos.IsNotAPoint())  return NoChanges;
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();
@@ -30,15 +31,17 @@ public class BlockProvider {
                 region.SetChunk(chunk);
             }
 
-            if(chunk.HasBlockAt(blockPos) ) return BlockDescription.InvalidBlock;
+            if(chunk.HasBlockAt(blockPos) ) return NoChanges;
 
             if(Block.IsTransparent(blockDescription)) {
                 var faces = DetermineVisibleFacesOfBlock(chunk, blockPos, worldPos);
-                return chunk.CreateTransparentBlock(blockPos, blockDescription, faces);
+                var block =  chunk.CreateTransparentBlock(blockPos, blockDescription, faces);
+                return new Changed[] { new Changed(worldPos, block)};
             }
             else {  // solid block
-                var faces = RemoveVisibleFacesOfNeighbours(chunk, blockPos, worldPos);
-                return chunk.CreateSolidBlock(blockPos, blockDescription, faces);
+                var (faces, changes) = RemoveVisibleFacesOfNeighbours(chunk, blockPos, worldPos);
+                var block = chunk.CreateSolidBlock(blockPos, blockDescription, faces);
+                return changes.Add(new Changed(worldPos, block));
             }
         }        
     }
@@ -72,10 +75,10 @@ public class BlockProvider {
             }
 
             var block = chunk.UpdateSolidBlock(blockPos, newBlockDefinition);
-            if(block.IsABlock()) return block;
+            if(block.IsBlock()) return block;
 
             block = chunk.UpdateTransparentBlock(blockPos, newBlockDefinition);
-            if(block.IsABlock()) return block;
+            if(block.IsBlock()) return block;
 
             // change block failed
             return BlockDescription.InvalidBlock;
@@ -86,8 +89,8 @@ public class BlockProvider {
     /// <summaryY
     /// ATTENTION: can only delete transparent blocks or solid blocks, that are visible
     /// </summary>
-    public Block DeleteBlock(WorldPoint worldPos) {
-        if(worldPos.IsNotAPoint())  return BlockDescription.NoBlock;
+    public Changed[]  DeleteBlock(WorldPoint worldPos) {
+        if(worldPos.IsNotAPoint())  return NoChanges;
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();
@@ -103,18 +106,18 @@ public class BlockProvider {
             }
 
             var block = chunk.DeleteTransparentBlock(blockPos);
-            if(block.IsABlock()) {
-                return block;
+            if(block.IsBlock()) {
+                return new Changed[] { new Changed(worldPos, BlockDescription.NoBlock) };
             }
 
             block = chunk.DeleteSolidBlock(blockPos);
-            if(block.IsABlock()) {
-                AddVisibleFacesToNeighbours(chunk, blockPos, worldPos);
-                return block;
+            if(block.IsBlock()) {
+                var changes = AddVisibleFacesToNeighbours(chunk, blockPos, worldPos);
+                return changes.Add(new Changed(worldPos, BlockDescription.NoBlock));
             }
 
             // delete block failed
-            return BlockDescription.InvalidBlock;
+            return NoChanges;
         }        
     }
 
@@ -193,54 +196,93 @@ public class BlockProvider {
     }
 
 
-    private Block.Faces RemoveVisibleFacesOfNeighbours(Chunk chunk, BlockPoint blockPos, WorldPoint  worldPos) {
+    private (Block.Faces, Changed[]) RemoveVisibleFacesOfNeighbours(Chunk centerChunk, BlockPoint blockPos, WorldPoint  worldPos) {
         Block.Faces faces = Block.NoFaces;
 
-        Block neighbour;
+        WorldPoint pos;
+        Block      neighbour;
+        Changed[]  changes = new Changed[6];
+        int        changeCount = 0;
         
-        if(blockPos.IsMostLeft())   neighbour = ReadChunk(worldPos.Left()).RemoveFace(worldPos.Left().GetBlockPoint(),  Block.Faces.Right);
-        else                        neighbour = chunk.RemoveFace(blockPos.Left(),  Block.Faces.Right);
+        pos = worldPos.Left();
+        if(blockPos.IsMostLeft())   neighbour = ReadChunk(pos).RemoveFace(pos.GetBlockPoint(),  Block.Faces.Right);
+        else                        neighbour = centerChunk.RemoveFace(blockPos.Left(),  Block.Faces.Right);
         if(!neighbour.IsSolid())    faces |= Block.Faces.Left;
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
 
-        if(blockPos.IsMostRight())  neighbour = ReadChunk(worldPos.Right()).RemoveFace(worldPos.Right().GetBlockPoint(), Block.Faces.Left);
-        else                        neighbour = chunk.RemoveFace(blockPos.Right(), Block.Faces.Left);
+        pos = worldPos.Right();
+        if(blockPos.IsMostRight())  neighbour = ReadChunk(pos).RemoveFace(pos.GetBlockPoint(), Block.Faces.Left);
+        else                        neighbour = centerChunk.RemoveFace(blockPos.Right(), Block.Faces.Left);
         if(!neighbour.IsSolid())    faces |= Block.Faces.Right;
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
         
-        if(blockPos.IsMostBack())   neighbour = ReadChunk(worldPos.Back()).RemoveFace(worldPos.Back().GetBlockPoint(),  Block.Faces.Front);
-        else                        neighbour = chunk.RemoveFace(blockPos.Back(),  Block.Faces.Front);
+        pos = worldPos.Back();
+        if(blockPos.IsMostBack())   neighbour = ReadChunk(pos).RemoveFace(pos.GetBlockPoint(), Block.Faces.Front);
+        else                        neighbour = centerChunk.RemoveFace(blockPos.Back(), Block.Faces.Front);
         if(!neighbour.IsSolid())    faces |= Block.Faces.Back;
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
         
-        if(blockPos.IsMostFront())  neighbour = ReadChunk(worldPos.Front()).RemoveFace(worldPos.Front().GetBlockPoint(), Block.Faces.Back);
-        else                        neighbour = chunk.RemoveFace(blockPos.Front(), Block.Faces.Back);
+        pos = worldPos.Front();
+        if(blockPos.IsMostFront())  neighbour = ReadChunk(pos).RemoveFace(pos.GetBlockPoint(), Block.Faces.Back);
+        else                        neighbour = centerChunk.RemoveFace(blockPos.Front(), Block.Faces.Back);
         if(!neighbour.IsSolid())    faces |= Block.Faces.Front;
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
         
-        if(blockPos.IsMostBottom()) neighbour = ReadChunk(worldPos.Bottom()).RemoveFace(worldPos.Bottom().GetBlockPoint(),Block.Faces.Top); 
-        else                        neighbour = chunk.RemoveFace(blockPos.Bottom(),Block.Faces.Top); 
+        pos = worldPos.Bottom();
+        if(blockPos.IsMostBottom()) neighbour = ReadChunk(pos).RemoveFace(pos.GetBlockPoint(), Block.Faces.Top); 
+        else                        neighbour = centerChunk.RemoveFace(blockPos.Bottom(), Block.Faces.Top); 
         if(!neighbour.IsSolid())    faces |= Block.Faces.Bottom;
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
         
-        if(blockPos.IsMostTop())    neighbour = ReadChunk(worldPos.Top()).RemoveFace(worldPos.Top().GetBlockPoint(),   Block.Faces.Bottom); 
-        else                        neighbour = chunk.RemoveFace(blockPos.Top(),   Block.Faces.Bottom); 
+        pos = worldPos.Top();
+        if(blockPos.IsMostTop())    neighbour = ReadChunk(pos).RemoveFace(pos.GetBlockPoint(), Block.Faces.Bottom); 
+        else                        neighbour = centerChunk.RemoveFace(blockPos.Top(), Block.Faces.Bottom); 
         if(!neighbour.IsSolid())    faces |= Block.Faces.Top;
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
         
-        return faces;
+        if(changeCount < 6) changes = changes[0..changeCount];
+        return (faces, changes);
     }
 
 
-    private void AddVisibleFacesToNeighbours(Chunk chunk, BlockPoint blockPos, WorldPoint  worldPos) {
-        if(blockPos.IsMostLeft())   ReadChunk(worldPos.Left()).AddFace(worldPos.Left().GetBlockPoint(),  Block.Faces.Right);
-        else                        chunk.AddFace(blockPos.Left(),  Block.Faces.Right);
-        if(blockPos.IsMostRight())  ReadChunk(worldPos.Right()).AddFace(worldPos.Right().GetBlockPoint(), Block.Faces.Left);
-        else                        chunk.AddFace(blockPos.Right(), Block.Faces.Left);
-        if(blockPos.IsMostBack())   ReadChunk(worldPos.Back()).AddFace(worldPos.Back().GetBlockPoint(),  Block.Faces.Front);
-        else                        chunk.AddFace(blockPos.Back(),  Block.Faces.Front);            
-        if(blockPos.IsMostFront())  ReadChunk(worldPos.Front()).AddFace(worldPos.Front().GetBlockPoint(), Block.Faces.Back);
-        else                        chunk.AddFace(blockPos.Front(), Block.Faces.Back);
-        if(blockPos.IsMostBottom()) ReadChunk(worldPos.Bottom()).AddFace(worldPos.Bottom().GetBlockPoint(),Block.Faces.Top); 
-        else                        chunk.AddFace(blockPos.Bottom(),Block.Faces.Top);
-        if(blockPos.IsMostTop())    ReadChunk(worldPos.Top()).AddFace(worldPos.Top().GetBlockPoint(),   Block.Faces.Bottom); 
-        else                        chunk.AddFace(blockPos.Top(),   Block.Faces.Bottom);
+    private Changed[] AddVisibleFacesToNeighbours(Chunk chunk, BlockPoint blockPos, WorldPoint  worldPos) {
+        WorldPoint pos;
+        Block      neighbour;
+        Changed[]  changes = new Changed[6];
+        int        changeCount = 0;
+
+        pos = worldPos.Left();
+        if(blockPos.IsMostLeft())   neighbour = ReadChunk(pos).AddFace(pos.GetBlockPoint(), Block.Faces.Right);
+        else                        neighbour = chunk.AddFace(blockPos.Left(),  Block.Faces.Right);
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
+
+        pos = worldPos.Right();
+        if(blockPos.IsMostRight())  neighbour = ReadChunk(pos).AddFace(pos.GetBlockPoint(), Block.Faces.Left);
+        else                        neighbour = chunk.AddFace(blockPos.Right(), Block.Faces.Left);
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
+
+        pos = worldPos.Back();
+        if(blockPos.IsMostBack())   neighbour = ReadChunk(pos).AddFace(pos.GetBlockPoint(),  Block.Faces.Front);
+        else                        neighbour = chunk.AddFace(blockPos.Back(),  Block.Faces.Front);            
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
+
+        pos = worldPos.Front();
+        if(blockPos.IsMostFront())  neighbour = ReadChunk(pos).AddFace(pos.GetBlockPoint(), Block.Faces.Back);
+        else                        neighbour = chunk.AddFace(blockPos.Front(), Block.Faces.Back);
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
+
+        pos = worldPos.Bottom();
+        if(blockPos.IsMostBottom()) neighbour = ReadChunk(pos).AddFace(pos.GetBlockPoint(),Block.Faces.Top); 
+        else                        neighbour = chunk.AddFace(blockPos.Bottom(),Block.Faces.Top);
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
+
+        pos = worldPos.Top();
+        if(blockPos.IsMostTop())    neighbour = ReadChunk(pos).AddFace(pos.GetBlockPoint(), Block.Faces.Bottom); 
+        else                        neighbour = chunk.AddFace(blockPos.Top(),   Block.Faces.Bottom);
+        if(neighbour.IsBlock())     changes[changeCount++] = new Changed(pos, neighbour);
+
+        if(changeCount < 6) changes = changes[0..changeCount];
+        return changes;
     }        
-
-
 
 }

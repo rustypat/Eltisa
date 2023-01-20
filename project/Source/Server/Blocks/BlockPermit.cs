@@ -1,14 +1,14 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Source.Server.Blocks; 
 
 using System;
 using Eltisa.Source.Administration;
 using Eltisa.Source.Models;
+using static Eltisa.Source.Server.Blocks.Constants;
 
 
 public class BlockPermit : IBlockAccess {
 
     private readonly IBlockAccess blockAccess;
-    private readonly Changed[] NoChanges = {};
 
     public BlockPermit(IBlockAccess blockAccess) {   
         this.blockAccess = blockAccess;     

@@ -86,12 +86,12 @@ public struct Block {
 
 
     // methods
-    public bool IsABlock() {
+    public bool IsBlock() {
         return data > 7;
     }
 
 
-    public bool IsNotABlock() {
+    public bool IsNoBlock() {
         return data < 8;
     }
 

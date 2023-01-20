@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using Eltisa.Source.Models;
 using Eltisa.Source.Tools;
 using Eltisa.Source.Administration;
+using Eltisa.Source.Server.Blocks;
 using static System.Diagnostics.Debug;
 using static Eltisa.Source.Administration.Configuration;
 
@@ -87,7 +88,7 @@ static public class World {
                 region.SetChanged();
             }
             Block block = chunk.AddFace(pos.GetBlockPoint(), face);
-            if( block.IsABlock() ) region.SetChanged();
+            if( block.IsBlock() ) region.SetChanged();
             return block;
         }
     }
@@ -104,7 +105,7 @@ static public class World {
                 region.SetChanged();
             }
             Block block = chunk.RemoveFace(pos.GetBlockPoint(), face);
-            if( block.IsABlock() ) region.SetChanged();
+            if( block.IsBlock() ) region.SetChanged();
             return block;
         }
     }

@@ -1,14 +1,14 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Source.Server.Blocks; 
 
 using System;
 using Eltisa.Source.Models;
 using static Eltisa.Source.Models.BlockDescription;
+using static Eltisa.Source.Server.Blocks.Constants;
 
 
 public class BlockController : IBlockAccess {
 
     private readonly BlockProvider blockProvider;
-    private readonly Changed[] NoChanges = {};
 
     public BlockController(BlockProvider blockProvider) {   
         this.blockProvider = blockProvider;     
@@ -16,9 +16,7 @@ public class BlockController : IBlockAccess {
 
 
     public Changed[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
-        var newBlock = blockProvider.CreateBlock(worldPos, blockDescription);
-        if(newBlock.IsInvalid()) return NoChanges;
-        else                     return new Changed[]{new Changed(worldPos, newBlock) };
+        return blockProvider.CreateBlock(worldPos, blockDescription);
     }
 
 
@@ -53,9 +51,7 @@ public class BlockController : IBlockAccess {
 
 
     public Changed[] DeleteBlock(Actor actor, WorldPoint worldPos) {
-        var newBlock = blockProvider.DeleteBlock(worldPos);
-        if(newBlock.IsInvalid()) return NoChanges;
-        else                     return new Changed[]{new Changed(worldPos, BlockDescription.NoBlock) };
+        return blockProvider.DeleteBlock(worldPos);
     }
 
 

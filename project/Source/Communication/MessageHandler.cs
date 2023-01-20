@@ -125,7 +125,7 @@ public static class MessageHandler {
         if( !Policy.CanModifyBlock(socket.GetActor(), position)) return;
 
         Block removedBlock = World.RemoveVisibleBlock(position);
-        if(removedBlock.IsNotABlock() ) return;
+        if(removedBlock.IsNoBlock() ) return;
         if(removedBlock.HasResource() ) {
             ResourcePersister.DeleteText(position);
         }
@@ -150,7 +150,7 @@ public static class MessageHandler {
         if( !Policy.CanModifyBlock(socket.GetActor(), position)) return;
         
         Block block = World.AddBlock(position, inMessage.BlockInfo);
-        if(block.IsABlock()) {
+        if(block.IsBlock()) {
             var addMessage = OutMessage.createBlockAddedMessage(position, block);
             HomeSocket.sendMessageToEnvironment(position, addMessage);
         }
@@ -163,7 +163,7 @@ public static class MessageHandler {
         if( !Policy.CanModifyBlock(socket.GetActor(), position)) return;
 
         Block block = World.ChangeStateOfVisibleBlock(position, inMessage.BlockInfo);
-        if(block.IsABlock()) {
+        if(block.IsBlock()) {
             var changeMessage = OutMessage.createBlocksChangedMessage(position, block);
             HomeSocket.sendMessageToEnvironment(position, changeMessage);
         }

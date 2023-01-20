@@ -1,4 +1,4 @@
-namespace Eltisa.Source.Server;
+namespace Eltisa.Source.Server.Blocks;
 
 using System;
 using System.Linq;
@@ -7,6 +7,8 @@ using Assert = Eltisa.Source.Tools.Assert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static Eltisa.Source.Models.BlockDescription;
 using static Eltisa.Source.Models.Block.Faces;
+using static Eltisa.Source.Server.Blocks.Constants;
+
 
 [TestClass]
 public class BlockServerTests {
@@ -91,13 +93,13 @@ public class BlockServerTests {
         var blockProvider   = new BlockProvider(regionCache);
 
         var pos = new WorldPoint(98, 32, 99);
-        var createdBlock = blockProvider.CreateBlock(pos, Stone);
+        var changes = blockProvider.CreateBlock(pos, Stone);
 
         var block = blockProvider.ReadBlock(pos);
         Assert.BlockIs(block, Stone);
         Assert.BlockHasFaces(block, Top, Left, Right, Front, Back);
         Assert.BlockHasFacesNot(block, Bottom);
-        Assert.AreEqual(createdBlock, block);
+        Assert.SizeIs(changes, 2);
 
         var blockBelow = blockProvider.ReadBlock(new WorldPoint(98, 31, 99));
         Assert.BlockHasFacesNot(blockBelow, Top, Left, Right, Front, Back, Bottom);
@@ -113,7 +115,7 @@ public class BlockServerTests {
 
         var pos = new WorldPoint(98, 20, 99);
         var result = blockProvider.CreateBlock(pos, Stone);
-        Assert.AreEqual(result, InvalidBlock);
+        Assert.AreEqual(result, new Changed[0]);
     }
 
 
@@ -125,8 +127,8 @@ public class BlockServerTests {
         var blockProvider   = new BlockProvider(regionCache);
 
         var pos = new WorldPoint(0, 31, 0);
-        var deletedBlock = blockProvider.DeleteBlock(pos);
-        Assert.BlockIs(deletedBlock, Water);
+        var changes = blockProvider.DeleteBlock(pos);
+        Assert.SizeIs(changes, 6);
 
         var block = blockProvider.ReadBlock(pos);
         Assert.BlockIs(block, Air);
@@ -154,13 +156,13 @@ public class BlockServerTests {
 
         // at 99 there is no block to delete
         var pos = new WorldPoint(0, 99, 0);
-        var deletedBlock = blockProvider.DeleteBlock(pos);
-        Assert.BlockIs(deletedBlock, Invalid);
+        var changes = blockProvider.DeleteBlock(pos);
+        Assert.Equals(changes, NoChanges);
 
         // cannot delete a block, that is not on the visible surface
         pos = new WorldPoint(0, 0, 0);
-        deletedBlock = blockProvider.DeleteBlock(pos);
-        Assert.BlockIs(deletedBlock, Invalid);
+        changes = blockProvider.DeleteBlock(pos);
+        Assert.Equals(changes, NoChanges);
     }
 
 
@@ -205,7 +207,7 @@ public class BlockServerTests {
         var blockProvider   = new BlockProvider(regionCache);
         var blockController = new BlockController(blockProvider);
 
-        var pos = new WorldPoint(0, 32, 0);
+        var pos = new WorldPoint(0, 99, 0);
         var changes = blockController.CreateBlock(null, pos, Lamp);
         Assert.SizeIs(changes, 1);
         Assert.BlockIs(changes[0].Block, Lamp);
