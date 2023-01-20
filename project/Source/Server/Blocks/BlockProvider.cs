@@ -58,8 +58,8 @@ public class BlockProvider {
     }
 
 
-    public Block UpdateBlock(WorldPoint worldPos, ushort newBlockDefinition) {
-        if(worldPos.IsNotAPoint())  return BlockDescription.NoBlock;
+    public Changed[] UpdateBlock(WorldPoint worldPos, ushort newBlockDefinition) {
+        if(worldPos.IsNotAPoint())  return NoChanges;
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();
@@ -75,13 +75,13 @@ public class BlockProvider {
             }
 
             var block = chunk.UpdateSolidBlock(blockPos, newBlockDefinition);
-            if(block.IsBlock()) return block;
+            if(block.IsBlock()) return new Changed[] { new Changed(worldPos, block)};;
 
             block = chunk.UpdateTransparentBlock(blockPos, newBlockDefinition);
-            if(block.IsBlock()) return block;
+            if(block.IsBlock()) return new Changed[] { new Changed(worldPos, block)};;
 
             // change block failed
-            return BlockDescription.InvalidBlock;
+            return NoChanges;
         }        
     }
 

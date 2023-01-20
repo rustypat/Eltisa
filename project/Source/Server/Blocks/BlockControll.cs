@@ -26,9 +26,7 @@ public class BlockController : IBlockAccess {
 
 
     public Changed[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
-        var newBlock = blockProvider.UpdateBlock(worldPos, newBlockDefinition);
-        if(newBlock.IsInvalid()) return NoChanges;
-        else                     return new Changed[]{new Changed(worldPos, newBlock) };
+        return blockProvider.UpdateBlock(worldPos, newBlockDefinition);
     }
 
 
@@ -41,9 +39,9 @@ public class BlockController : IBlockAccess {
             if( block.IsInvalid()) continue;
             var newDefinition = GetSwitchDefinition(block.Definition);
             if(newDefinition == 0) continue;
-            var newBlock = blockProvider.UpdateBlock(worldPos, newDefinition);
-            if( newBlock.IsInvalid()) continue;
-            switchList[switchCount++] = new Changed(worldPos, newBlock);        
+            var changed = blockProvider.UpdateBlock(worldPos, newDefinition);
+            if( changed == NoChanges) continue;
+            switchList[switchCount++] = changed[0];        
         }
         if(switchCount < worldPositions.Length) switchList = switchList[0..switchCount];
         return switchList;

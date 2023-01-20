@@ -223,6 +223,23 @@ public class BlockServerTests {
 
 
     [TestMethod]
+    public void SwitchTestFailing() {
+        var regionCreator   = new RegionCreator(null);
+        var regionCache     = new RegionCache(regionCreator);
+        var blockProvider   = new BlockProvider(regionCache);
+        var blockController = new BlockController(blockProvider);
+
+        var pos = new WorldPoint(0, 99, 0);
+        var changes = blockController.SwitchBlocks(null, pos);
+        Assert.Equals(changes, NoChanges);
+
+        pos = new WorldPoint(0, 0, 0);
+        changes = blockController.SwitchBlocks(null, pos);
+        Assert.Equals(changes, NoChanges);
+    }
+
+
+    [TestMethod]
     public void DevelopTest() {
     }
 
