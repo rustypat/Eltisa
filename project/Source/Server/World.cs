@@ -1,15 +1,15 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Server; 
 
 using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-using Eltisa.Source.Models;
-using Eltisa.Source.Tools;
-using Eltisa.Source.Administration;
-using Eltisa.Source.Server.Blocks;
+using Eltisa.Models;
+using Eltisa.Tools;
+using Eltisa.Administration;
+using Eltisa.Server.Blocks;
 using static System.Diagnostics.Debug;
-using static Eltisa.Source.Administration.Configuration;
+using static Eltisa.Administration.Configuration;
 
 static public class World {
 

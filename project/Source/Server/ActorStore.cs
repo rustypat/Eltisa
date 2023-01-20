@@ -1,14 +1,14 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Server; 
 
 using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using static System.String;
-using Eltisa.Source.Models;
-using Eltisa.Source.Communication;
-using Eltisa.Source.Administration;
-using static Eltisa.Source.Tools.StringExtensions;
+using Eltisa.Models;
+using Eltisa.Communication;
+using Eltisa.Administration;
+using static Eltisa.Tools.StringExtensions;
 
 
 public static class ActorStore {

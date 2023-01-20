@@ -1,4 +1,4 @@
-namespace Eltisa.Source.Tools; 
+namespace Eltisa.Tools; 
 
 using System;
 using System.Collections.Generic;

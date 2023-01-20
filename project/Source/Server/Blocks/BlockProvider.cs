@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Server.Blocks; 
+namespace Eltisa.Server.Blocks; 
 
 using System;
-using Eltisa.Source.Models;
-using Eltisa.Source.Tools;
-using static Eltisa.Source.Server.Blocks.Constants;
+using Eltisa.Models;
+using Eltisa.Tools;
+using static Eltisa.Server.Blocks.Constants;
 
 public class BlockProvider {
 

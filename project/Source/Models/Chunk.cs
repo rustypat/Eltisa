@@ -1,11 +1,11 @@
-namespace Eltisa.Source.Models; 
+namespace Eltisa.Models; 
 
 using System;
 using System.Linq;
-using Eltisa.Source.Server;
-using Eltisa.Source.Tools;
+using Eltisa.Server;
+using Eltisa.Tools;
 using static System.Diagnostics.Debug;
-using static Eltisa.Source.Administration.Configuration;
+using static Eltisa.Administration.Configuration;
 
 
 public class Chunk {

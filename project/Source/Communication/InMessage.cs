@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Communication; 
+namespace Eltisa.Communication; 
 
 using System;
-using Eltisa.Source.Models;
-using Eltisa.Source.Tools;
-using Eltisa.Source.Administration;
+using Eltisa.Models;
+using Eltisa.Tools;
+using Eltisa.Administration;
 using static System.Diagnostics.Debug;
 
 

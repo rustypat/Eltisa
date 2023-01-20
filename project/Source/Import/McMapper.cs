@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Import; 
+namespace Eltisa.Import; 
 
 using System;
-using Eltisa.Source.Models;
+using Eltisa.Models;
 using static System.Diagnostics.Debug;
-using static Eltisa.Source.Models.BlockDescription;
+using static Eltisa.Models.BlockDescription;
 
 
 /// <summary>

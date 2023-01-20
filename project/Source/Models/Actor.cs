@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Models; 
+namespace Eltisa.Models; 
 
 using System;
-using Eltisa.Source.Communication;
-using Eltisa.Source.Server;
-using static Eltisa.Source.Administration.Configuration;
+using Eltisa.Communication;
+using Eltisa.Server;
+using static Eltisa.Administration.Configuration;
 
 
 public class Actor {

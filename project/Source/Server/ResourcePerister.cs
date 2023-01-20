@@ -1,11 +1,11 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Server; 
 
 using System;
 using System.IO;
 using System.IO.Compression;
-using Eltisa.Source.Models;
-using Eltisa.Source.Administration;
-using Eltisa.Source.Tools;
+using Eltisa.Models;
+using Eltisa.Administration;
+using Eltisa.Tools;
 using static System.Diagnostics.Debug;
 
 

@@ -1,4 +1,4 @@
-namespace Eltisa.Source.Models; 
+namespace Eltisa.Models; 
 
 using System;
 

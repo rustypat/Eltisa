@@ -1,12 +1,12 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Server; 
 
 using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Collections.Generic;
-using Eltisa.Source.Models;
-using static Eltisa.Source.Administration.Configuration;
+using Eltisa.Models;
+using static Eltisa.Administration.Configuration;
 
 
 public static class CitizenStore {

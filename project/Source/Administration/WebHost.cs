@@ -1,4 +1,4 @@
-namespace Eltisa.Source.Administration; 
+namespace Eltisa.Administration; 
 
 using System;
 using System.Net;
@@ -7,9 +7,9 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
-using Eltisa.Source.Server;
-using Eltisa.Source.Communication;
-using Eltisa.Source.Tools;
+using Eltisa.Server;
+using Eltisa.Communication;
+using Eltisa.Tools;
 
 
 public static class WebHost {

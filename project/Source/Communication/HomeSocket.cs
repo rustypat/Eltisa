@@ -1,4 +1,4 @@
-namespace Eltisa.Source.Communication; 
+namespace Eltisa.Communication; 
 
 using System;
 using System.Threading.Tasks;
@@ -7,11 +7,11 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Security.Authentication;
 using Microsoft.AspNetCore.Http;
-using Eltisa.Source.Models;
-using Eltisa.Source.Server;
-using Eltisa.Source.Tools;
+using Eltisa.Models;
+using Eltisa.Server;
+using Eltisa.Tools;
 using static System.Diagnostics.Debug;
-using static Eltisa.Source.Administration.Configuration;
+using static Eltisa.Administration.Configuration;
 
 
 public class HomeSocket {

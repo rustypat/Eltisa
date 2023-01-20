@@ -1,4 +1,4 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Server; 
 
 using System;
 

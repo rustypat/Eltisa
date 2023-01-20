@@ -1,8 +1,8 @@
-namespace Eltisa.Source.Models; 
+namespace Eltisa.Models; 
 
 using System;
 using System.Collections.Generic;
-using Eltisa.Source.Administration;
+using Eltisa.Administration;
 
 
 public class Citizen {

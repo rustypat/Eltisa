@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Server.Blocks; 
+namespace Eltisa.Server.Blocks; 
 
 using System;
-using Eltisa.Source.Models;
-using static Eltisa.Source.Models.BlockDescription;
-using static Eltisa.Source.Server.Blocks.Constants;
+using Eltisa.Models;
+using static Eltisa.Models.BlockDescription;
+using static Eltisa.Server.Blocks.Constants;
 
 
 public class BlockController : IBlockAccess {

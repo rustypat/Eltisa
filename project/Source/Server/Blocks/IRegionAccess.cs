@@ -1,7 +1,7 @@
-namespace Eltisa.Source.Server.Blocks; 
+namespace Eltisa.Server.Blocks; 
 
 using System;
-using Eltisa.Source.Models;
+using Eltisa.Models;
 
 
 public interface IRegionAccess {

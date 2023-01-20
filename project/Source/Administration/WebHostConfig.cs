@@ -1,4 +1,4 @@
-﻿namespace Eltisa.Source.Administration; 
+﻿namespace Eltisa.Administration; 
 
 using System;
 using Microsoft.AspNetCore.Builder;
@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Eltisa.Source.Communication;
-using static Eltisa.Source.Administration.Configuration;
+using Eltisa.Communication;
+using static Eltisa.Administration.Configuration;
 
 public class WebHostConfig {
 

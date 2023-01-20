@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Server.Blocks; 
+namespace Eltisa.Server.Blocks; 
 
 using System;
 using System.Collections.Concurrent;
-using Eltisa.Source.Models;
-using Eltisa.Source.Tools;
+using Eltisa.Models;
+using Eltisa.Tools;
 
 public class RegionCache : IRegionAccess {
 

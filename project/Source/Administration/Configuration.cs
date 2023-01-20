@@ -1,4 +1,4 @@
-namespace Eltisa.Source.Administration; 
+namespace Eltisa.Administration; 
 
 using System;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Xml;
 using System.Linq;
 using System.Xml.Serialization;
 using static System.IO.Directory;
-using static Eltisa.Source.Tools.StringExtensions;
+using static Eltisa.Tools.StringExtensions;
 
 public enum RunMode { Develop, Server, Eltisa };
 

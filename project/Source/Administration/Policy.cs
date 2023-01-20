@@ -1,7 +1,7 @@
-namespace Eltisa.Source.Administration; 
+namespace Eltisa.Administration; 
 
 using System;
-using Eltisa.Source.Models;
+using Eltisa.Models;
 
 public static class Policy {
 

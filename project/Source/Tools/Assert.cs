@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Tools; 
+namespace Eltisa.Tools; 
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Eltisa.Source.Models;
+using Eltisa.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 

@@ -1,17 +1,17 @@
-namespace Eltisa.Source.Import; 
+namespace Eltisa.Import; 
 
 using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using Eltisa.Source.Models;
-using Eltisa.Source.Server;
-using Eltisa.Source.Tools;
+using Eltisa.Models;
+using Eltisa.Server;
+using Eltisa.Tools;
 using static System.Diagnostics.Debug;
-using static Eltisa.Source.Tools.Tools;
-using static Eltisa.Source.Models.BlockDescription;
-using static Eltisa.Source.Models.Block;
-using static Eltisa.Source.Models.Block.Faces;
+using static Eltisa.Tools.Tools;
+using static Eltisa.Models.BlockDescription;
+using static Eltisa.Models.Block;
+using static Eltisa.Models.Block.Faces;
 
 
 /// <summary>

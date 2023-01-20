@@ -1,13 +1,13 @@
-﻿namespace Eltisa.Source; 
+﻿namespace Eltisa; 
 
 using System;
 using System.Linq;
-using Eltisa.Source.Administration;
-using Eltisa.Source.Server;
-using Eltisa.Source.Tools;
-using Eltisa.Source.Models;
-using Eltisa.Source.Import;
-using static Eltisa.Source.Tools.ArgumentsExtensions;
+using Eltisa.Administration;
+using Eltisa.Server;
+using Eltisa.Tools;
+using Eltisa.Models;
+using Eltisa.Import;
+using static Eltisa.Tools.ArgumentsExtensions;
 
 
 public static class Program  {

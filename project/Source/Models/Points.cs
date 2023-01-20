@@ -1,8 +1,8 @@
-namespace Eltisa.Source.Models; 
+namespace Eltisa.Models; 
 
 using System;
 using static System.Diagnostics.Debug;
-using static Eltisa.Source.Administration.Configuration;
+using static Eltisa.Administration.Configuration;
 
 
 // coordinates of a block in a chunk

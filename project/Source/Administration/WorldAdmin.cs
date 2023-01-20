@@ -1,11 +1,11 @@
-namespace Eltisa.Source.Administration; 
+namespace Eltisa.Administration; 
 
 using System;
 using System.IO;
-using Eltisa.Source.Models;
-using Eltisa.Source.Server;
-using Eltisa.Source.Server.Blocks;
-using Eltisa.Source.Tools;
+using Eltisa.Models;
+using Eltisa.Server;
+using Eltisa.Server.Blocks;
+using Eltisa.Tools;
 using static System.Diagnostics.Debug;
 
 

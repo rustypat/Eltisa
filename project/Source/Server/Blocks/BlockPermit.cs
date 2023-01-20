@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Server.Blocks; 
+namespace Eltisa.Server.Blocks; 
 
 using System;
-using Eltisa.Source.Administration;
-using Eltisa.Source.Models;
-using static Eltisa.Source.Server.Blocks.Constants;
+using Eltisa.Administration;
+using Eltisa.Models;
+using static Eltisa.Server.Blocks.Constants;
 
 
 public class BlockPermit : IBlockAccess {

@@ -1,8 +1,8 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Server; 
 
 using System;
-using Eltisa.Source.Models;
-using static Eltisa.Source.Administration.Configuration;
+using Eltisa.Models;
+using static Eltisa.Administration.Configuration;
 
 
 public static class DefaultWorld {

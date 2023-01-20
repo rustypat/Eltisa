@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Models; 
+namespace Eltisa.Models; 
 
 using System;
 using System.Text;
 using System.Collections.Generic;
-using Eltisa.Source.Server;
+using Eltisa.Server;
 
 
 public class Region {

@@ -1,9 +1,9 @@
-namespace Eltisa.Source.Server; 
+namespace Eltisa.Server; 
 
 using System;
-using Eltisa.Source.Models;
-using Eltisa.Source.Communication;
-using static Eltisa.Source.Models.BlockDescription;
+using Eltisa.Models;
+using Eltisa.Communication;
+using static Eltisa.Models.BlockDescription;
 
 
 public static class BlockActions {

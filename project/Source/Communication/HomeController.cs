@@ -1,4 +1,4 @@
-namespace Eltisa.Source.Communication; 
+namespace Eltisa.Communication; 
 
 using System;
 using Microsoft.AspNetCore.Mvc;

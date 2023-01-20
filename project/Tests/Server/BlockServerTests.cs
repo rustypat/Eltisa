@@ -1,13 +1,13 @@
-namespace Eltisa.Source.Server.Blocks;
+namespace Eltisa.Server.Blocks;
 
 using System;
 using System.Linq;
-using Eltisa.Source.Models;
-using Assert = Eltisa.Source.Tools.Assert;
+using Eltisa.Models;
+using Assert = Eltisa.Tools.Assert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static Eltisa.Source.Models.BlockDescription;
-using static Eltisa.Source.Models.Block.Faces;
-using static Eltisa.Source.Server.Blocks.Constants;
+using static Eltisa.Models.BlockDescription;
+using static Eltisa.Models.Block.Faces;
+using static Eltisa.Server.Blocks.Constants;
 
 
 [TestClass]
