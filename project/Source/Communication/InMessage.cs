@@ -285,6 +285,7 @@ public static class InMessage {
         public int        PosY;
         public int        PosZ;
         public int        Type;
+        public string     Pwd;
     }
 
     static public GetBlockResource ToGetBlockResourceMessage(byte[] inBuffer) {
@@ -296,6 +297,7 @@ public static class InMessage {
         message.PosY     = reader.ReadInt();
         message.PosZ     = reader.ReadInt();
         message.Type     = reader.ReadInt();
+        message.Pwd      = reader.ReadString();
         int endTag       = reader.ReadInt();
 
         Assert(messageId == GetBlockResource.Id);
@@ -310,6 +312,7 @@ public static class InMessage {
         public int        PosY;
         public int        PosZ;
         public int        Type;
+        public string     Pwd;
         public string     Text;
     }
 
@@ -322,6 +325,7 @@ public static class InMessage {
         message.PosY     = reader.ReadInt();
         message.PosZ     = reader.ReadInt();
         message.Type     = reader.ReadInt();
+        message.Pwd      = reader.ReadString();
         message.Text     = reader.ReadString();
         int endTag       = reader.ReadInt();
 

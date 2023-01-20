@@ -51,7 +51,7 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
 
     function deleteAction(event) {
         if(event) event.stopPropagation();
-        server.requestSaveBlockResource(blockPos, Block.Tresor, "");
+        server.requestSaveBlockResource(blockPos, Block.Tresor, "", "");
         body.removeChild(baseDiv);      
         document.removeEventListener("keydown", keypressHandler);
         activateGame();
@@ -91,6 +91,7 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
         textArea.value       = "";
         textAreaPass.value   = "";
         const password = textAreaPass.value.trim();
+        console.log(password);
         server.requestBlockResource(blockPos, Block.Tresor, password);
         
 
