@@ -287,6 +287,7 @@ namespace Eltisa.Source.Communication {
             public int        PosY;
             public int        PosZ;
             public int        Type;
+            public string     Pwd;
         }
 
         static public GetBlockResource ToGetBlockResourceMessage(byte[] inBuffer) {
@@ -298,6 +299,7 @@ namespace Eltisa.Source.Communication {
             message.PosY     = reader.ReadInt();
             message.PosZ     = reader.ReadInt();
             message.Type     = reader.ReadInt();
+            message.Pwd      = reader.ReadString();
             int endTag       = reader.ReadInt();
 
             Assert(messageId == GetBlockResource.Id);
@@ -313,6 +315,7 @@ namespace Eltisa.Source.Communication {
             public int        PosZ;
             public int        Type;
             public string     Text;
+            public string     Pwd;
         }
 
         static public SaveBlockResource ToSaveBlockResourceMessage(byte[] inBuffer) {
@@ -324,6 +327,7 @@ namespace Eltisa.Source.Communication {
             message.PosY     = reader.ReadInt();
             message.PosZ     = reader.ReadInt();
             message.Type     = reader.ReadInt();
+            message.Pwd      = reader.ReadString();
             message.Text     = reader.ReadString();
             int endTag       = reader.ReadInt();
 

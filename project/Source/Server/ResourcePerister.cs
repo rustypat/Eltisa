@@ -18,7 +18,7 @@ namespace Eltisa.Source.Server {
 
         private const int  ENDTAG = 01110111;
 
-        static public string ReadText(WorldPoint blockPosition, int requestedType) {
+        static public string ReadText(WorldPoint blockPosition, int requestedType, string password=null) {
             string  fileName = GetFilePath(blockPosition); 
             if(!File.Exists(fileName)) return null;
 
@@ -27,19 +27,23 @@ namespace Eltisa.Source.Server {
                 DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Decompress);
                 BinaryReader  reader        = new BinaryReader(regionStream);
 
-                int type          = reader.ReadInt32();  
-                int owner         = reader.ReadInt32();
-                string password   = reader.ReadString();
-                text              = reader.ReadString();
-                int endTag        = reader.ReadInt32();  Assert(endTag == ENDTAG);
+                int type               = reader.ReadInt32();  
+                int owner              = reader.ReadInt32();
+                string storedPassword  = reader.ReadString();
+                text                   = reader.ReadString();
+                int endTag             = reader.ReadInt32();  Assert(endTag == ENDTAG);
                 reader.Close();
-                if( type != requestedType ) return null;
+          
+                if( type != requestedType )              return null;
+                if(storedPassword.IsUndefined())         return text;
+                else if(String.IsNullOrEmpty(password))  return "PASSWORD REQUIRED";
+                else if(password != storedPassword)      return "WRONG PASSWORD";
+                else                                     return text;
             }
-            return text;
         }
 
 
-        static public void WriteText(WorldPoint blockPosition, int type, string text) {
+        static public void WriteText(WorldPoint blockPosition, int type, string text, string password="") {
             Log.Trace("Store block resource for " + blockPosition);
 
             if(String.IsNullOrWhiteSpace(text) ) {
@@ -56,7 +60,7 @@ namespace Eltisa.Source.Server {
 
                 writer.Write((int)type);       
                 writer.Write((int)0);         // owner
-                writer.Write((string)"");            
+                writer.Write((string)password);            
                 writer.Write((string)text);                
                 writer.Write((int)ENDTAG);            
                 writer.Close();

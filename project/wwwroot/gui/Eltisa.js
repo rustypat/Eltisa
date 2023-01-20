@@ -19,6 +19,7 @@ const eltisa = new function() {
     const errorBlocker           = new ErrorBlocker(body, activateGame, deactivateGame);
     const bossBlocker            = new BossBlocker(body, activateGame, deactivateGame);
     const scriptureBlocker       = new ScriptureBlocker(body, activateGame, deactivateGame, server);
+    const tresorBlocker          = new TresorBlocker(body, activateGame, deactivateGame, server);
     const portalBlocker          = new PortalBlocker(body, activateGame, deactivateGame, server, player);
     const videoChatBlocker       = new VideoChatBlocker(body, activateGame, deactivateGame, server);
     const tetrisBlocker          = new TetrisBlocker(body, activateGame, deactivateGame);
@@ -292,11 +293,12 @@ const eltisa = new function() {
             const direction      = player.getDirection().scale(+0.01);
             const inTargetPos    = targetPos.add(direction);
             const blockPos       = Vector.roundToFloor(inTargetPos);
-
+           
             var            handled = Behavior.switchState(server, chunkStore, blockPos);
             if( !handled ) handled = scriptureBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = bookBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = tetrisBlocker.show(chunkStore, blockPos);
+            if( !handled ) handled = tresorBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = portalBlocker.requestTeleportation(chunkStore, blockPos);
             if( !handled ) handled = chat.addText(" ");
             if( handled ) return false;
@@ -361,7 +363,8 @@ const eltisa = new function() {
         if( bossBlocker.isVisible() ) return true;
         if( introBlocker.isVisible() ) return true;
         if( errorBlocker.isVisible() ) return true;
-        if( scriptureBlocker.isVisible() ) return true;    
+        if( scriptureBlocker.isVisible() ) return true;
+        if( tresorBlocker.isVisible() ) return true;    
         if( bookBlocker.isVisible() ) return true;    
         if( cameraBlocker.isVisible() ) return true;    
         if( portalBlocker.isVisible() ) return true;    
@@ -454,6 +457,9 @@ const eltisa = new function() {
         }
         else if( BlockData.isBook(message.type) ) {
             bookBlocker.handleBlockResourceMessage(message);
+        }
+        else if( BlockData.isTresor(message.type) ) {
+            tresorBlocker.handleBlockResourceMessage(message);
         }
         else if( BlockData.isPortal(message.type) ) {
             portalBlocker.handleBlockResourceMessage(message, player);

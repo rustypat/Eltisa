@@ -51,7 +51,7 @@ namespace Eltisa.Source.Administration {
 
         private static void ConfigureServerOptions(KestrelServerOptions options) {
             #if DEBUG
-                options.Listen(IPAddress.Loopback, 5000);  // http:localhost:5000
+                options.Listen(IPAddress.Any, 5000);  // http:localhost:5000
                 if(HasCertificate() ){
                     options.Listen(IPAddress.Any, 5001, listenOptions => listenOptions.UseHttps(certificate) );
                 }

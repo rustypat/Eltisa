@@ -24,6 +24,22 @@ const GuiTools = new function() {
     }
 
 
+    this.createBaseDivLight = function(parent, opaque, id) {
+        /** @type {HTMLDivElement} */
+        const div                      = document.createElement("div");
+        div.style.position             = 'absolute';
+        div.style.width                = '100%';
+        div.style.height               = '100%';
+        div.style.textAlign            = 'center';
+        if(id) div.id                  = id;
+
+        if(opaque)      div.style.backgroundColor      = 'rgba(255,255,255,1)';
+        else            div.style.backgroundColor      = 'rgba(255,255,255,0.2)';
+        if(parent) parent.appendChild(div);
+        return div;        
+    }
+
+
     this.createDiv = function(parent) {
         const display                  = 'inline-block';
         const div                      = document.createElement("div");

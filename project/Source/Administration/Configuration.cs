@@ -96,7 +96,7 @@ namespace Eltisa.Source.Administration {
 
         public static string FindWorldDataDirectory()
         {
-            var path = Environment.CurrentDirectory;
+            var path = GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).FullName;
 
             do
             {

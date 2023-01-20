@@ -628,6 +628,10 @@ const BlockData = new function() {
         return definition >= Block.Lever_Mantel && definition <= Block.ButtonWood_Base+7;
     }
 
+    this.isTresor = function(blockData) {
+        return this.getDefinition(blockData) == Block.Tresor;
+    }
+
     
     this.isDoubleBlock = function(blockData) {
         const definition = this.getDefinition(blockData);

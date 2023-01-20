@@ -505,13 +505,14 @@ function Server(serverLocation, webSocketPath) {
     }
 
 
-    this.requestBlockResource = function(blockPos, type) {
+    this.requestBlockResource = function(blockPos, type, password) {
         writer.reset();
         writer.writeInteger(OutMessageType.GetBlockResource);
         writer.writeInteger(blockPos.x);
         writer.writeInteger(blockPos.y);
         writer.writeInteger(blockPos.z);
         writer.writeInteger(type);
+        writer.writeString(password);
         writer.writeInteger(endTag);
         
         const message = writer.ToArrayBuffer();
@@ -520,13 +521,14 @@ function Server(serverLocation, webSocketPath) {
     }
 
 
-    this.requestSaveBlockResource = function(blockPos, type, text) {
+    this.requestSaveBlockResource = function(blockPos, type, text, password) {
         writer.reset();
         writer.writeInteger(OutMessageType.SaveBlockResource);
         writer.writeInteger(blockPos.x);
         writer.writeInteger(blockPos.y);
         writer.writeInteger(blockPos.z);
         writer.writeInteger(type);
+        writer.writeString(password);
         writer.writeString(text);
         writer.writeInteger(endTag);
         

@@ -262,7 +262,7 @@ namespace Eltisa.Source.Communication {
             var inMessage    = InMessage.ToGetBlockResourceMessage(inBuffer);
             var position     = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
 
-            string text      = ResourcePersister.ReadText(position, inMessage.Type);
+            string text      = ResourcePersister.ReadText(position, inMessage.Type, inMessage.Pwd);
             if(text != null) {
                 var blockResourceMessage = OutMessage.createBlockResourceMessage(position, inMessage.Type, text);
                 HomeSocket.sendMessageToEnvironment(position, blockResourceMessage);
@@ -274,7 +274,7 @@ namespace Eltisa.Source.Communication {
             var inMessage    = InMessage.ToSaveBlockResourceMessage(inBuffer);
             var position     = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
             if( Policy.CanModifyBlock(socket.GetActor(), position)) {
-                ResourcePersister.WriteText(position, inMessage.Type, inMessage.Text);
+                ResourcePersister.WriteText(position, inMessage.Type, inMessage.Text, inMessage.Pwd);
             }
         }
 
