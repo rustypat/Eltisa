@@ -1,184 +1,180 @@
+namespace Eltisa.Communication; 
+
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Collections.Generic;
 using System.Security.Authentication;
 using Microsoft.AspNetCore.Http;
+using Eltisa.Models;
+using Eltisa.Server;
+using Eltisa.Tools;
 using static System.Diagnostics.Debug;
-
-using Eltisa.Source.Models;
-using Eltisa.Source.Server;
-using Eltisa.Source.Tools;
-using static Eltisa.Source.Tools.StringExtensions;
-using static Eltisa.Source.Administration.Configuration;
+using static Eltisa.Administration.Configuration;
 
 
-namespace Eltisa.Source.Communication {
-
-    public class HomeSocket {
-        
-        private WebSocket         webSocket;
-        private Actor             actor;
-        private SemaphoreSlim     sendSemaphore  = new SemaphoreSlim(1);
+public class HomeSocket {
+    
+    private WebSocket         webSocket;
+    private Actor             actor;
+    private SemaphoreSlim     sendSemaphore  = new SemaphoreSlim(1);
 
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // creation
-        ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    // creation
+    ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-        public static async Task<bool> HandleWebSocketRequest(HttpContext context) {
-            if (!context.WebSockets.IsWebSocketRequest)  return false;
-            if (context.Request.Path != "/ws")           return false;
+    public static async Task<bool> HandleWebSocketRequest(HttpContext context) {
+        if (!context.WebSockets.IsWebSocketRequest)  return false;
+        if (context.Request.Path != "/ws")           return false;
 
-            var  socket     = await OpenSocket(context);  
-            await socket?.ListenToSocket();
-            await socket?.CloseSocket();
-            return true;
+        var  socket     = await OpenSocket(context);  
+        await socket?.ListenToSocket();
+        await socket?.CloseSocket();
+        return true;
+    }
+
+
+    private static async Task<HomeSocket> OpenSocket(HttpContext context) {
+        HomeSocket homeSocket = new HomeSocket();
+        homeSocket.webSocket = await context.WebSockets.AcceptWebSocketAsync();            
+
+        // wait for connection
+        for(int i=0; i < 10; i++) {
+            if(homeSocket.webSocket.State == WebSocketState.Connecting) {
+                await Task.Delay(100);
+            }
         }
 
+        if(homeSocket.webSocket.State != WebSocketState.Open) {
+            Log.Error("WebSocket: could not connect");
+            return null;
+        }
+        Log.Trace("WebSocket: opened");
 
-        private static async Task<HomeSocket> OpenSocket(HttpContext context) {
-            HomeSocket homeSocket = new HomeSocket();
-            homeSocket.webSocket = await context.WebSockets.AcceptWebSocketAsync();            
+        return homeSocket;            
+    }
 
-            // wait for connection
-            for(int i=0; i < 10; i++) {
-                if(homeSocket.webSocket.State == WebSocketState.Connecting) {
-                    await Task.Delay(100);
+
+    public void SetActor(Actor actor) {
+        Assert(this.actor == null && actor != null);
+        this.actor = actor;
+    }
+
+
+    public Actor GetActor() {
+        return actor;
+    }
+
+
+    public async Task CloseSocket() {
+        Log.Trace("WebSocket: closing");
+        try {                
+            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "good by", CancellationToken.None);
+        }catch(Exception e) {
+            if(IsClientClosedWebsocketException(e)) Log.Trace(e.Message);
+            else Log.Error(e);
+        }
+        if(actor != null) {
+            ActorStore.RemoveActor(actor);
+            var actorMessage = OutMessage.createActorLogoutMessage(actor);
+            sendMessageToAll(actorMessage, actor);                            
+            Log.Info(actor.Name + " logged out");
+        }
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    // incomming communication
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+
+    public async Task ListenToSocket() {
+
+        var inBuffer = new byte[WebSocketBufferSize];
+        while (true) {
+            try {
+                // read full message
+                WebSocketReceiveResult inResult;
+                int                    inCount  = 0;
+                do {
+                    var arraySegment = new ArraySegment<byte>(inBuffer, inCount, WebSocketBufferSize - inCount);
+                    inResult = await webSocket.ReceiveAsync(arraySegment, CancellationToken.None); 
+                    inCount  += inResult.Count;
+                    Assert(inCount < WebSocketBufferSize);
+                    if(inCount >= WebSocketBufferSize) throw new Exception("websocket inBuffer overflow");
+                }while(!inResult.EndOfMessage);
+
+                // check for close
+                if(inResult.CloseStatus.HasValue) {
+                    Log.Trace("WebSocket: received close request");
+                    return;
                 }
-            }
+                if(webSocket.State != WebSocketState.Open && webSocket.State != WebSocketState.Connecting ) {
+                    return;
+                }
+                
+                // handle message
+                MessageHandler.HandleSocketMessage(this, inBuffer, inCount);
 
-            if(homeSocket.webSocket.State != WebSocketState.Open) {
-                Log.Error("WebSocket: could not connect");
-                return null;
-            }
-            Log.Trace("WebSocket: opened");
-
-            return homeSocket;            
-        }
-
-
-        public void SetActor(Actor actor) {
-            Assert(this.actor == null && actor != null);
-            this.actor = actor;
-        }
-
-
-        public Actor GetActor() {
-            return actor;
-        }
-
-
-        public async Task CloseSocket() {
-            Log.Trace("WebSocket: closing");
-            try {                
-                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "good by", CancellationToken.None);
+            }catch(AuthenticationException e) {
+                Log.Trace(e.Message);
+                return;
             }catch(Exception e) {
                 if(IsClientClosedWebsocketException(e)) Log.Trace(e.Message);
                 else Log.Error(e);
-            }
-            if(actor != null) {
-                ActorStore.RemoveActor(actor);
-                var actorMessage = OutMessage.createActorLogoutMessage(actor);
-                sendMessageToAll(actorMessage, actor);                            
-                Log.Info(actor.Name + " logged out");
+                return;
             }
         }
-
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // incomming communication
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-        public async Task ListenToSocket() {
-
-            var inBuffer = new byte[WebSocketBufferSize];
-            while (true) {
-                try {
-                    // read full message
-                    WebSocketReceiveResult inResult;
-                    int                    inCount  = 0;
-                    do {
-                        var arraySegment = new ArraySegment<byte>(inBuffer, inCount, WebSocketBufferSize - inCount);
-                        inResult = await webSocket.ReceiveAsync(arraySegment, CancellationToken.None); 
-                        inCount  += inResult.Count;
-                        Assert(inCount < WebSocketBufferSize);
-                        if(inCount >= WebSocketBufferSize) throw new Exception("websocket inBuffer overflow");
-                    }while(!inResult.EndOfMessage);
-
-                    // check for close
-                    if(inResult.CloseStatus.HasValue) {
-                        Log.Trace("WebSocket: received close request");
-                        return;
-                    }
-                    if(webSocket.State != WebSocketState.Open && webSocket.State != WebSocketState.Connecting ) {
-                        return;
-                    }
-                    
-                    // handle message
-                    MessageHandler.HandleSocketMessage(this, inBuffer, inCount);
-
-                }catch(AuthenticationException e) {
-                    Log.Trace(e.Message);
-                    return;
-                }catch(Exception e) {
-                    if(IsClientClosedWebsocketException(e)) Log.Trace(e.Message);
-                    else Log.Error(e);
-                    return;
-                }
-            }
-        }
-
-
-        private static bool IsClientClosedWebsocketException(Exception e) {
-            return "The remote party closed the WebSocket connection without completing the close handshake.".Equals(e.Message);
-        }
-
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // outgoing communication
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-        public async void sendMessageAsync(byte[] message) {
-            try {
-                await sendSemaphore.WaitAsync();
-                await webSocket.SendAsync(new ArraySegment<byte>(message), WebSocketMessageType.Binary, true, CancellationToken.None);
-            } 
-            catch(Exception e) {
-                Log.Error(e);
-            }
-            finally {
-                sendSemaphore.Release();
-            }
-        }
-
-
-        static public void sendMessageToEnvironment(WorldPoint pos, byte[] message, Actor excludedActor=null) {
-            IEnumerable<Region> environment = World.GetLoadedEnvironment(pos.GetRegionPoint());
-            foreach(var region in environment) {
-                foreach(var otherActor in region.GetActors()) {
-                    if(otherActor != excludedActor) {
-                        otherActor.Socket.sendMessageAsync(message);
-                    }
-                }
-            }
-        }
-
-
-        static public void sendMessageToAll(byte[] message, Actor excludedActor=null) {
-            foreach(var actor in ActorStore.GetActors() ) {
-                if(actor != excludedActor) {
-                    actor.Socket.sendMessageAsync(message);
-                }
-            }
-        }
-
-
-
     }
+
+
+    private static bool IsClientClosedWebsocketException(Exception e) {
+        return "The remote party closed the WebSocket connection without completing the close handshake.".Equals(e.Message);
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    // outgoing communication
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+
+    public async void sendMessageAsync(byte[] message) {
+        try {
+            await sendSemaphore.WaitAsync();
+            await webSocket.SendAsync(new ArraySegment<byte>(message), WebSocketMessageType.Binary, true, CancellationToken.None);
+        } 
+        catch(Exception e) {
+            Log.Error(e);
+        }
+        finally {
+            sendSemaphore.Release();
+        }
+    }
+
+
+    static public void sendMessageToEnvironment(WorldPoint pos, byte[] message, Actor excludedActor=null) {
+        IEnumerable<Region> environment = World.GetLoadedEnvironment(pos.GetRegionPoint());
+        foreach(var region in environment) {
+            foreach(var otherActor in region.GetActors()) {
+                if(otherActor != excludedActor) {
+                    otherActor.Socket.sendMessageAsync(message);
+                }
+            }
+        }
+    }
+
+
+    static public void sendMessageToAll(byte[] message, Actor excludedActor=null) {
+        foreach(var actor in ActorStore.GetActors() ) {
+            if(actor != excludedActor) {
+                actor.Socket.sendMessageAsync(message);
+            }
+        }
+    }
+
+
+
 }

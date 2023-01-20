@@ -1,36 +1,61 @@
-namespace Eltisa.Server; 
+namespace Eltisa.Server.Blocks; 
 
 using System;
 using Eltisa.Models;
-using Eltisa.Communication;
 using static Eltisa.Models.BlockDescription;
+using static Eltisa.Server.Blocks.Constants;
 
 
-public static class BlockActions {
+public class BlockController : IBlockAccess {
 
+    private readonly BlockProvider blockProvider;
 
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    // switch 
-    ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-    public static int SwitchBlocks(InMessage.SwitchBlocks switchRequest, WorldPoint[] switchedPositions, Block[] switchedBlocks) {
-        int switchCount = 0;
-
-        for(int i =0; i < switchRequest.PositionCount; i++) {
-            WorldPoint position        = switchRequest.GetPosition(i);
-            Block      block           = World.GetBlock(position);
-            ushort     newDefinition   = switchTable[block.Definition];
-            if(newDefinition != 0) {
-                Block newBlock = World.ChangeStateOfVisibleBlock(position, newDefinition); 
-                switchedPositions[switchCount] = position;
-                switchedBlocks[switchCount]    = newBlock;
-                switchCount++;
-            }
-        }
-        return switchCount;
+    public BlockController(BlockProvider blockProvider) {   
+        this.blockProvider = blockProvider;     
     }
 
+
+    public Changed[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
+        return blockProvider.CreateBlock(worldPos, blockDescription);
+    }
+
+
+    public Block ReadBlock(Actor actor, WorldPoint worldPos) {
+        return blockProvider.ReadBlock(worldPos);
+    }
+
+
+    public Changed[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
+        return blockProvider.UpdateBlock(worldPos, newBlockDefinition);
+    }
+
+
+    public Changed[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
+        var switchList = new Changed[worldPositions.Length];
+        int switchCount = 0;
+        
+        foreach(var worldPos in worldPositions) {
+            var block = blockProvider.ReadBlock(worldPos);
+            if( block.IsInvalid()) continue;
+            var newDefinition = GetSwitchDefinition(block.Definition);
+            if(newDefinition == 0) continue;
+            var changed = blockProvider.UpdateBlock(worldPos, newDefinition);
+            if( changed == NoChanges) continue;
+            switchList[switchCount++] = changed[0];        
+        }
+        if(switchCount < worldPositions.Length) switchList = switchList[0..switchCount];
+        return switchList;
+    }
+
+
+    public Changed[] DeleteBlock(Actor actor, WorldPoint worldPos) {
+        return blockProvider.DeleteBlock(worldPos);
+    }
+
+
+    public Chunk ReadChunk(Actor actor, WorldPoint worldPos)  {
+        return blockProvider.ReadChunk(worldPos);
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +72,13 @@ public static class BlockActions {
     }
 
 
-    static BlockActions() {
+    private static ushort GetSwitchDefinition(ushort oldDefinition) {
+        if(oldDefinition >= BlockDescription.MaxBlockDefinition) return 0;
+        else return switchTable[oldDefinition];
+    }
+
+
+    static BlockController() {
         addSwitch(JackOLantern,    JackOLantern_On);
         addSwitch(Oracle,          OracleUsed);
         addSwitch(Lamp,            Lamp_On);
