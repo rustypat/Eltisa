@@ -1,4 +1,4 @@
-namespace Eltisa.Server; 
+namespace Eltisa.Server.Players; 
 
 using System;
 
