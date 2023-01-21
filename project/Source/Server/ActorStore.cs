@@ -128,4 +128,12 @@ public static class ActorStore {
         }
     }
     
+
+
+    public static void sendMessageToRange(byte[] message, WorldPoint pos, int manhattanDistance ) {
+        foreach(var actor in actors.Values) {
+            actor.Socket.sendMessageAsync(message);
+        }
+    }
+    
 }
