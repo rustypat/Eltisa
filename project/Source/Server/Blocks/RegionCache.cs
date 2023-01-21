@@ -63,6 +63,9 @@ public class RegionCache : IRegionAccess {
             }
         }
         Log.TraceEnd("region cache clearance");
-    }        
+    }    
+
+
+    public int Size() => regions.Count;
 
 }

@@ -79,6 +79,20 @@ public class BlockServerTests {
 
 
     [TestMethod]
+    public void RegionCacheFreeTest() {
+        var regionCreator   = new RegionCreator(null);
+        var regionCache     = new RegionCache(regionCreator);
+
+        var regionPos       = new RegionPoint(20, 11, 12);
+        regionCache.ReadRegion(regionPos);
+        Assert.Equals(regionCache.Size(), 1);
+
+        regionCache.FreeUnusedRegions(0, 0);
+        Assert.Equals(regionCache.Size(), 0);
+    }
+
+
+    [TestMethod]
     public void DefaultWorldTest() {
         var regionCreator   = new RegionCreator(null);
         var blockProvider   = new BlockProvider(regionCreator);
