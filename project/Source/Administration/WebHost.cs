@@ -7,9 +7,10 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
-using Eltisa.Server;
 using Eltisa.Communication;
 using Eltisa.Tools;
+using Eltisa.Server;
+using Eltisa.Server.Players;
 
 
 public static class WebHost {

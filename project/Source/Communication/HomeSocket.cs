@@ -4,11 +4,10 @@ using System;
 using System.Threading.Tasks;
 using System.Net.WebSockets;
 using System.Threading;
-using System.Collections.Generic;
 using System.Security.Authentication;
 using Microsoft.AspNetCore.Http;
 using Eltisa.Models;
-using Eltisa.Server;
+using Eltisa.Server.Players;
 using Eltisa.Tools;
 using static System.Diagnostics.Debug;
 using static Eltisa.Administration.Configuration;
@@ -80,7 +79,7 @@ public class HomeSocket {
         if(actor != null) {
             ActorStore.RemoveActor(actor);
             var actorMessage = OutMessage.createActorLogoutMessage(actor);
-            sendMessageToAll(actorMessage, actor);                            
+            ActorStore.sendMessageToAll(actorMessage, actor);                            
             Log.Info(actor.Name + " logged out");
         }
     }
@@ -153,28 +152,5 @@ public class HomeSocket {
             sendSemaphore.Release();
         }
     }
-
-
-    static public void sendMessageToEnvironment(WorldPoint pos, byte[] message, Actor excludedActor=null) {
-        IEnumerable<Region> environment = World.GetLoadedEnvironment(pos.GetRegionPoint());
-        foreach(var region in environment) {
-            foreach(var otherActor in region.GetActors()) {
-                if(otherActor != excludedActor) {
-                    otherActor.Socket.sendMessageAsync(message);
-                }
-            }
-        }
-    }
-
-
-    static public void sendMessageToAll(byte[] message, Actor excludedActor=null) {
-        foreach(var actor in ActorStore.GetActors() ) {
-            if(actor != excludedActor) {
-                actor.Socket.sendMessageAsync(message);
-            }
-        }
-    }
-
-
 
 }

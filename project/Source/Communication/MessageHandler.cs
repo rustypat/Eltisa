@@ -5,8 +5,10 @@ using System.Security.Authentication;
 using Eltisa.Models;
 using Eltisa.Tools;
 using Eltisa.Server;
+using Eltisa.Server.Players;
 using Eltisa.Administration;
 using static System.Diagnostics.Debug;
+using static Eltisa.Administration.Configuration;
 
 
 public static class MessageHandler {
@@ -97,7 +99,7 @@ public static class MessageHandler {
             }
 
             byte[] loginMessage = OutMessage.createActorChangedMessage(actor, OutMessage.ActorChange.Login);
-            HomeSocket.sendMessageToAll(loginMessage, actor);
+            ActorStore.sendMessageToAll(loginMessage, actor);
         }
     }
 
@@ -111,7 +113,7 @@ public static class MessageHandler {
         if(couldMoveActor) {
             var actorMessage   = OutMessage.createActorChangedMessage(actor, OutMessage.ActorChange.Moved);
             var newPos         = new WorldPoint(actor.PositionX, actor.PositionY, actor.PositionZ);
-            HomeSocket.sendMessageToEnvironment(newPos, actorMessage, actor);                
+            ActorStore.sendMessageToRange(actorMessage, newPos, ClientCacheBlockRadius, actor);                
         }
         else {
             // TODO send reject move message to sender
@@ -139,7 +141,7 @@ public static class MessageHandler {
         neighbours[5] = World.GetBlock(position.Bottom());
 
         var removeMessage = OutMessage.createBlockRemovedMessage(position, neighbours);
-        HomeSocket.sendMessageToEnvironment(position, removeMessage);
+        ActorStore.sendMessageToRange(removeMessage, position, ClientCacheBlockRadius);                
     }
 
 
@@ -152,7 +154,7 @@ public static class MessageHandler {
         Block block = World.AddBlock(position, inMessage.BlockInfo);
         if(block.IsBlock()) {
             var addMessage = OutMessage.createBlockAddedMessage(position, block);
-            HomeSocket.sendMessageToEnvironment(position, addMessage);
+            ActorStore.sendMessageToRange(addMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -165,7 +167,7 @@ public static class MessageHandler {
         Block block = World.ChangeStateOfVisibleBlock(position, inMessage.BlockInfo);
         if(block.IsBlock()) {
             var changeMessage = OutMessage.createBlocksChangedMessage(position, block);
-            HomeSocket.sendMessageToEnvironment(position, changeMessage);
+            ActorStore.sendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -179,7 +181,7 @@ public static class MessageHandler {
         if(switchedCount > 0) {
             var position      = inMessage.GetPosition(0);
             var changeMessage = OutMessage.createBlocksChangedMessage(switchedCount, switchedPositions, switchedBlocks);
-            HomeSocket.sendMessageToEnvironment(position, changeMessage);
+            ActorStore.sendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -256,7 +258,7 @@ public static class MessageHandler {
         string text      = ResourcePersister.ReadText(position, inMessage.Type, inMessage.Pwd);
         if(text != null) {
             var blockResourceMessage = OutMessage.createBlockResourceMessage(position, inMessage.Type, text);
-            HomeSocket.sendMessageToEnvironment(position, blockResourceMessage);
+            ActorStore.sendMessageToRange(blockResourceMessage, position, ClientCacheBlockRadius);                
         }
     }
 

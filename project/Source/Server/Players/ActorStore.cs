@@ -1,4 +1,4 @@
-namespace Eltisa.Server; 
+namespace Eltisa.Server.Players; 
 
 using System;
 using System.Text;
@@ -124,6 +124,14 @@ public static class ActorStore {
 
     public static void sendMessageToAll(byte[] message) {
         foreach(var actor in actors.Values) {
+            actor.Socket.sendMessageAsync(message);
+        }
+    }
+    
+
+    public static void sendMessageToAll(byte[] message, Actor excludeActor ) {
+        foreach(var actor in actors.Values) {
+            if(actor == excludeActor) continue;
             actor.Socket.sendMessageAsync(message);
         }
     }
