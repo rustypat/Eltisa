@@ -4,7 +4,7 @@
 function TresorBlocker(body, activateGame, deacitvateGame, server) {
 
     const baseDiv            = GuiTools.createBaseDivLight();
-    const textAreaPass       = GuiTools.createTextInput(baseDiv, null, "50%", "5%", "left");
+    const textAreaPass       = GuiTools.createTextInput(baseDiv, null, "50%", "5%", "left", "Passwort");
     GuiTools.createLineBreak(baseDiv);
     const textArea           = GuiTools.createTextArrea(baseDiv, "50%", "65%");
     GuiTools.createLineBreak(baseDiv);    
@@ -12,6 +12,7 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
     const saveButton         = GuiTools.createButton(buttonDiv, "save",   saveAction);
     const cancelButton       = GuiTools.createButton(buttonDiv, "cancel", cancelAction);
     const deleteButton       = GuiTools.createButton(buttonDiv, "delete", deleteAction);
+    let password;
 
     var blockPos;
     var blockData;
@@ -23,19 +24,20 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
     // tab events
     ///////////////////////////////////////////////////////////////////////////////////////////////////    
 
-    function checkPassword() {
-        const password = textAreaPass.value.trim();
-        console.log(password)
+    function getBlockResource() {
+        password = textAreaPass.value.trim();
+        console.log("pwd : " + password);
         server.requestBlockResource(blockPos, Block.Tresor, password);
     }
+    
 
 
     function saveAction(event)  {
         if(event) event.stopPropagation();
         const text = textArea.value.trim();
-        const password = textAreaPass.value.trim();
-
-        server.requestSaveBlockResource(blockPos, Block.Tresor, text, password); 
+        const newPassword = textAreaPass.value.trim();
+        console.log("Save Tresor NewPassword : " + newPassword)
+        server.requestSaveBlockResource(blockPos, Block.Tresor, text, password, newPassword); 
         body.removeChild(baseDiv);      
         document.removeEventListener("keydown", keypressHandler);
         activateGame();     
@@ -51,7 +53,7 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
 
     function deleteAction(event) {
         if(event) event.stopPropagation();
-        server.requestSaveBlockResource(blockPos, Block.Tresor, "", "");
+        server.requestSaveBlockResource(blockPos, Block.Tresor, "", password, "");
         body.removeChild(baseDiv);      
         document.removeEventListener("keydown", keypressHandler);
         activateGame();
@@ -67,7 +69,7 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
             noKeyPressed = false;
         }
         else if (event.code === "Enter" && document.activeElement === textAreaPass) {
-            checkPassword();
+            getBlockResource();
         }
         else if(document.activeElement === textAreaPass){
             textAreaPass.focus();
@@ -90,9 +92,8 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
 
         textArea.value       = "";
         textAreaPass.value   = "";
-        const password = textAreaPass.value.trim();
-        console.log(password);
-        server.requestBlockResource(blockPos, Block.Tresor, password);
+        password             = "";
+        getBlockResource();
         
 
         if(!body.contains(baseDiv)) {
@@ -102,7 +103,6 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
         document.addEventListener("keydown", keypressHandler);
         noKeyPressed         = true;
         saveButton.disabled  = true;
-        //textArea.disabled    = true;
          
         deacitvateGame();
 
@@ -118,7 +118,8 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
     this.handleBlockResourceMessage = function(resourceMessage) {
         if( self.isVisible() ) {
             textArea.value = resourceMessage.text;
-            textArea.disabled = false;
+            if(resourceMessage.text === "PASSWORD REQUIRED" || resourceMessage.text === "WRONG PASSWORD") textArea.disabled = true;
+            else textArea.disabled = false;
         }
     }
 

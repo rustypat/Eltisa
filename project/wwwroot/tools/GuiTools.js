@@ -360,13 +360,14 @@ const GuiTools = new function() {
     }
 
 
-    this.createTextInput = function(parent, maxLength, width, height, textAlign) {
-        const input                    = document.createElement("input");
-        input.style.margin             = '10px';   
-        if(maxLength) input.maxLength  = maxLength;
-        if(width)  input.style.width   = width;
-        if(height) input.style.height  = height;
+    this.createTextInput = function(parent, maxLength, width, height, textAlign, placeholder) {
+        const input                         = document.createElement("input");
+        input.style.margin                  = '10px';   
+        if(maxLength) input.maxLength       = maxLength;
+        if(width)  input.style.width        = width;
+        if(height) input.style.height       = height;
         if(textAlign) input.style.textAlign = textAlign;
+        if(placeholder) input.placeholder   = placeholder;
         if(parent) parent.appendChild(input);
         input.style.fontSize           = "15px";        
         input.style.borderRadius       = "10px";
