@@ -137,4 +137,14 @@ public static class ActorStore {
         }
     }
     
+
+    public static void sendMessageToRange(byte[] message, WorldPoint pos, int chebishevDistance, Actor excludeActor ) {
+        foreach(var actor in actors.Values) {
+            if(actor == excludeActor) continue;
+            if(actor.Position.ChebishevDistanceIsSmallerThan(pos, chebishevDistance)) {
+                actor.Socket.sendMessageAsync(message);
+            }
+        }
+    }
+    
 }
