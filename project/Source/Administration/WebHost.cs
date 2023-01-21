@@ -7,9 +7,10 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
-using Eltisa.Server;
 using Eltisa.Communication;
 using Eltisa.Tools;
+using Eltisa.Server;
+using Eltisa.Server.Players;
 
 
 public static class WebHost {
@@ -35,7 +36,7 @@ public static class WebHost {
         try {
             Log.Info("start shutdown");
             var chatMessage  = OutMessage.createChatMessage("Admin", "system is going down, by by");
-            ActorStore.sendMessageToAll(chatMessage);
+            ActorStore.SendMessageToAll(chatMessage);
             World.StopMaintenanceThread();  
             World.Persist();
             Log.Info("end shutdown");            

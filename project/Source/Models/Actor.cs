@@ -17,6 +17,7 @@ public class Actor {
     public readonly string         Password;
     public readonly int            Color;
     public readonly Citizen        Citizen;
+    public WorldPoint              Position  { get; private set; }
 
     public float PositionX { get; private set; } = -WorldRadius;
     public float PositionY { get; private set; } = -WorldRadiusVertical;
@@ -41,10 +42,10 @@ public class Actor {
         if(z < -WorldRadius || z >= WorldRadius) return false;
         if(y < -WorldRadiusVertical || y >= WorldRadiusVertical) return false;
         
-        WorldPoint newPos    = new WorldPoint(x, y, z);
+        Position     = new WorldPoint(x, y, z);
         // if(RegionStore.HasSolidBlock(newPos)) return false;  TODO consider reactivating check for non admins
 
-        Region     newRegion = World.GetRegion(newPos);
+        Region     newRegion = World.GetRegion(Position);
         WorldPoint oldPos    = new WorldPoint(PositionX, PositionY, PositionZ);
         Region     oldRegion = World.GetRegion(oldPos);
 

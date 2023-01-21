@@ -3,9 +3,9 @@ namespace Eltisa.Server.Players;
 using System;
 
 
-public class PlayerServer {
+public class PlayerStore {
 
-    public PlayerServer() {        
+    public PlayerStore() {        
     }
 
 

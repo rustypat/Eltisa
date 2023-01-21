@@ -354,10 +354,22 @@ public struct WorldPoint {
 
     public double GetEuclidDistanceTo(WorldPoint point) {
         int dx = X - point.X;
-        int dy = X - point.Y;
-        int dz = X - point.Z;
+        int dy = Y - point.Y;
+        int dz = Z - point.Z;
         int sum = dx*dx + dy*dy + dz*dz;
         return Math.Sqrt(sum);
+    }
+
+
+    public bool ChebishevDistanceIsSmallerThan(WorldPoint point, int distance) {
+        int minDistance = - distance;
+        int dx = X - point.X;
+        if(dx < minDistance || dx > distance) return false;
+        int dy = Y - point.Y;
+        if(dy < minDistance || dy > distance) return false;
+        int dz = Z - point.Z;
+        if(dz < minDistance || dz > distance) return false;
+        return true;
     }
 
 

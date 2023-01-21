@@ -25,29 +25,47 @@ public class RegionCache : IRegionAccess {
 
 
     public void WriteRegion(Region region) {
-        throw new Exception("Not implemented. Calling this method is probably an error");
+        lock(region) {
+            region.Validate();
+            regionCreator.WriteRegion(region);
+            region.SetUnchanged();
+        }
     }
 
 
-    /// <summary>
-    /// WARNING: this method is not thread save
-    /// </summary>
-    public void WriteRegions() {
+    public void WriteRegions(bool validate=false) {
         int storedRegions = 0;
         Log.TraceStart("region persistance");
         foreach(Region region in regions.Values) {
             if(region.HasChanged()) {
-                storedRegions++;
-                #if DEBUG
-                    region.Validate();
-                #endif                                                
-                regionCreator.WriteRegion(region);
-                region.SetUnchanged();
+                lock(region) {
+                    storedRegions++;
+                    region.OptimizeChunks();
+                    if(validate) region.Validate();
+                    regionCreator.WriteRegion(region);
+                    region.SetUnchanged();
+                }
             } 
         }
         Log.TraceEnd("region persisted: " + storedRegions);
     }
 
 
+    public void FreeUnusedRegions(int regionsToKeep, int unusedSinceMilliseconds) {
+        Log.TraceStart("region cache clearance");
+        DateTime dueTime = DateTime.Now.AddMilliseconds(-unusedSinceMilliseconds);
+        Region removedRegion;
+        if(regions.Count > regionsToKeep) {
+            foreach(Region region in regions.Values) {
+                if( region.LastUsedBefore(dueTime) && !region.HasChanged() && !region.HasActors() ) {
+                    regions.TryRemove(region.Position, out removedRegion);
+                } 
+            }
+        }
+        Log.TraceEnd("region cache clearance");
+    }    
+
+
+    public int Size() => regions.Count;
 
 }

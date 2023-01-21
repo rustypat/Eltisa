@@ -8,7 +8,6 @@ using static Eltisa.Server.Blocks.Constants;
 public class BlockProvider {
 
     private readonly IRegionAccess regionAccess;
-    private readonly Object changeLock = new Object();
 
     public BlockProvider(IRegionAccess regionAccess) {   
         this.regionAccess = regionAccess;     
@@ -23,7 +22,7 @@ public class BlockProvider {
         Chunk chunk           = region.GetChunk(chunkPos);
         BlockPoint blockPos   = worldPos.GetBlockPoint();
 
-        lock(changeLock) {
+        lock(region) {
             region.SetChanged();
 
             if(chunk == null) {
@@ -66,7 +65,7 @@ public class BlockProvider {
         Chunk chunk           = region.GetChunk(chunkPos);
         BlockPoint blockPos   = worldPos.GetBlockPoint();
 
-        lock(changeLock) {
+        lock(region) {
             region.SetChanged();  // not entirely correct here
 
             if(chunk == null) {
@@ -97,7 +96,7 @@ public class BlockProvider {
         Chunk chunk           = region.GetChunk(chunkPos);
         BlockPoint blockPos   = worldPos.GetBlockPoint();
 
-        lock(changeLock) {
+        lock(region) {
             region.SetChanged();  // not entirely correct here
 
             if(chunk == null) {

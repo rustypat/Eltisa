@@ -164,29 +164,6 @@ static public class World {
     }
 
 
-    public static IEnumerable<Region> GetLoadedEnvironment(RegionPoint pos) {
-        Assert(ClientCacheRadius == 1);
-
-        int xStart = Math.Max(pos.X - 1, -RegionRadius);
-        int xEnd   = Math.Min(pos.X + 2,  RegionRadius);
-        int yStart = Math.Max(pos.Y - 1, -RegionRadiusVertical);
-        int yEnd   = Math.Min(pos.Y + 2,  RegionRadiusVertical);
-        int zStart = Math.Max(pos.Z - 1, -RegionRadius);
-        int zEnd   = Math.Min(pos.Z + 2,  RegionRadius);
-        for(int x=xStart; x < xEnd; x++) {
-            for(int y=yStart; y < yEnd; y++) {
-                for(int z=zStart; z < zEnd; z++) {
-                    RegionPoint p = new RegionPoint(x, y, z);
-                    Region region = World.GetLoadedRegion(p);
-                    if(region != null) {
-                        yield return region;
-                    } 
-                }
-            }
-        }
-    }
-
-
     public static Chunk GetChunk(WorldPoint pos) {
         if(pos.IsNotAPoint())  return null;
         Region region = GetRegion(pos);

@@ -5,11 +5,13 @@ using System.Security.Authentication;
 using Eltisa.Models;
 using Eltisa.Tools;
 using Eltisa.Server;
+using Eltisa.Server.Players;
 using Eltisa.Administration;
 using static System.Diagnostics.Debug;
+using static Eltisa.Administration.Configuration;
 
 
-public static class MessageHandler {
+public static class InMessageHandler {
 
 
     public static void HandleSocketMessage(HomeSocket socket, byte[] message, int messageLength) {
@@ -79,25 +81,25 @@ public static class MessageHandler {
         (Actor actor, string errorMessage) = ActorStore.CreateActor(inMessage.Name, inMessage.Password, socket);
         if(actor == null) {
             byte[] outMessage = OutMessage.createLoginMessage(null, errorMessage);
-            socket.sendMessageAsync(outMessage);            
+            socket.SendMessageAsync(outMessage);            
             throw new AuthenticationException("login failed for " + inMessage.Name + ", closing connection");
         }
         else {
             socket.SetActor(actor);
             byte[] outMessage = OutMessage.createLoginMessage(actor, null);
-            socket.sendMessageAsync(outMessage);  
+            socket.SendMessageAsync(outMessage);  
             Log.Info(actor.Name + " logged in");
 
             if( actor.Citizen != null && actor.Citizen.HasChatMessages() ) {
                 var chatMessages = actor.Citizen.GetChatMessages();
                 foreach(var chatMessage in chatMessages) {
                     outMessage = OutMessage.createChatMessage(chatMessage.Sender, chatMessage.Message);
-                    socket.sendMessageAsync(outMessage);                          
+                    socket.SendMessageAsync(outMessage);                          
                 }
             }
 
             byte[] loginMessage = OutMessage.createActorChangedMessage(actor, OutMessage.ActorChange.Login);
-            HomeSocket.sendMessageToAll(loginMessage, actor);
+            ActorStore.SendMessageToAll(loginMessage, actor);
         }
     }
 
@@ -111,7 +113,7 @@ public static class MessageHandler {
         if(couldMoveActor) {
             var actorMessage   = OutMessage.createActorChangedMessage(actor, OutMessage.ActorChange.Moved);
             var newPos         = new WorldPoint(actor.PositionX, actor.PositionY, actor.PositionZ);
-            HomeSocket.sendMessageToEnvironment(newPos, actorMessage, actor);                
+            ActorStore.SendMessageToRange(actorMessage, newPos, ClientCacheBlockRadius, actor);                
         }
         else {
             // TODO send reject move message to sender
@@ -139,7 +141,7 @@ public static class MessageHandler {
         neighbours[5] = World.GetBlock(position.Bottom());
 
         var removeMessage = OutMessage.createBlockRemovedMessage(position, neighbours);
-        HomeSocket.sendMessageToEnvironment(position, removeMessage);
+        ActorStore.SendMessageToRange(removeMessage, position, ClientCacheBlockRadius);                
     }
 
 
@@ -152,7 +154,7 @@ public static class MessageHandler {
         Block block = World.AddBlock(position, inMessage.BlockInfo);
         if(block.IsBlock()) {
             var addMessage = OutMessage.createBlockAddedMessage(position, block);
-            HomeSocket.sendMessageToEnvironment(position, addMessage);
+            ActorStore.SendMessageToRange(addMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -165,7 +167,7 @@ public static class MessageHandler {
         Block block = World.ChangeStateOfVisibleBlock(position, inMessage.BlockInfo);
         if(block.IsBlock()) {
             var changeMessage = OutMessage.createBlocksChangedMessage(position, block);
-            HomeSocket.sendMessageToEnvironment(position, changeMessage);
+            ActorStore.SendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -179,7 +181,7 @@ public static class MessageHandler {
         if(switchedCount > 0) {
             var position      = inMessage.GetPosition(0);
             var changeMessage = OutMessage.createBlocksChangedMessage(switchedCount, switchedPositions, switchedBlocks);
-            HomeSocket.sendMessageToEnvironment(position, changeMessage);
+            ActorStore.SendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -200,7 +202,7 @@ public static class MessageHandler {
 
         }
         var chunksMessage = OutMessage.createChunksMessage(inMessage.RequestId, inMessage.Regions, chunks, responseChunkCount);
-        socket.sendMessageAsync(chunksMessage);
+        socket.SendMessageAsync(chunksMessage);
     }
 
 
@@ -219,7 +221,7 @@ public static class MessageHandler {
         }
         else {
             var chatMessage  = OutMessage.createChatMessage(actor.Name, inMessage.Message);
-            ActorStore.sendMessageToAll(chatMessage);
+            ActorStore.SendMessageToAll(chatMessage);
         }
 
     }
@@ -236,15 +238,15 @@ public static class MessageHandler {
 
         if(receiver == null) {
             var chatMessage  = OutMessage.createVideoChatMessage(inMessage.Receiver, inMessage.Sender, (int)InMessage.VideoChatMessage.Type.StopChat, "\"can't find " + inMessage.Receiver + "\"");
-            sender.Socket.sendMessageAsync(chatMessage);
+            sender.Socket.SendMessageAsync(chatMessage);
         }
         else if( !Policy.CanVideoChat(sender, receiver) ) {
             var chatMessage  = OutMessage.createVideoChatMessage(inMessage.Receiver, inMessage.Sender, (int)InMessage.VideoChatMessage.Type.StopChat, "\"to protect children, visitors may not video chat with citizen\"");
-            sender.Socket.sendMessageAsync(chatMessage);
+            sender.Socket.SendMessageAsync(chatMessage);
         }
         else {
             var chatMessage  = OutMessage.createVideoChatMessage(inMessage.Sender, inMessage.Receiver, inMessage.MessageType, inMessage.JsonMessage);
-            receiver.Socket.sendMessageAsync(chatMessage);
+            receiver.Socket.SendMessageAsync(chatMessage);
         }
     }
 
@@ -256,7 +258,7 @@ public static class MessageHandler {
         string text      = ResourcePersister.ReadText(position, inMessage.Type, inMessage.Pwd);
         if(text != null) {
             var blockResourceMessage = OutMessage.createBlockResourceMessage(position, inMessage.Type, text);
-            HomeSocket.sendMessageToEnvironment(position, blockResourceMessage);
+            ActorStore.SendMessageToRange(blockResourceMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -274,7 +276,7 @@ public static class MessageHandler {
         var inMessage         = InMessage.ToListActorsMessage(inBuffer);
         var (actors, count)   = ActorStore.GetActorsAndCount();
         var outMessage        = OutMessage.createActorListMessage(actors, count);
-        socket.sendMessageAsync(outMessage);                          
+        socket.SendMessageAsync(outMessage);                          
     }
 
 
@@ -287,11 +289,11 @@ public static class MessageHandler {
         if(message == "$store regions") {
             int storedRegions = World.Persist();
             var chatMessage  = OutMessage.createChatMessage("System", "regions stored " +  storedRegions);
-            admin.Socket.sendMessageAsync(chatMessage);
+            admin.Socket.SendMessageAsync(chatMessage);
         }
         else if(message == "$version") {
             var chatMessage  = OutMessage.createChatMessage("System", "Version " + Configuration.Version + "  " + Configuration.VersionType);
-            admin.Socket.sendMessageAsync(chatMessage);
+            admin.Socket.SendMessageAsync(chatMessage);
         }
     }
 
@@ -308,8 +310,8 @@ public static class MessageHandler {
         Actor receiver = ActorStore.GetActor(receiverName);
         if( receiver != null) {
             var chatMessage  = OutMessage.createChatMessage(sender.Name,dedicatedMessage);                
-            sender.Socket.sendMessageAsync(chatMessage);
-            receiver.Socket.sendMessageAsync(chatMessage);
+            sender.Socket.SendMessageAsync(chatMessage);
+            receiver.Socket.SendMessageAsync(chatMessage);
             return;
         }
 
@@ -321,7 +323,7 @@ public static class MessageHandler {
         
         {
             var chatMessage  = OutMessage.createChatMessage("System", receiverName + " is unknown");                
-            sender.Socket.sendMessageAsync(chatMessage);                
+            sender.Socket.SendMessageAsync(chatMessage);                
             return;
         }            
     }
