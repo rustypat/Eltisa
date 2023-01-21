@@ -37,8 +37,29 @@ public static class ResourcePersister {
             }
         }
 
-        static public void WriteText(WorldPoint blockPosition, int type, string text, string password="") {
+        static public void WriteText(WorldPoint blockPosition, int type, string text, string password="", string newPassword="") {
             Log.Trace("Store block resource for " + blockPosition);
+
+            //check permission
+            string  fileName = GetFilePath(blockPosition);
+            if(File.Exists(fileName)) {
+                using(FileStream regionStream = File.OpenRead(fileName)) {
+                    DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Decompress);
+                    BinaryReader  reader        = new BinaryReader(regionStream);
+
+                    reader.ReadInt32();  
+                    reader.ReadInt32();
+                    string storedPassword  = reader.ReadString();
+                    reader.Close();
+
+                    if(storedPassword != "" && storedPassword != password) return;
+                }
+            }
+            else Log.Trace("File doen't exist");
+
+
+
+
 
             if(String.IsNullOrWhiteSpace(text) ) {
                 DeleteText(blockPosition);
@@ -46,7 +67,7 @@ public static class ResourcePersister {
             }
             
             string filePath = GetDirectoryPath(); 
-            string fileName = GetFilePath(blockPosition); 
+                   fileName = GetFilePath(blockPosition); 
             Directory.CreateDirectory(filePath);
             using(FileStream resourceStream = File.OpenWrite(fileName)) {
                 DeflateStream deflateStream = new DeflateStream(resourceStream, CompressionMode.Compress);
@@ -54,7 +75,7 @@ public static class ResourcePersister {
 
                 writer.Write((int)type);       
                 writer.Write((int)0);         // owner
-                writer.Write((string)password);            
+                writer.Write((string)newPassword);            
                 writer.Write((string)text);                
                 writer.Write((int)ENDTAG);            
                 writer.Close();

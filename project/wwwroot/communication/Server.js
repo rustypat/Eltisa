@@ -521,7 +521,7 @@ function Server(serverLocation, webSocketPath) {
     }
 
 
-    this.requestSaveBlockResource = function(blockPos, type, text, password) {
+    this.requestSaveBlockResource = function(blockPos, type, text, password, newPassword) {
         writer.reset();
         writer.writeInteger(OutMessageType.SaveBlockResource);
         writer.writeInteger(blockPos.x);
@@ -529,6 +529,7 @@ function Server(serverLocation, webSocketPath) {
         writer.writeInteger(blockPos.z);
         writer.writeInteger(type);
         writer.writeString(password);
+        writer.writeString(newPassword);
         writer.writeString(text);
         writer.writeInteger(endTag);
         

@@ -313,6 +313,7 @@ public static class InMessage {
         public int        PosZ;
         public int        Type;
         public string     Pwd;
+        public string     NewPwd;
         public string     Text;
     }
 
@@ -326,6 +327,7 @@ public static class InMessage {
         message.PosZ     = reader.ReadInt();
         message.Type     = reader.ReadInt();
         message.Pwd      = reader.ReadString();
+        message.NewPwd   = reader.ReadString();
         message.Text     = reader.ReadString();
         int endTag       = reader.ReadInt();
 

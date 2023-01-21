@@ -265,7 +265,7 @@ public static class MessageHandler {
         var inMessage    = InMessage.ToSaveBlockResourceMessage(inBuffer);
         var position     = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
         if( Policy.CanModifyBlock(socket.GetActor(), position)) {
-            ResourcePersister.WriteText(position, inMessage.Type, inMessage.Text, inMessage.Pwd);
+            ResourcePersister.WriteText(position, inMessage.Type, inMessage.Text, inMessage.Pwd, inMessage.NewPwd);
         }
     }
 
