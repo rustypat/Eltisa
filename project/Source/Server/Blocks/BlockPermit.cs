@@ -48,7 +48,6 @@ public class BlockPermit : IBlockAccess {
     }
 
 
-
     private bool CanModifyBlock(Actor actor, WorldPoint blockPos) {
         if( Configuration.Mode == RunMode.Eltisa) {
             if ( actor.ActorType == Actor.Type.Administrator ) return true;

@@ -122,35 +122,35 @@ public static class ActorStore {
     }
 
 
-    public static void sendMessageToAll(byte[] message) {
+    public static void SendMessageToAll(byte[] message) {
         foreach(var actor in actors.Values) {
-            actor.Socket.sendMessageAsync(message);
+            actor.Socket.SendMessageAsync(message);
         }
     }
     
 
-    public static void sendMessageToAll(byte[] message, Actor excludeActor ) {
+    public static void SendMessageToAll(byte[] message, Actor excludeActor ) {
         foreach(var actor in actors.Values) {
             if(actor == excludeActor) continue;
-            actor.Socket.sendMessageAsync(message);
+            actor.Socket.SendMessageAsync(message);
         }
     }
     
 
-    public static void sendMessageToRange(byte[] message, WorldPoint pos, int chebishevDistance ) {
+    public static void SendMessageToRange(byte[] message, WorldPoint pos, int chebishevDistance ) {
         foreach(var actor in actors.Values) {
             if(actor.Position.ChebishevDistanceIsSmallerThan(pos, chebishevDistance)) {
-                actor.Socket.sendMessageAsync(message);
+                actor.Socket.SendMessageAsync(message);
             }
         }
     }
     
 
-    public static void sendMessageToRange(byte[] message, WorldPoint pos, int chebishevDistance, Actor excludeActor ) {
+    public static void SendMessageToRange(byte[] message, WorldPoint pos, int chebishevDistance, Actor excludeActor ) {
         foreach(var actor in actors.Values) {
             if(actor == excludeActor) continue;
             if(actor.Position.ChebishevDistanceIsSmallerThan(pos, chebishevDistance)) {
-                actor.Socket.sendMessageAsync(message);
+                actor.Socket.SendMessageAsync(message);
             }
         }
     }

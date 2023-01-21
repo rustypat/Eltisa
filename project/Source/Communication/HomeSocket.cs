@@ -79,7 +79,7 @@ public class HomeSocket {
         if(actor != null) {
             ActorStore.RemoveActor(actor);
             var actorMessage = OutMessage.createActorLogoutMessage(actor);
-            ActorStore.sendMessageToAll(actorMessage, actor);                            
+            ActorStore.SendMessageToAll(actorMessage, actor);                            
             Log.Info(actor.Name + " logged out");
         }
     }
@@ -140,7 +140,7 @@ public class HomeSocket {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public async void sendMessageAsync(byte[] message) {
+    public async void SendMessageAsync(byte[] message) {
         try {
             await sendSemaphore.WaitAsync();
             await webSocket.SendAsync(new ArraySegment<byte>(message), WebSocketMessageType.Binary, true, CancellationToken.None);
