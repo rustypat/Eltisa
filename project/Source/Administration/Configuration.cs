@@ -42,6 +42,7 @@ public static class Configuration {
     public const int WorldRadiusVertical     = ChunkRadiusVertical * ChunkSize;
 
     public const int ClientCacheRadius       = 1;                // in regions
+    public const int ClientCacheBlockRadius  = 32 * 16;          // maximal 32 chunks with 16 blocks = 512
     public const int WebSocketBufferSize     = 256 * 1024;
     public const int MaxSwitches             = 5;
 

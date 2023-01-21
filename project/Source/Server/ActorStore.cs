@@ -129,10 +129,11 @@ public static class ActorStore {
     }
     
 
-
-    public static void sendMessageToRange(byte[] message, WorldPoint pos, int manhattanDistance ) {
+    public static void sendMessageToRange(byte[] message, WorldPoint pos, int chebishevDistance ) {
         foreach(var actor in actors.Values) {
-            actor.Socket.sendMessageAsync(message);
+            if(actor.Position.ChebishevDistanceIsSmallerThan(pos, chebishevDistance)) {
+                actor.Socket.sendMessageAsync(message);
+            }
         }
     }
     
