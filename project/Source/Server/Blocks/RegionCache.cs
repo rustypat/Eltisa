@@ -50,4 +50,19 @@ public class RegionCache : IRegionAccess {
         Log.TraceEnd("region persisted: " + storedRegions);
     }
 
+
+    public void FreeUnusedRegions(int regionsToKeep, int unusedSinceMilliseconds) {
+        Log.TraceStart("region cache clearance");
+        DateTime dueTime = DateTime.Now.AddMilliseconds(-unusedSinceMilliseconds);
+        Region removedRegion;
+        if(regions.Count > regionsToKeep) {
+            foreach(Region region in regions.Values) {
+                if( region.LastUsedBefore(dueTime) && !region.HasChanged() && !region.HasActors() ) {
+                    regions.TryRemove(region.Position, out removedRegion);
+                } 
+            }
+        }
+        Log.TraceEnd("region cache clearance");
+    }        
+
 }
