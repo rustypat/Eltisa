@@ -36,7 +36,7 @@ public static class WebHost {
         try {
             Log.Info("start shutdown");
             var chatMessage  = OutMessage.createChatMessage("Admin", "system is going down, by by");
-            ActorStore.SendMessageToAll(chatMessage);
+            OutMessageHandler.SendMessageToAll(chatMessage);
             World.StopMaintenanceThread();  
             World.Persist();
             Log.Info("end shutdown");            

@@ -99,7 +99,7 @@ public static class InMessageHandler {
             }
 
             byte[] loginMessage = OutMessage.createActorChangedMessage(actor, OutMessage.ActorChange.Login);
-            ActorStore.SendMessageToAll(loginMessage, actor);
+            OutMessageHandler.SendMessageToAll(loginMessage, actor);
         }
     }
 
@@ -113,7 +113,7 @@ public static class InMessageHandler {
         if(couldMoveActor) {
             var actorMessage   = OutMessage.createActorChangedMessage(actor, OutMessage.ActorChange.Moved);
             var newPos         = new WorldPoint(actor.PositionX, actor.PositionY, actor.PositionZ);
-            ActorStore.SendMessageToRange(actorMessage, newPos, ClientCacheBlockRadius, actor);                
+            OutMessageHandler.SendMessageToRange(actorMessage, newPos, ClientCacheBlockRadius, actor);                
         }
         else {
             // TODO send reject move message to sender
@@ -141,7 +141,7 @@ public static class InMessageHandler {
         neighbours[5] = World.GetBlock(position.Bottom());
 
         var removeMessage = OutMessage.createBlockRemovedMessage(position, neighbours);
-        ActorStore.SendMessageToRange(removeMessage, position, ClientCacheBlockRadius);                
+        OutMessageHandler.SendMessageToRange(removeMessage, position, ClientCacheBlockRadius);                
     }
 
 
@@ -154,7 +154,7 @@ public static class InMessageHandler {
         Block block = World.AddBlock(position, inMessage.BlockInfo);
         if(block.IsBlock()) {
             var addMessage = OutMessage.createBlockAddedMessage(position, block);
-            ActorStore.SendMessageToRange(addMessage, position, ClientCacheBlockRadius);                
+            OutMessageHandler.SendMessageToRange(addMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -167,7 +167,7 @@ public static class InMessageHandler {
         Block block = World.ChangeStateOfVisibleBlock(position, inMessage.BlockInfo);
         if(block.IsBlock()) {
             var changeMessage = OutMessage.createBlocksChangedMessage(position, block);
-            ActorStore.SendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
+            OutMessageHandler.SendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -181,7 +181,7 @@ public static class InMessageHandler {
         if(switchedCount > 0) {
             var position      = inMessage.GetPosition(0);
             var changeMessage = OutMessage.createBlocksChangedMessage(switchedCount, switchedPositions, switchedBlocks);
-            ActorStore.SendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
+            OutMessageHandler.SendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
         }
     }
 
@@ -221,7 +221,7 @@ public static class InMessageHandler {
         }
         else {
             var chatMessage  = OutMessage.createChatMessage(actor.Name, inMessage.Message);
-            ActorStore.SendMessageToAll(chatMessage);
+            OutMessageHandler.SendMessageToAll(chatMessage);
         }
 
     }
@@ -258,7 +258,7 @@ public static class InMessageHandler {
         string text      = ResourcePersister.ReadText(position, inMessage.Type, inMessage.Pwd);
         if(text != null) {
             var blockResourceMessage = OutMessage.createBlockResourceMessage(position, inMessage.Type, text);
-            ActorStore.SendMessageToRange(blockResourceMessage, position, ClientCacheBlockRadius);                
+            OutMessageHandler.SendMessageToRange(blockResourceMessage, position, ClientCacheBlockRadius);                
         }
     }
 
