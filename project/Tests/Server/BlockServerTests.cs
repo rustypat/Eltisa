@@ -8,13 +8,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static Eltisa.Models.BlockDescription;
 using static Eltisa.Models.Block.Faces;
 using static Eltisa.Server.Blocks.Constants;
-
+using System.IO;
+using Eltisa.Tools;
 
 [TestClass]
 public class BlockServerTests {
     
     [TestMethod]
     public void RegionPersisterTest() {
+        Computer.DeleteDirectory(".\\RegionData\\");
         var regionPersister = new RegionPersister(".\\RegionData\\");
         var regionPos       = new RegionPoint(10, 11, 12);
         var region          = new Region(regionPos);
@@ -28,6 +30,7 @@ public class BlockServerTests {
 
     [TestMethod]
     public void RegionCreatorTest() {
+        Computer.DeleteDirectory(".\\RegionData\\");
         var regionCreator   = new RegionCreator(null);
 
         var regionPos       = new RegionPoint(30, 11, 12);
@@ -42,7 +45,8 @@ public class BlockServerTests {
 
 
     [TestMethod]
-    public void RegionCacheTest() {
+    public void RegionCacheSameTest() {
+        Computer.DeleteDirectory(".\\RegionData\\");
         var regionPersister = new RegionPersister(".\\RegionData\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
@@ -53,6 +57,23 @@ public class BlockServerTests {
         Assert.AreSame(region, regionSecond);
 
         regionCache.WriteRegions();
+        Assert.FiileExistsNot(".\\Regiondata\\20_11_12.rgn");
+    }
+
+
+    [TestMethod]
+    public void RegionCacheWriteTest() {
+        Computer.DeleteDirectory(".\\RegionData\\");
+        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionCreator   = new RegionCreator(regionPersister);
+        var regionCache     = new RegionCache(regionCreator);
+
+        var regionPos       = new RegionPoint(20, 11, 12);
+        var region          = regionCache.ReadRegion(regionPos);
+        var regionSecond    = regionCache.ReadRegion(regionPos);
+        Assert.AreSame(region, regionSecond);
+
+        regionCache.WriteRegions(true);
         Assert.FiileExistsNot(".\\Regiondata\\20_11_12.rgn");
     }
 
