@@ -11,7 +11,7 @@ using static System.Diagnostics.Debug;
 using static Eltisa.Administration.Configuration;
 
 
-public static class MessageHandler {
+public static class InMessageHandler {
 
 
     public static void HandleSocketMessage(HomeSocket socket, byte[] message, int messageLength) {

@@ -116,7 +116,7 @@ public class HomeSocket {
                 }
                 
                 // handle message
-                MessageHandler.HandleSocketMessage(this, inBuffer, inCount);
+                InMessageHandler.HandleSocketMessage(this, inBuffer, inCount);
 
             }catch(AuthenticationException e) {
                 Log.Trace(e.Message);
