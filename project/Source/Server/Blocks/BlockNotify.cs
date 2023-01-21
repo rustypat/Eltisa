@@ -19,36 +19,52 @@ public class BlockNotify : IBlockAccess {
     public Changed[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
         var changes = blockAccess.CreateBlock(actor, worldPos, blockDescription);
         if(changes != NoChanges) {
-            ActorStore.SendMessageToRange(message, worldPos, Configuration.ClientCacheBlockRadius);
+            //TODO send message
         }
         return changes;
     }
 
 
     public Block ReadBlock(Actor actor, WorldPoint worldPos) {
-        return blockAccess.ReadBlock(actor, worldPos);
+        var block = blockAccess.ReadBlock(actor, worldPos);
+        if(!block.IsInvalid()) {
+            // TODO return result
+        }
+        return block;
     }
 
 
     public Changed[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
-        if(CanModifyBlock(actor, worldPos)) return blockAccess.UpdateBlock(actor, worldPos, newBlockDefinition);
-        else                                return NoChanges;        
+        var changes =  blockAccess.UpdateBlock(actor, worldPos, newBlockDefinition);
+        if(changes != NoChanges) {
+            //TODO send message
+        }
+        return changes;
     }
 
 
     public Changed[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
-        return blockAccess.SwitchBlocks(actor, worldPositions);
+        var changes = blockAccess.SwitchBlocks(actor, worldPositions);
+        if(changes != NoChanges) {
+            //TODO send message
+        }
+        return changes;
     }
 
 
     public Changed[] DeleteBlock(Actor actor, WorldPoint worldPos) {
-        if(CanModifyBlock(actor, worldPos)) return blockAccess.DeleteBlock(actor, worldPos);
-        else                                return NoChanges;                
+        var changes = blockAccess.DeleteBlock(actor, worldPos);
+        if(changes != NoChanges) {
+            //TODO send message
+        }
+        return changes;
     }
 
 
     public Chunk ReadChunk(Actor actor, WorldPoint worldPos)  {
-        return blockAccess.ReadChunk(actor, worldPos);
+        var chunk = blockAccess.ReadChunk(actor, worldPos);
+        // TODO return result
+        return chunk;
     }
 
 }
