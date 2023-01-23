@@ -14,6 +14,7 @@ public static class BlockDescription {
     // the first type is reserved for special no block values!
     public const ushort Air                  = 0;
     public const ushort Invalid              = 1;
+    public const ushort Unknown              = 7;
 
     public const ushort Rock                 = 8;
     public const ushort Gravel               = 8+1;

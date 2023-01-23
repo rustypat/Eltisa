@@ -3,7 +3,7 @@ namespace Eltisa.Server.Blocks;
 using System;
 using Eltisa.Administration;
 using Eltisa.Models;
-using static Eltisa.Server.Blocks.Constants;
+using static Eltisa.Models.Constants;
 
 
 public class BlockPermit : IBlockAccess {
@@ -15,7 +15,7 @@ public class BlockPermit : IBlockAccess {
     }
 
 
-    public Changed[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
+    public Change[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
         if(CanModifyBlock(actor, worldPos)) return blockAccess.CreateBlock(actor, worldPos, blockDescription);
         else                                return NoChanges;
     }
@@ -26,18 +26,18 @@ public class BlockPermit : IBlockAccess {
     }
 
 
-    public Changed[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
+    public Change[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
         if(CanModifyBlock(actor, worldPos)) return blockAccess.UpdateBlock(actor, worldPos, newBlockDefinition);
         else                                return NoChanges;        
     }
 
 
-    public Changed[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
+    public Change[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
         return blockAccess.SwitchBlocks(actor, worldPositions);
     }
 
 
-    public Changed[] DeleteBlock(Actor actor, WorldPoint worldPos) {
+    public Change[] DeleteBlock(Actor actor, WorldPoint worldPos) {
         if(CanModifyBlock(actor, worldPos)) return blockAccess.DeleteBlock(actor, worldPos);
         else                                return NoChanges;                
     }

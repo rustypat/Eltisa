@@ -86,6 +86,14 @@ public static class Assert {
     }
 
 
+    public static void BlockPositionIs(Block block, byte x, byte y, byte z, string errorMessage=null) {
+        var blockPosInChunk = block.Position;
+        if(blockPosInChunk.X == x && blockPosInChunk.Y == y && blockPosInChunk.Z == z ) return;
+        errorMessage ??= $"block in chunk position is  {blockPosInChunk.X}/{blockPosInChunk.Z}/{blockPosInChunk.Z} instead of {x}/{y}/{z}";
+        throw new AssertFailedException(errorMessage);
+    }
+
+
     public static void SizeIs<T>(T[] t, int expectedLength, string errorMessage=null) {
         if(t.Length == expectedLength) return;
         errorMessage ??= $"array length is {t.Length} instead of {expectedLength}";

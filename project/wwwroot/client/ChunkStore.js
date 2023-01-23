@@ -95,6 +95,21 @@ function ChunkStore(_viewport) {
     }
 
 
+    function updateBlock(x, y, z, blockdata) {
+        const key = ChunkPos.createFromWorldPos(x, y, z);
+        if( !key ) return null;
+        const chunk = chunks.get(key);
+        if( !chunk ) return null;
+        if(BlockData.isBlock(blockdata)) {
+            chunk.blocks.replaceOrAdd(blockdata, BlockData.equalLocation);
+        }
+        else {
+            chunk.blocks.removeFirstMatch(blockdata, BlockData.equalLocation)
+        }
+        return chunk;
+    }
+
+
     function updateChunk(chunkDescription) {
         // add or replace mesh
         const key       = ChunkPos.create(chunkDescription.x, chunkDescription.y, chunkDescription.z);

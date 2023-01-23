@@ -1,8 +1,9 @@
 namespace Eltisa.Server.Blocks; 
 
 using System;
+using Eltisa.Communication;
 using Eltisa.Models;
-using static Eltisa.Server.Blocks.Constants;
+using static Eltisa.Models.Constants;
 
 
 public class BlockNotify : IBlockAccess {
@@ -14,10 +15,10 @@ public class BlockNotify : IBlockAccess {
     }
 
 
-    public Changed[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
+    public Change[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
         var changes = blockAccess.CreateBlock(actor, worldPos, blockDescription);
         if(changes != NoChanges) {
-            //TODO send message
+            OutMessageHandler.BlocksChanged(worldPos, changes);
         }
         return changes;
     }
@@ -32,16 +33,16 @@ public class BlockNotify : IBlockAccess {
     }
 
 
-    public Changed[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
+    public Change[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
         var changes =  blockAccess.UpdateBlock(actor, worldPos, newBlockDefinition);
         if(changes != NoChanges) {
-            //TODO send message
+            OutMessageHandler.BlocksChanged(worldPos, changes);
         }
         return changes;
     }
 
 
-    public Changed[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
+    public Change[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
         var changes = blockAccess.SwitchBlocks(actor, worldPositions);
         if(changes != NoChanges) {
             //TODO send message
@@ -50,10 +51,10 @@ public class BlockNotify : IBlockAccess {
     }
 
 
-    public Changed[] DeleteBlock(Actor actor, WorldPoint worldPos) {
+    public Change[] DeleteBlock(Actor actor, WorldPoint worldPos) {
         var changes = blockAccess.DeleteBlock(actor, worldPos);
         if(changes != NoChanges) {
-            //TODO send message
+            OutMessageHandler.BlocksChanged(worldPos, changes);
         }
         return changes;
     }

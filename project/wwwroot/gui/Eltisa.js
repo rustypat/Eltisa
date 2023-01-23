@@ -451,6 +451,16 @@ const eltisa = new function() {
     }
 
 
+    server.updateBlock = function(x, y, z, blockData) {
+        return chunkStore.updateBlock(x, y, z, blockData);
+    }
+
+
+    server.updateChunk = function(chunk) {
+        return chunkStore.updateChunk(chunk);
+    }
+
+
     server.receiveBlockResourceHandler = function(message) {
         if( BlockData.isScripture(message.type) ) {
             scriptureBlocker.handleBlockResourceMessage(message);

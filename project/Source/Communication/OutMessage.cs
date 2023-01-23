@@ -216,6 +216,7 @@ public static class OutMessage {
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((byte)OutMessageType.BlocksChanged);
         builder.WriteInt(messageCounter);
+        builder.WriteInt(0);                 // fill in for change type
         builder.WriteInt(changedCount);
         for(int i=0; i < changedCount; i++) {
             WorldPoint pos   = positions[i];
@@ -224,6 +225,27 @@ public static class OutMessage {
             builder.WriteInt(pos.Y);
             builder.WriteInt(pos.Z);
             builder.WriteUint(block.GetData());
+        }
+        builder.WriteInt(EndTag);
+
+        byte[] message = builder.ToArray();
+        Log.Trace("send message " + messageCounter + " blocks changed, length " + message.Length);
+        return message;
+    }
+
+
+    public static byte[] createBlocksChangedMessage(Change[] changes) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((byte)OutMessageType.BlocksChanged);
+        builder.WriteInt(messageCounter);
+        builder.WriteInt(changes.Length);
+        foreach(var change in changes) {
+            builder.WriteInt(change.Position.X);
+            builder.WriteInt(change.Position.Y);
+            builder.WriteInt(change.Position.Z);
+            builder.WriteUint(change.Block.GetData());
         }
         builder.WriteInt(EndTag);
 

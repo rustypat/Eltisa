@@ -2,14 +2,13 @@ namespace Eltisa.Server.Blocks;
 
 using System;
 using System.Linq;
-using Eltisa.Models;
-using Assert = Eltisa.Tools.Assert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Eltisa.Models;
+using Eltisa.Tools;
+using Assert = Eltisa.Tools.Assert;
 using static Eltisa.Models.BlockDescription;
 using static Eltisa.Models.Block.Faces;
-using static Eltisa.Server.Blocks.Constants;
-using System.IO;
-using Eltisa.Tools;
+using static Eltisa.Models.Constants;
 
 [TestClass]
 public class BlockServerTests {
@@ -121,7 +120,7 @@ public class BlockServerTests {
 
 
     [TestMethod]
-    public void AddBlockTest() {
+    public void AddBlockAboveWaterTest() {
         var regionPersister = new RegionPersister(".\\RegionData\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
@@ -150,7 +149,7 @@ public class BlockServerTests {
 
         var pos = new WorldPoint(98, 20, 99);
         var result = blockProvider.CreateBlock(pos, Stone);
-        Assert.AreEqual(result, new Changed[0]);
+        Assert.AreEqual(result, new Change[0]);
     }
 
 
@@ -271,6 +270,35 @@ public class BlockServerTests {
         pos = new WorldPoint(0, 0, 0);
         changes = blockController.SwitchBlocks(null, pos);
         Assert.Equals(changes, NoChanges);
+    }
+
+
+    [TestMethod]
+    public void CreateAndDeleteChangeTest() {
+        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionCreator   = new RegionCreator(regionPersister);
+        var regionCache     = new RegionCache(regionCreator);
+        var blockProvider   = new BlockProvider(regionCache);
+        var blockController = new BlockController(blockProvider);
+        var blockPermit     = new BlockPermit(blockController);
+        var blockNotify     = new BlockNotify(blockPermit);
+
+        var actor   = new Actor(1, "Tester", "noSecret", null, Actor.Type.Administrator, 1, null);
+        var pos = new WorldPoint(17, 66, 19);
+        
+        var changes = blockNotify.CreateBlock(actor, pos, Stone);
+        Assert.SizeIs(changes, 1);
+        Block block   = changes[0].Block;
+        Assert.BlockHasFaces(block, Top, Left, Right, Front, Back, Bottom);
+        Assert.BlockIs(block, Stone);
+        Assert.BlockPositionIs(block, 1, 2, 3);
+        
+        changes = blockNotify.DeleteBlock(actor, pos);
+        Assert.SizeIs(changes, 1);
+        block   = changes[0].Block;
+        Assert.BlockHasFacesNot(block, Top, Left, Right, Front, Back, Bottom);
+        Assert.BlockIs(block, Air);
+        Assert.BlockPositionIs(block, 1, 2, 3);
     }
 
 

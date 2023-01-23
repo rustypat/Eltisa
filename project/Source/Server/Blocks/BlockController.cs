@@ -3,7 +3,7 @@ namespace Eltisa.Server.Blocks;
 using System;
 using Eltisa.Models;
 using static Eltisa.Models.BlockDescription;
-using static Eltisa.Server.Blocks.Constants;
+using static Eltisa.Models.Constants;
 
 
 public class BlockController : IBlockAccess {
@@ -15,7 +15,7 @@ public class BlockController : IBlockAccess {
     }
 
 
-    public Changed[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
+    public Change[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
         return blockProvider.CreateBlock(worldPos, blockDescription);
     }
 
@@ -25,13 +25,13 @@ public class BlockController : IBlockAccess {
     }
 
 
-    public Changed[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
+    public Change[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
         return blockProvider.UpdateBlock(worldPos, newBlockDefinition);
     }
 
 
-    public Changed[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
-        var switchList = new Changed[worldPositions.Length];
+    public Change[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
+        var switchList = new Change[worldPositions.Length];
         int switchCount = 0;
         
         foreach(var worldPos in worldPositions) {
@@ -48,7 +48,7 @@ public class BlockController : IBlockAccess {
     }
 
 
-    public Changed[] DeleteBlock(Actor actor, WorldPoint worldPos) {
+    public Change[] DeleteBlock(Actor actor, WorldPoint worldPos) {
         return blockProvider.DeleteBlock(worldPos);
     }
 

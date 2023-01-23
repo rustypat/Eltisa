@@ -28,9 +28,19 @@ public struct Block {
         return (Faces)( (data >> 14) & 0b111111 );
     }}
 
-    public ushort     Definition   { get {                  // 32 Categories * 64 BlockType * 8 States
-        return (ushort) (data & 0b11111111111111);
-    }} 
+    public ushort     Definition   { 
+        get {                  // 32 Categories * 64 BlockType * 8 States
+            return (ushort) (data & 0b11111111111111);
+        }
+        // set {
+        //     data = (data & 0b11111111111111111100000000000000u) | (value & 0b00000000000000000011111111111111u);
+        // }
+    } 
+
+    // keeps only position
+    public void ClearFacesCategoryTypeStatus() {
+        data &= 0b11111111111100000000000000000000u;
+    }
 
     public byte       Category   { get {
         return (byte)( (data >> 9) & 0b11111 );             // 5 bits
@@ -58,7 +68,7 @@ public struct Block {
 
 
     public bool IsSolid() {
-        return data > 7 && Category < 8;
+        return data >= 7 && Category < 8;
     }
 
 
@@ -87,12 +97,12 @@ public struct Block {
 
     // methods
     public bool IsBlock() {
-        return data > 7;
+        return data >= 7;
     }
 
 
     public bool IsNoBlock() {
-        return data < 8;
+        return data < 7;
     }
 
 

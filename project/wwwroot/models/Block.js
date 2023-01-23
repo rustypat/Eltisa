@@ -9,7 +9,8 @@ const Block = {
 
     // category 0: landscape    
     NoBlock:            0,
-    UnknownBlock:       1,
+    InvalidBlock:       1,
+    UnknownBlock:       7,
 
     Rock:               8,
     Gravel:             8+1,
@@ -548,12 +549,12 @@ const BlockData = new function() {
 
 
     this.isBlock = function(blockData) {
-        return this.getDefinition(blockData) > Block.NoBlock;
+        return this.getDefinition(blockData) >= 7;
     }
 
 
     this.isSolid = function(blockData) {
-        return this.getCategory(blockData) < 8 && this.getDefinition(blockData) > Block.NoBlock;
+        return this.getCategory(blockData) < 8 && this.getDefinition(blockData) >= 7;
     }
     
     

@@ -269,8 +269,7 @@ function NumberArray(startCapacity, capacityIncrement) {
         for(var i = 0; i < arguments.length; i++) {
             floatArray[length] = arguments[i];
             length++;
-        }
-        
+        }        
     }
 
 
@@ -308,6 +307,29 @@ function NumberArray(startCapacity, capacityIncrement) {
             }
         }
         return false;
+    }
+
+    // returns true if replaced and false if added
+    this.replaceOrAdd = function(value,  matchFunction) {
+        // try replace
+        for(var i=0; i < length; i++) {
+            if(matchFunction(floatArray[i], value)) {
+                floatArray[i] = value;
+                return true;
+            }
+        }
+
+        // increase capacity if needed
+        if(length + 1 >= capacity) {
+            capacity = capacity + capacityIncrement;
+            const newArray    = new Float64Array(capacity);
+            newArray.set(floatArray);
+            floatArray = newArray;
+        }
+
+        // add value at end
+        floatArray[length] = value;
+        return false
     }
 
 }

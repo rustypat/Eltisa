@@ -132,7 +132,7 @@ public struct ChunkPoint {
 
 // coordinates of a region in the world (in region coordinates)
 public struct RegionPoint {
-    private int   data;                           // Y: 8bit signed, Z: 12bit signed, X: 12bit signed
+    private int   data;                           // X: 12bit signed, Y: 8bit signed, Z: 12bit signed
     public  int   Data { get{ return data;} }
 
     public int Y   {  get { return (data      ) >> 24; }  }

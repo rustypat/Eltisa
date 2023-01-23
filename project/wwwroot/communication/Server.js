@@ -233,16 +233,22 @@ function Server(serverLocation, webSocketPath) {
     function receiveBlocksChangedMessage(reader, messageType) {
         if(messageType != InMessageType.BlocksChanged) return false;
 
-        const message        = {};
+        const changedChunks = new Set();
         const blockCount     = reader.readInteger();
         for(var i=0; i < blockCount; i++) {
-            message.x        = reader.readInteger();
-            message.y        = reader.readInteger();
-            message.z        = reader.readInteger();
-            message.blockData= reader.readInteger();  // message must not change faces!            
-            self.receiveBlockChangedHandler(message);
+            const x        = reader.readInteger();
+            const y        = reader.readInteger();
+            const z        = reader.readInteger();
+            const blockData= reader.readInteger();  
+            const chunk    = self.updateBlock(x, y, z, blockData);
+            if(chunk) changedChunks.add(chunk);
         }
         assert(endTag       == reader.readInteger());
+
+        for(const chunk of changedChunks.values) {
+            self.updateChunk(chunk);
+        }
+        
         return true;        
     } 
 
