@@ -26,9 +26,6 @@ public class BlockNotify : IBlockAccess {
 
     public Block ReadBlock(Actor actor, WorldPoint worldPos) {
         var block = blockAccess.ReadBlock(actor, worldPos);
-        if(!block.IsInvalid()) {
-            // TODO return result
-        }
         return block;
     }
 
@@ -43,9 +40,10 @@ public class BlockNotify : IBlockAccess {
 
 
     public Change[] SwitchBlocks(Actor actor, params WorldPoint[] worldPositions) {
+        if(worldPositions.Length == 0) return NoChanges;
         var changes = blockAccess.SwitchBlocks(actor, worldPositions);
         if(changes != NoChanges) {
-            //TODO send message
+            OutMessageHandler.BlocksChanged(worldPositions[0], changes);
         }
         return changes;
     }
@@ -62,7 +60,6 @@ public class BlockNotify : IBlockAccess {
 
     public Chunk ReadChunk(Actor actor, WorldPoint worldPos)  {
         var chunk = blockAccess.ReadChunk(actor, worldPos);
-        // TODO return result
         return chunk;
     }
 
