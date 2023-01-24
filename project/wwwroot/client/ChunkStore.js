@@ -36,65 +36,6 @@ function ChunkStore(_viewport) {
     }
 
 
-    this.addBlock = function(addBlockMessage) {
-        const key       = ChunkPos.createFromWorldPos(addBlockMessage.x, addBlockMessage.y, addBlockMessage.z);
-        var   chunk     = chunks.get(key);
-        if(chunk) {
-            if(!chunk.blocks) chunk.blocks = new IntegerArray(64, 64);
-            chunk.blocks.add(addBlockMessage.blockData);
-            replaceChunk(chunk);
-        }
-    }
-
-
-    this.changeBlock = function(changeBlockMessage) {
-        const key       = ChunkPos.createFromWorldPos(changeBlockMessage.x, changeBlockMessage.y, changeBlockMessage.z);
-        var   chunk     = chunks.get(key);
-        if(chunk) {
-            chunk.blocks.replaceFirstMatch(changeBlockMessage.blockData, BlockData.equalLocation );
-            replaceChunk(chunk);
-        }
-    }
-
-
-    this.removeBlock = function(removeBlockMessage) {
-
-        // remove block
-        const key       = ChunkPos.createFromWorldPos(removeBlockMessage.x, removeBlockMessage.y, removeBlockMessage.z);
-        var   chunk     = chunks.get(key);
-        if(chunk) {
-            const removedBlockDescr = BlockData.createBlockData(removeBlockMessage.x, removeBlockMessage.y, removeBlockMessage.z, 0, 0);
-            chunk.blocks.removeFirstMatch(removedBlockDescr, BlockData.equalLocation );
-        }
-
-        updateNeighbour(removeBlockMessage.x-1, removeBlockMessage.y,   removeBlockMessage.z,   removeBlockMessage.neighbours[0], chunk);
-        updateNeighbour(removeBlockMessage.x+1, removeBlockMessage.y,   removeBlockMessage.z,   removeBlockMessage.neighbours[1], chunk);
-        updateNeighbour(removeBlockMessage.x,   removeBlockMessage.y,   removeBlockMessage.z+1, removeBlockMessage.neighbours[2], chunk);
-        updateNeighbour(removeBlockMessage.x,   removeBlockMessage.y,   removeBlockMessage.z-1, removeBlockMessage.neighbours[3], chunk);
-        updateNeighbour(removeBlockMessage.x,   removeBlockMessage.y+1, removeBlockMessage.z,   removeBlockMessage.neighbours[4], chunk);
-        updateNeighbour(removeBlockMessage.x,   removeBlockMessage.y-1, removeBlockMessage.z,   removeBlockMessage.neighbours[5], chunk);
-        
-        if(chunk) {
-            replaceChunk(chunk);
-        }
-    }
-
-
-    function updateNeighbour(x, y, z, neighbourDefinition, chunk) {
-        if( neighbourDefinition == 0           ) return;
-        const key             = ChunkPos.createFromWorldPos(x, y, z);
-        if( !key ) return;
-        var   neighbourChunk  = chunks.get(key);
-        if( neighbourChunk ) {
-            if( !neighbourChunk.blocks ) neighbourChunk.blocks = new IntegerArray(64, 64);            
-            if( !neighbourChunk.blocks.replaceFirstMatch(neighbourDefinition, BlockData.equalLocation) ) {
-                neighbourChunk.blocks.add(neighbourDefinition);
-            }
-            if( neighbourChunk != chunk )  replaceChunk(neighbourChunk);
-        }
-    }
-
-
     this.updateBlock = function(x, y, z, blockdata) {
         const key = ChunkPos.createFromWorldPos(x, y, z);
         if( !key ) return null;
