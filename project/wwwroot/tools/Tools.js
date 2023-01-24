@@ -309,6 +309,7 @@ function NumberArray(startCapacity, capacityIncrement) {
         return false;
     }
 
+
     // returns true if replaced and false if added
     this.replaceOrAdd = function(value,  matchFunction) {
         // try replace
@@ -331,6 +332,7 @@ function NumberArray(startCapacity, capacityIncrement) {
         floatArray[length] = value;
         return false
     }
+
 
 }
 
@@ -410,6 +412,30 @@ function IntegerArray(startCapacity, capacityIncrement, int32Array) {
         return false;
     }
 
+
+    // returns true if replaced and false if added
+    this.replaceOrAdd = function(value,  matchFunction) {
+        // try replace
+        for(var i=0; i < length; i++) {
+            if(matchFunction(intArray[i], value)) {
+                intArray[i] = value;
+                return true;
+            }
+        }
+
+        // increase capacity if needed
+        if(length + 1 >= capacity) {
+            capacity = capacity + capacityIncrement;
+            const newArray    = new Int32Array(capacity);
+            newArray.set(intArray);
+            intArray = newArray;
+        }
+
+        // add value at end
+        intArray[length] = value;
+        length++;
+        return false
+    }
 
 }
 

@@ -67,11 +67,7 @@ public static class ActorStore {
 
     
     public static void RemoveActor(Actor actor) {
-        WorldPoint oldPos    = new WorldPoint(actor.PositionX, actor.PositionY, actor.PositionZ);
-        Region     oldRegion = World.GetRegion(oldPos);
-        oldRegion?.RemoveActor(actor);
-        Actor dummy;
-        actors.TryRemove(actor.Name, out dummy);
+        actors.TryRemove(actor.Name, out _);
     }   
 
 

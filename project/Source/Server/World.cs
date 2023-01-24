@@ -2,18 +2,15 @@ namespace Eltisa.Server;
 
 using System;
 using System.Text;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 using Eltisa.Models;
 using Eltisa.Tools;
 using Eltisa.Administration;
 using Eltisa.Server.Blocks;
-using static System.Diagnostics.Debug;
 using static Eltisa.Administration.Configuration;
+using static Eltisa.Models.Constants;
+
 
 static public class World {
-
-    private static readonly ConcurrentDictionary<RegionPoint, Region>   regions = new ConcurrentDictionary<RegionPoint, Region>();
 
     private static readonly PeriodicThread maintenanceThread = new PeriodicThread(RegionStoreTime, () => {
         Persist();
@@ -22,212 +19,94 @@ static public class World {
 
     private static readonly Object changeLock = new Object();
 
-    private static readonly RegionPersister regionPersister = new RegionPersister(Configuration.RegionDirectory);
-    
+    private static RegionPersister regionPersister;
+    private static RegionCreator   regionCreator;
+    private static RegionCache     regionCache;
+    private static BlockProvider   blockProvider;
+    private static BlockController blockController;
+    private static BlockPermit     blockPermit;
+    private static BlockNotify     blockNotify;
+
+
+    public static void Initialize(string regionDirectory) {
+        regionPersister = new RegionPersister(regionDirectory);
+        regionCreator   = new RegionCreator(regionPersister);
+        regionCache     = new RegionCache(regionCreator);
+        blockProvider   = new BlockProvider(regionCache);
+        blockController = new BlockController(blockProvider);
+        blockPermit     = new BlockPermit(blockController);
+        blockNotify     = new BlockNotify(blockPermit);
+    }
+
+
+    static World() {
+        Initialize(Configuration.RegionDirectory);
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // change
     ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public static Block AddBlock(WorldPoint pos, ushort blockInfo) {    
-        if(pos.IsNotAPoint())  return BlockDescription.NoBlock;
-        Region      region      = GetRegion(pos);
-        Chunk       chunk       = region.GetChunk(pos);
+    public static Change[] AddBlock(Actor actor, WorldPoint pos, ushort blockInfo) {    
+        if(pos.IsNotAPoint())  return NoChanges;
         lock(changeLock) {
-            region.SetChanged();
-            if(chunk == null) {
-                chunk = DefaultWorld.CreateChunk(pos);
-                region.SetChunk(chunk);
-            }
-            Block block = chunk.AddBlock(pos, blockInfo);
-            return block;
+            return blockNotify.CreateBlock(actor, pos, blockInfo);
         }
     }
 
 
-    public static Block RemoveVisibleBlock(WorldPoint pos) {    
-        if(pos.IsNotAPoint())  return BlockDescription.NoBlock;
-        Region      region      = GetRegion(pos);
-        Chunk       chunk       = region.GetChunk(pos);
+    public static Change[] RemoveVisibleBlock(Actor actor, WorldPoint pos) {    
+        if(pos.IsNotAPoint())  return NoChanges;
         lock(changeLock) {
-            region.SetChanged();
-            if(chunk == null) {
-                chunk = DefaultWorld.CreateChunk(pos);
-                region.SetChunk(chunk);
-            }
-            return chunk.RemoveVisibleBlock(pos);
+            return blockNotify.DeleteBlock(actor, pos);
+            // TODO if block has resource, delete it
         }
     }
 
 
-    public static Block ChangeStateOfVisibleBlock(WorldPoint pos, ushort blockInfo) {    
-        if(pos.IsNotAPoint())  return BlockDescription.NoBlock;
-        Region      region      = GetRegion(pos);
-        Chunk       chunk       = region.GetChunk(pos);
+    public static Change[] ChangeStateOfVisibleBlock(Actor actor, WorldPoint pos, ushort blockInfo) {    
+        if(pos.IsNotAPoint())  return NoChanges;
         lock(changeLock) {
-            region.SetChanged();
-            if(chunk == null) {
-                chunk = DefaultWorld.CreateChunk(pos);
-                region.SetChunk(chunk);
-            }
-            Block block = chunk.ChangeStateOfVisibleBlock(pos, blockInfo);
-            return block;
+            return blockNotify.UpdateBlock(actor, pos, blockInfo);
         }
     }
 
 
-    public static Block AddFace(WorldPoint pos, Block.Faces face) {
-        if(pos.IsNotAPoint())  return BlockDescription.NoBlock;
-        Region      region      = GetRegion(pos);
-        Chunk       chunk       = region.GetChunk(pos);
+    public static Change[] SwitchBlocks(Actor actor, WorldPoint[] positions) {    
         lock(changeLock) {
-            if(chunk == null) {
-                chunk = DefaultWorld.CreateChunk(pos);
-                region.SetChunk(chunk);
-                region.SetChanged();
-            }
-            Block block = chunk.AddFace(pos.GetBlockPoint(), face);
-            if( block.IsBlock() ) region.SetChanged();
-            return block;
+            return blockNotify.SwitchBlocks(actor, positions);
         }
     }
 
 
-    public static Block RemoveFace(WorldPoint pos, Block.Faces face) {
-        if(pos.IsNotAPoint())  return BlockDescription.NoBlock;
-        Region      region      = GetRegion(pos);
-        Chunk       chunk       = region.GetChunk(pos);
-        lock(changeLock) {
-            if(chunk == null) {
-                chunk = DefaultWorld.CreateChunk(pos);
-                region.SetChunk(chunk);
-                region.SetChanged();
-            }
-            Block block = chunk.RemoveFace(pos.GetBlockPoint(), face);
-            if( block.IsBlock() ) region.SetChanged();
-            return block;
-        }
-    }
-
-
-    // WARNING: does not adjust faces of surroundig chunks, 
-    // use only for world import, that fills the region again to the full
     public static void ClearChunk(WorldPoint pos) {
-        if(pos.IsNotAPoint())  return;
-        Region      region      = GetRegion(pos);
-        ChunkPoint  chunkPoint  = pos.GetChunkPoint();
-        Chunk       chunk       = DefaultWorld.CreateSkyChunk(chunkPoint);
-        lock(changeLock) {
-            region.SetChanged();
-            region.SetChunk(chunk);
-        }
+        throw new NotImplementedException();
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    // read 
-    ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-    public static Region GetRegion(WorldPoint worldPos) {
-        RegionPoint pos = worldPos.GetRegionPoint();
-        return GetRegion(pos);
-    }
-
-
-    public static Region GetRegion(RegionPoint pos) {
-        if(pos.IsNotAPoint())  return null;
-        
-        Region region;
-        regions.TryGetValue(pos, out region);
-        if(region != null) return region;
-        
-        Region savedRegion = regionPersister.ReadRegion(pos);
-        if(savedRegion != null) {
-            regions[pos] = savedRegion;
-            return savedRegion;
-        }
-
-        Region createdRegion = new Region(pos);
-        regions[pos] = createdRegion;
-        return createdRegion;
-    }
-
-
-    private static Region GetLoadedRegion(RegionPoint pos) {
-        if(pos.IsNotAPoint())  return null;
-        
-        Region region;
-        regions.TryGetValue(pos, out region);
-        return region;
-    }
-
-
-    public static Chunk GetChunk(WorldPoint pos) {
-        if(pos.IsNotAPoint())  return null;
-        Region region = GetRegion(pos);
-        Chunk  chunk  = region.GetChunk(pos);
-        return chunk;
-    }
-
-
-    public static Chunk GetChunk(RegionPoint regionPos, ChunkPoint chunkPos) {
+    public static Chunk GetChunk(Actor actor, RegionPoint regionPos, ChunkPoint chunkPos) {
         if(regionPos.IsNotAPoint())  return null;
         if(chunkPos.IsNotAPoint())  return null;
-        Region region = GetRegion(regionPos);
-        Chunk  chunk  = region.GetChunk(chunkPos);
-        return chunk;
+        return blockNotify.ReadChunk(actor, regionPos, chunkPos);
     }
 
 
-    public static Block GetBlock(WorldPoint pos) {
+    public static Block GetBlock(Actor actor, WorldPoint pos) {
         if(pos.IsNotAPoint())  return BlockDescription.NoBlock;
-        Region region = GetRegion(pos);
-        Chunk  chunk  = region.GetChunk(pos);
-        if(chunk != null) return chunk.GetBlock(pos.GetBlockPoint());
-        else              return DefaultWorld.GetBlock(pos);
-    }
-
-
-    public static bool HasSolidBlockAt(WorldPoint pos) {  
-        if( pos.IsNotAPoint() ) return true;   // the whole world is surrounded by imaginary solid blocks that can't be seen
-        Region region = GetRegion(pos);
-        Chunk  chunk  = region.GetChunk(pos);
-        if(chunk != null) return chunk.HasSolidBlockAt(pos.GetBlockPoint());
-        else              return DefaultWorld.HasSolidBlock(pos);
+        return blockNotify.ReadBlock(actor, pos);
     }
 
 
     public static string GetDescription() {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine();
-        sb.AppendLine("Regions loaded:   " + regions.Count);
-        sb.AppendLine("Regions changed: " + CountChangedRegions());
-
-        #if DEBUG
-            foreach(var region in regions.Values) {
-                sb.AppendLine("    " + region.ToString());
-            }
-        #endif
-        
-
+        sb.AppendLine("Regions loaded:  NOT IMPLEMENTED");
+        sb.AppendLine("Regions changed: NOT IMPLEMENTED");
         return sb.ToString();
     }
 
-
-    public static int CountChangedRegions() {
-        int count = 0;
-        foreach(Region region in regions.Values) {
-            if( region.HasChanged() ) count++;
-        }
-        return count;
-    }
-
-
-    public static int CountLoadedRegions() {
-        return regions.Count;
-    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -235,60 +114,19 @@ static public class World {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public static void ValidateLoadedChunks() {
-        Log.TraceStart("region validation");
-        foreach(Region region in regions.Values) {
-            lock(changeLock) {
-                region.Validate();
-            }
-        }
-        Log.TraceEnd("region validation");
-    }
-
-
-    public static void OptimizeLoadedChunks() {
-        Log.TraceStart("region optimization");
-        foreach(Region region in regions.Values) {
-            if(region.HasChanged()) {
-                lock(changeLock) {
-                    region.OptimizeChunks();
-                }
-            } 
-        }
-        Log.TraceEnd("region optimization");
-    }
-
-
     public static int Persist() {
-        int storedRegions = 0;
-        Log.TraceStart("region persistance");
-        foreach(Region region in regions.Values) {
-            if(region.HasChanged()) {
-                storedRegions++;
-                lock(changeLock) {
-                    #if DEBUG
-                        region.Validate();
-                    #endif                                                
-                    regionPersister.WriteRegion(region);
-                    region.SetUnchanged();
-                }
-            } 
+        lock(changeLock) {
+            #if DEBUG
+                return regionCache.WriteRegions(true);
+            #else
+                return regionCache.WriteRegions(false);
+            #endif                                                
         }
-        Log.TraceEnd("region persisted: " + storedRegions);
-        return storedRegions;
     }
 
 
     public static void FreeCache() {
-        Log.TraceStart("region cache clearance");
-        DateTime dueTime = DateTime.Now.AddMilliseconds(-RegionReleaseTime);
-        Region removedRegion;
-        foreach(Region region in regions.Values) {
-            if( region.LastUsedBefore(dueTime) && !region.HasChanged() && !region.HasActors() ) {
-                regions.TryRemove(region.Position, out removedRegion);
-            } 
-        }
-        Log.TraceEnd("region cache clearance");
+        regionCache.FreeUnusedRegions(100, RegionReleaseTime);
     }        
 
 

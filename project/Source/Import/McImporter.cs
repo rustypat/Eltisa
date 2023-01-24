@@ -31,6 +31,7 @@ class ChunkData {
 /// Imports a part of a Mindcraft World into Eltisa
 /// </summary>
 public class McImporter {
+    private readonly Actor actor = new Actor(1, "Importer", "notImportand", null, Actor.Type.Administrator, 1);
 
     string sourceDirectory;
 
@@ -127,11 +128,11 @@ public class McImporter {
                 
                 if( IsWaterlilyBlock(block) || IsCarpet(mcBlock) ) {
                     WorldPoint lowerPos = pos.Bottom();
-                    World.RemoveVisibleBlock(lowerPos);
-                    World.AddBlock(lowerPos, block);
+                    World.RemoveVisibleBlock(actor, lowerPos);
+                    World.AddBlock(actor, lowerPos, block);
                 }
                 else  {
-                    World.AddBlock(pos, block);
+                    World.AddBlock(actor, pos, block);
                 }                    
             }
         }
@@ -364,22 +365,22 @@ public class McImporter {
             for(int y=0+shiftY; y <= 255+shiftY; y++) {
                 for(int z=zFrom+shiftZ; z <= zTo+shiftZ; z++) {
                     WorldPoint pos = new WorldPoint(x, y, z);
-                    Block block    = World.GetBlock(pos);        
+                    Block block    = World.GetBlock(actor, pos);        
                     ushort adjustedBlock = GetAdjustedBlock(block, pos);      
                     if( block.BlockType.IsOneOf(MC_TrapDoor1_Lower_Left, MC_TrapDoor2_Lower_Left)) {
-                        World.RemoveVisibleBlock(pos);
-                        World.AddBlock(pos.Bottom(), adjustedBlock);
+                        World.RemoveVisibleBlock(actor, pos);
+                        World.AddBlock(actor, pos.Bottom(), adjustedBlock);
                     }
                     else if( block.BlockType == Fence_BackFront ) {
-                        World.RemoveVisibleBlock(pos);
-                        World.AddBlock(pos, adjustedBlock);
+                        World.RemoveVisibleBlock(actor, pos);
+                        World.AddBlock(actor, pos, adjustedBlock);
                     }
                     else if( block.BlockType == MC_UpperDoor_RightAttached ) {
-                        World.RemoveVisibleBlock(pos);
-                        if( adjustedBlock != Air ) World.ChangeStateOfVisibleBlock(pos.Bottom(), adjustedBlock);
+                        World.RemoveVisibleBlock(actor, pos);
+                        if( adjustedBlock != Air ) World.ChangeStateOfVisibleBlock(actor, pos.Bottom(), adjustedBlock);
                     }
                     else if( adjustedBlock != Air ) {
-                        World.ChangeStateOfVisibleBlock(pos, adjustedBlock);
+                        World.ChangeStateOfVisibleBlock(actor, pos, adjustedBlock);
                     }
                 }
             }
@@ -390,7 +391,7 @@ public class McImporter {
 
     ushort GetAdjustedBlock(Block block, WorldPoint pos) {
         if( block.Definition == MC_UpperDoor_RightAttached ) {
-            Block door = World.GetBlock(pos.Bottom());
+            Block door = World.GetBlock(actor, pos.Bottom());
             return (ushort)(door.Definition + 4);
         }
         if( block.BlockType == Fence_BackFront ) {
@@ -499,13 +500,13 @@ public class McImporter {
         Faces neighbours = NoFaces;
 
         Block neighbour;
-        neighbour = World.GetBlock(pos.Left() );
+        neighbour = World.GetBlock(actor, pos.Left() );
         if( neighbour.IsSolid() || neighbour.BlockType.IsOneOf(blockTypes) ) neighbours |= Left;
-        neighbour = World.GetBlock(pos.Right() );
+        neighbour = World.GetBlock(actor, pos.Right() );
         if( neighbour.IsSolid() || neighbour.BlockType.IsOneOf(blockTypes) ) neighbours |= Right;
-        neighbour = World.GetBlock(pos.Back() );
+        neighbour = World.GetBlock(actor, pos.Back() );
         if( neighbour.IsSolid() || neighbour.BlockType.IsOneOf(blockTypes) ) neighbours |= Back;
-        neighbour = World.GetBlock(pos.Front() );
+        neighbour = World.GetBlock(actor, pos.Front() );
         if( neighbour.IsSolid() || neighbour.BlockType.IsOneOf(blockTypes) ) neighbours |= Front;
 
         return neighbours;

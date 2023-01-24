@@ -509,6 +509,11 @@ const BlockData = new function() {
     }
 
 
+    this.hasFaces = function(blockData) {
+        return (blockData & 0b00000000000011111100000000000000) != 0;
+    }
+
+
     this.getDefinition = function(blockData) {
         return blockData & 0x3FFF;       
     }

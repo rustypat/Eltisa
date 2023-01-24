@@ -27,8 +27,6 @@ function Server(serverLocation, webSocketPath) {
         ActorList:           23,
 
         Chunks:              31,
-        BlockAdded:          33,
-        BlockRemoved:        35,
         BlocksChanged:       37,
 
         Chat:                41,
@@ -72,8 +70,6 @@ function Server(serverLocation, webSocketPath) {
             receiveActorChangedMessage(reader, messageType);
             receiveActorListMessage(reader, messageType);
             receiveChatMessage(reader, messageType);
-            receiveBlockAddedMessage(reader, messageType);
-            receiveBlockRemovedMessage(reader, messageType);
             receiveBlocksChangedMessage(reader, messageType);
             receiveLoginMessage(reader, messageType);
             receiveVideoChatMessage(reader, messageType);
@@ -101,8 +97,6 @@ function Server(serverLocation, webSocketPath) {
             case InMessageType.ActorChanged:     return "ActorChanged";
             case InMessageType.ActorList:        return "ActorList";
             case InMessageType.Chunks:           return "Chunks";
-            case InMessageType.BlockAdded:       return "BlockAdded";
-            case InMessageType.BlockRemoved:     return "BlockRemoved";
             case InMessageType.BlocksChanged:    return "BlocksChanged";
             case InMessageType.BlockResource:    return "BlockResource";
             case InMessageType.Chat:             return "Chat";
@@ -121,8 +115,6 @@ function Server(serverLocation, webSocketPath) {
     this.receiveActorListHandler       = function(message) {};
     this.receiveChatHandler            = function(message) {};
     this.receiveChunksHandler          = function(message) {};
-    this.receiveBlockAddedHandler      = function(message) {};
-    this.receiveBlockRemovedHandler    = function(message) {};
     this.receiveBlockChangedHandler    = function(message) {};
     this.receiveVideoChatHandler       = function(message) {};
     this.receiveBlockResourceHandler   = function(message) {};
@@ -197,39 +189,6 @@ function Server(serverLocation, webSocketPath) {
     }
     
 
-    function receiveBlockAddedMessage(reader, messageType) {
-        if(messageType != InMessageType.BlockAdded) return false;
-
-        const message        = {};
-        message.x            = reader.readInteger();
-        message.y            = reader.readInteger();
-        message.z            = reader.readInteger();
-        message.blockData    = reader.readInteger();
-        assert(endTag       == reader.readInteger());
-        
-        self.receiveBlockAddedHandler(message);
-        return true;        
-    }
-    
-
-    function receiveBlockRemovedMessage(reader, messageType) {
-        if(messageType != InMessageType.BlockRemoved) return false;
-
-        const message        = {};
-        message.x            = reader.readInteger();
-        message.y            = reader.readInteger();
-        message.z            = reader.readInteger();
-        message.neighbours   = new Int32Array(6);
-        for(var i=0; i< 6; i++) {
-            message.neighbours[i] = reader.readInteger();
-        }
-        assert(endTag       == reader.readInteger());
-        
-        self.receiveBlockRemovedHandler(message);
-        return true;        
-    }
-    
-
     function receiveBlocksChangedMessage(reader, messageType) {
         if(messageType != InMessageType.BlocksChanged) return false;
 
@@ -245,7 +204,7 @@ function Server(serverLocation, webSocketPath) {
         }
         assert(endTag       == reader.readInteger());
 
-        for(const chunk of changedChunks.values) {
+        for(const chunk of changedChunks.values()) {
             self.updateChunk(chunk);
         }
         

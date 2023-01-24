@@ -30,7 +30,7 @@ function ChunkStore(_viewport) {
 
     this.updateNewChunks = function(breakTime) {
         while(newChunks.length > 0) {
-            updateChunk(newChunks.pop());
+            replaceChunk(newChunks.pop());
             if(performance.now() > breakTime) return;
         }
     }
@@ -42,7 +42,7 @@ function ChunkStore(_viewport) {
         if(chunk) {
             if(!chunk.blocks) chunk.blocks = new IntegerArray(64, 64);
             chunk.blocks.add(addBlockMessage.blockData);
-            updateChunk(chunk);
+            replaceChunk(chunk);
         }
     }
 
@@ -52,7 +52,7 @@ function ChunkStore(_viewport) {
         var   chunk     = chunks.get(key);
         if(chunk) {
             chunk.blocks.replaceFirstMatch(changeBlockMessage.blockData, BlockData.equalLocation );
-            updateChunk(chunk);
+            replaceChunk(chunk);
         }
     }
 
@@ -75,7 +75,7 @@ function ChunkStore(_viewport) {
         updateNeighbour(removeBlockMessage.x,   removeBlockMessage.y-1, removeBlockMessage.z,   removeBlockMessage.neighbours[5], chunk);
         
         if(chunk) {
-            updateChunk(chunk);
+            replaceChunk(chunk);
         }
     }
 
@@ -90,17 +90,17 @@ function ChunkStore(_viewport) {
             if( !neighbourChunk.blocks.replaceFirstMatch(neighbourDefinition, BlockData.equalLocation) ) {
                 neighbourChunk.blocks.add(neighbourDefinition);
             }
-            if( neighbourChunk != chunk )  updateChunk(neighbourChunk);
+            if( neighbourChunk != chunk )  replaceChunk(neighbourChunk);
         }
     }
 
 
-    function updateBlock(x, y, z, blockdata) {
+    this.updateBlock = function(x, y, z, blockdata) {
         const key = ChunkPos.createFromWorldPos(x, y, z);
         if( !key ) return null;
         const chunk = chunks.get(key);
         if( !chunk ) return null;
-        if(BlockData.isBlock(blockdata)) {
+        if(BlockData.hasFaces(blockdata)) {
             chunk.blocks.replaceOrAdd(blockdata, BlockData.equalLocation);
         }
         else {
@@ -110,7 +110,7 @@ function ChunkStore(_viewport) {
     }
 
 
-    function updateChunk(chunkDescription) {
+    function replaceChunk(chunkDescription) {
         // add or replace mesh
         const key       = ChunkPos.create(chunkDescription.x, chunkDescription.y, chunkDescription.z);
         var   chunk     = chunks.get(key);
@@ -126,6 +126,12 @@ function ChunkStore(_viewport) {
         return;
     }
 
+    this.updateChunk = function(chunk) {
+        viewport.removeChunkMesh(chunk);
+        viewport.addChunkMesh(chunk);
+        chunk.isValid = true;        
+
+    }
 
     const chunkPos = {};
 

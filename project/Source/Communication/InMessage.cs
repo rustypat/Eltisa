@@ -185,48 +185,33 @@ public static class InMessage {
     
 
     public class SwitchBlocks {
-        public const int  MaxCoordinates = Configuration.MaxSwitches*3;
         public const byte Id = 38;
-        public int        PositionCount;
-        public int[]      Coordinates;
-        public int        PosX;
-        public int        PosY;
-        public int        PosZ;
+        public readonly WorldPoint[] Positions;
 
-        public WorldPoint GetPosition(int i) { 
-            if(PositionCount == 1) return new WorldPoint(PosX, PosY, PosZ);
-            else                   return new WorldPoint(Coordinates[i*3], Coordinates[i*3+1], Coordinates[i*3+2]);
+        public SwitchBlocks(int numberOfBlocksToSwitch) {
+            Positions = new WorldPoint[numberOfBlocksToSwitch];
         }
     }
 
     static public SwitchBlocks ToSwitchBlockMessage(byte[] inBuffer) {
         var reader                 = new ArrayReader(inBuffer);
-        var switchBlockMessage     = new SwitchBlocks();
-
         int messageId              = reader.ReadInt();
-        int coordinateCount        = reader.ReadInt();            
+        int switchCount            = reader.ReadInt() / 3;            
 
-        if(coordinateCount < 3 || coordinateCount > SwitchBlocks.MaxCoordinates) {
-            throw new ArgumentOutOfRangeException("coordinateCount is out of range: " + coordinateCount);
+        if(switchCount < 3 || switchCount > Configuration.MaxSwitches) {
+            throw new ArgumentOutOfRangeException("switchCount is out of range: " + switchCount);
         }
-        else if(coordinateCount == 3) {
-            switchBlockMessage.PosX    = reader.ReadInt();
-            switchBlockMessage.PosY    = reader.ReadInt();
-            switchBlockMessage.PosZ    = reader.ReadInt();
-        }
-        else {
-            switchBlockMessage.Coordinates = new int[coordinateCount];
-            for(int i=0; i < coordinateCount; i++) {
-                switchBlockMessage.Coordinates[i]    = reader.ReadInt();
-            }
-            switchBlockMessage.PosX    = switchBlockMessage.Coordinates[0];
-            switchBlockMessage.PosY    = switchBlockMessage.Coordinates[1];
-            switchBlockMessage.PosZ    = switchBlockMessage.Coordinates[2];
+
+        var switchBlockMessage     = new SwitchBlocks(switchCount);
+
+        for(int i=0; i < switchCount; i++) {
+            var x = reader.ReadInt();
+            var y = reader.ReadInt();
+            var z = reader.ReadInt();
+            var pos = new WorldPoint(x, y, z);
+            switchBlockMessage.Positions[i] = pos;
         }
         int endTag                 = reader.ReadInt();
-
-        switchBlockMessage.PositionCount = coordinateCount / 3;
-
         Assert(messageId == SwitchBlocks.Id);
         Assert(endTag    == EndTag);            
         return switchBlockMessage;

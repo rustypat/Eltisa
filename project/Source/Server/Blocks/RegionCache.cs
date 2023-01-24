@@ -33,7 +33,7 @@ public class RegionCache : IRegionAccess {
     }
 
 
-    public void WriteRegions(bool validate=false) {
+    public int WriteRegions(bool validate=false) {
         int storedRegions = 0;
         Log.TraceStart("region persistance");
         foreach(Region region in regions.Values) {
@@ -48,6 +48,7 @@ public class RegionCache : IRegionAccess {
             } 
         }
         Log.TraceEnd("region persisted: " + storedRegions);
+        return storedRegions;
     }
 
 
@@ -57,7 +58,7 @@ public class RegionCache : IRegionAccess {
         Region removedRegion;
         if(regions.Count > regionsToKeep) {
             foreach(Region region in regions.Values) {
-                if( region.LastUsedBefore(dueTime) && !region.HasChanged() && !region.HasActors() ) {
+                if( region.LastUsedBefore(dueTime) && !region.HasChanged() ) {
                     regions.TryRemove(region.Position, out removedRegion);
                 } 
             }

@@ -16,6 +16,7 @@ public class BlockController : IBlockAccess {
 
 
     public Change[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
+        if(blockDescription >= BlockDescription.MaxBlockDefinition) return NoChanges;
         return blockProvider.CreateBlock(worldPos, blockDescription);
     }
 
@@ -53,8 +54,8 @@ public class BlockController : IBlockAccess {
     }
 
 
-    public Chunk ReadChunk(Actor actor, WorldPoint worldPos)  {
-        return blockProvider.ReadChunk(worldPos);
+    public Chunk ReadChunk(Actor actor, RegionPoint regionPos, ChunkPoint chunkPos)  {
+        return blockProvider.ReadChunk(regionPos, chunkPos);
     }
 
 

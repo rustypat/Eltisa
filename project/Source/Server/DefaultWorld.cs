@@ -42,6 +42,18 @@ public static class DefaultWorld {
     }
 
 
+    public static Chunk CreateChunk(RegionPoint regionPos, ChunkPoint chunkPos) {
+        int y = regionPos.Y * chunkPos.Y * 16;
+
+        if( y == - ChunkRadiusVertical ) return CreateMagmaChunk(chunkPos);
+        else if( y  < 0 )                return CreateEarthChunk(chunkPos);
+        else if( y == 0 )                return CreateSeaChunk(chunkPos);
+        else if( y == 1 )                return CreateSeaSurfaceChunk(chunkPos);
+        else if( y  > 0 )                return CreateSkyChunk(chunkPos);
+        else throw new Exception("this should never happen");
+    }
+
+
     public static bool IsModifiedChunk(Chunk chunk) {
         if( chunk.Position.Y == - ChunkRadiusVertical ) return IsModifiedMagmaChunk(chunk);
         else if( chunk.Position.Y  < 0 )                return IsModifiedEarthChunk(chunk);

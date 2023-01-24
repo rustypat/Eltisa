@@ -58,8 +58,8 @@ public class BlockNotify : IBlockAccess {
     }
 
 
-    public Chunk ReadChunk(Actor actor, WorldPoint worldPos)  {
-        var chunk = blockAccess.ReadChunk(actor, worldPos);
+    public Chunk ReadChunk(Actor actor, RegionPoint regionPos, ChunkPoint chunkPos)  {
+        var chunk = blockAccess.ReadChunk(actor, regionPos, chunkPos);
         return chunk;
     }
 

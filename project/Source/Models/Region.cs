@@ -15,7 +15,6 @@ public class Region {
     private DateTime                               lastUsed;
     private bool                                   hasChanged;  
     private Dictionary<ChunkPoint, Chunk>          chunks;        
-    private HashSet<Actor>                         actors; 
 
 
     public Region(RegionPoint pos, int owner=0, int accessRights=0, List<Chunk> chunkList=null) {
@@ -110,47 +109,15 @@ public class Region {
     public void SetChanged()   => hasChanged = true;
     public void SetUnchanged() => hasChanged = false;     
     public bool HasChanged()   => hasChanged; 
-    public bool HasActors()    => actors != null && actors.Count > 0; 
 
     override
     public string ToString() {
         StringBuilder strb = new StringBuilder();
         strb.Append("Region " + Position.X + "/" + Position.Y + "/" + Position.Z);
-        if( actors != null ) strb.Append(" actors:" + actors.Count);
         if( HasChanged() ) strb.Append("  changed");
         return strb.ToString();
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    // actors
-    ///////////////////////////////////////////////////////////////////////////////////////////
-
-    public void AddActor(Actor actor) {
-        lastUsed    = DateTime.Now;
-        if(actors == null) actors = new HashSet<Actor>();
-        lock(actors) {
-            actors.Add(actor);
-        }
-    }
-
-    
-    public void RemoveActor(Actor actor) {
-        lastUsed    = DateTime.Now;
-        if(actors == null) return;
-        lock(actors) {
-            actors.Remove(actor);
-        }
-    }        
-
-    
-    private static readonly HashSet<Actor> emptyActorsDummy = new HashSet<Actor>();
-
-    public IEnumerable<Actor> GetActors()  {
-        lastUsed    = DateTime.Now;
-        if(actors == null) return emptyActorsDummy;
-        else               return actors;
-    }
-    
 
 }

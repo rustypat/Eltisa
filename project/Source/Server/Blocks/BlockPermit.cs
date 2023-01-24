@@ -43,8 +43,8 @@ public class BlockPermit : IBlockAccess {
     }
 
 
-    public Chunk ReadChunk(Actor actor, WorldPoint worldPos)  {
-        return blockAccess.ReadChunk(actor, worldPos);
+    public Chunk ReadChunk(Actor actor, RegionPoint regionPos, ChunkPoint chunkPos)  {
+        return blockAccess.ReadChunk(actor, regionPos, chunkPos);
     }
 
 

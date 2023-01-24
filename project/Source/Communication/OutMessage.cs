@@ -18,8 +18,6 @@ public static class OutMessage {
         ActorChanged     = 21,
         ActorList        = 23,
         Chunks           = 31,
-        BlockAdded       = 33,
-        BlockRemoved     = 35,
         BlocksChanged    = 37,
         Chat             = 41,
         VideoChat        = 43,
@@ -173,67 +171,6 @@ public static class OutMessage {
     }
 
 
-    public static byte[] createBlockAddedMessage(WorldPoint blockPos, Block block) {
-        messageCounter += 1;
-
-        ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)OutMessageType.BlockAdded);
-        builder.WriteInt(messageCounter);
-        builder.WriteInt(blockPos.X);
-        builder.WriteInt(blockPos.Y);
-        builder.WriteInt(blockPos.Z);
-        builder.WriteUint(block.GetData());
-        builder.WriteInt(EndTag);
-
-        byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " block added, length " + message.Length);
-        return message;
-    }
-
-
-    public static byte[] createBlocksChangedMessage(WorldPoint blockPos, Block block) {
-        messageCounter += 1;
-
-        ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)OutMessageType.BlocksChanged);
-        builder.WriteInt(messageCounter);
-        builder.WriteInt(1);
-        builder.WriteInt(blockPos.X);
-        builder.WriteInt(blockPos.Y);
-        builder.WriteInt(blockPos.Z);
-        builder.WriteUint(block.GetData());
-        builder.WriteInt(EndTag);
-
-        byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " blocks changed, length " + message.Length);
-        return message;
-    }
-
-
-    public static byte[] createBlocksChangedMessage(int changedCount, WorldPoint[] positions, Block[] blocks) {
-        messageCounter += 1;
-
-        ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)OutMessageType.BlocksChanged);
-        builder.WriteInt(messageCounter);
-        builder.WriteInt(0);                 // fill in for change type
-        builder.WriteInt(changedCount);
-        for(int i=0; i < changedCount; i++) {
-            WorldPoint pos   = positions[i];
-            Block      block = blocks[i];
-            builder.WriteInt(pos.X);
-            builder.WriteInt(pos.Y);
-            builder.WriteInt(pos.Z);
-            builder.WriteUint(block.GetData());
-        }
-        builder.WriteInt(EndTag);
-
-        byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " blocks changed, length " + message.Length);
-        return message;
-    }
-
-
     public static byte[] createBlocksChangedMessage(Change[] changes) {
         messageCounter += 1;
 
@@ -251,26 +188,6 @@ public static class OutMessage {
 
         byte[] message = builder.ToArray();
         Log.Trace("send message " + messageCounter + " blocks changed, length " + message.Length);
-        return message;
-    }
-
-
-    public static byte[] createBlockRemovedMessage(WorldPoint blockPos, Block[] neighbours) {
-        messageCounter += 1;
-
-        ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)OutMessageType.BlockRemoved);
-        builder.WriteInt(messageCounter);
-        builder.WriteInt(blockPos.X);
-        builder.WriteInt(blockPos.Y);
-        builder.WriteInt(blockPos.Z);
-        foreach(Block block in neighbours) {
-            builder.WriteUint(block.GetData());
-        }
-        builder.WriteInt(EndTag);
-
-        byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " block removed, length " + message.Length);
         return message;
     }
 

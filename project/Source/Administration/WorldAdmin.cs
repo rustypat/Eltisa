@@ -10,13 +10,14 @@ using static System.Diagnostics.Debug;
 
 
 public static class WorldAdmin {
+    private static readonly Actor actor = new Actor(1, "Importer", "notImportand", null, Actor.Type.Administrator, 1);
 
     public static void CreateSeaPit(int xFrom, int xTo, int zFrom, int zTo, int depth) {
         Log.Info("create sea pit start");
         for(int x=xFrom; x <= xTo; x++) {
             for(int z=zFrom; z <= zTo; z++) {
                 for(int y=DefaultWorld.SeaLevel-1; y > DefaultWorld.SeaLevel-1-depth; y--) {
-                    World.RemoveVisibleBlock(new WorldPoint(x, y, z));
+                    World.RemoveVisibleBlock(actor, new WorldPoint(x, y, z));
                 }
             }
         }
@@ -30,8 +31,8 @@ public static class WorldAdmin {
         for(int x=xFrom; x <= xTo; x++) {
             for(int z=zFrom; z > zFrom-coastWidth; z--) {
                 int y = DefaultWorld.SeaLevel;
-                while(World.HasSolidBlockAt(new WorldPoint(x, y+1, z))) {
-                    World.AddBlock(new WorldPoint(x, y, z-1), BlockDescription.Stone);
+                while(World.GetBlock(actor, new WorldPoint(x, y+1, z)).IsSolid()) {
+                    World.AddBlock(actor, new WorldPoint(x, y, z-1), BlockDescription.Stone);
                     y++;
                 }
             }
@@ -40,8 +41,8 @@ public static class WorldAdmin {
         for(int z=zFrom-coastWidth; z <= zTo; z++) {
             for(int x=xFrom; x > xFrom-coastWidth; x--) {
                 int y = DefaultWorld.SeaLevel;
-                while(World.HasSolidBlockAt(new WorldPoint(x, y+1, z))) {
-                    World.AddBlock(new WorldPoint(x-1, y, z), BlockDescription.Stone);
+                while(World.GetBlock(actor, new WorldPoint(x, y+1, z)).IsSolid()) {
+                    World.AddBlock(actor, new WorldPoint(x-1, y, z), BlockDescription.Stone);
                     y++;
                 }
             }
@@ -50,8 +51,8 @@ public static class WorldAdmin {
         for(int x=xFrom-coastWidth; x <= xTo; x++) {
             for(int z=zTo; z <= zTo+coastWidth; z++) {
                 int y = DefaultWorld.SeaLevel;
-                while(World.HasSolidBlockAt(new WorldPoint(x, y+1, z))) {
-                    World.AddBlock(new WorldPoint(x, y, z+1), BlockDescription.Stone);
+                while(World.GetBlock(actor, new WorldPoint(x, y+1, z)).IsSolid()) {
+                    World.AddBlock(actor, new WorldPoint(x, y, z+1), BlockDescription.Stone);
                     y++;
                 }
             }
@@ -60,8 +61,8 @@ public static class WorldAdmin {
         for(int z=zFrom-coastWidth; z <= zTo+coastWidth; z++) {
             for(int x=xTo; x <= xTo+coastWidth; x++) {
                 int y = DefaultWorld.SeaLevel;
-                while(World.HasSolidBlockAt(new WorldPoint(x, y+1, z))) {
-                    World.AddBlock(new WorldPoint(x+1, y, z), BlockDescription.Stone);
+                while(World.GetBlock(actor, new WorldPoint(x, y+1, z)).IsSolid()) {
+                    World.AddBlock(actor, new WorldPoint(x+1, y, z), BlockDescription.Stone);
                     y++;
                 }
             }
@@ -77,18 +78,18 @@ public static class WorldAdmin {
         int coreRadiusSquare       = radiusCore * radiusCore;
 
         var centerPosition = new WorldPoint(xCenter, yCenter, zCenter);
-        Block centerBlock = World.AddBlock(centerPosition, BlockDescription.Gem_3);
+        World.AddBlock(actor, centerPosition, BlockDescription.Gem_3);
         for(int x=-radius; x <= radius; x++) {
             for(int y=-radius; y <= radius; y++) {
                 for(int z=-radius; z <= radius; z++) {
                     int distanceSquare = x*x + y*y + z*z;
                     if( distanceSquare < radiusSquare && distanceSquare >= innerRadiusSquare) {
                         var pos = new WorldPoint(xCenter + x, yCenter+y, zCenter+z);
-                        World.AddBlock(pos, block);
+                        World.AddBlock(actor, pos, block);
                     }
                     else if ( distanceSquare < radiusCore ) {
                         var pos = new WorldPoint(xCenter + x, yCenter+y, zCenter+z);
-                        World.AddBlock(pos, BlockDescription.Goldblock);
+                        World.AddBlock(actor, pos, BlockDescription.Goldblock);
                     }
                 }
             }
@@ -102,7 +103,7 @@ public static class WorldAdmin {
         for(int x=xFrom; x <= xTo; x++) {
             for(int y=yTo; y >= yFrom; y--) {
                 for(int z=zFrom; z <= zTo; z++) {
-                    World.AddBlock(new WorldPoint(x, y, z), block);
+                    World.AddBlock(actor, new WorldPoint(x, y, z), block);
                 }
             }
         }
@@ -116,7 +117,7 @@ public static class WorldAdmin {
         for(int x=xFrom; x <= xTo; x++) {
             for(int y=yTo; y >= yFrom; y--) {
                 for(int z=zFrom; z <= zTo; z++) {
-                    World.RemoveVisibleBlock(new WorldPoint(x, y, z));
+                    World.RemoveVisibleBlock(actor, new WorldPoint(x, y, z));
                 }
             }
         }
@@ -186,7 +187,7 @@ public static class WorldAdmin {
         foreach(FileInfo fileInfo in fileInfos) {
             if( !fileInfo.Name.EndsWith(RegionPersister.FileType) ) continue;
             RegionPoint pos  = regionPersister.GetFilePosition(fileInfo.Name);
-            Region region    = World.GetRegion(pos);
+            Region region    = regionPersister.ReadRegion(pos);
             region.Validate();
         }                    
         Log.Info("validate world end");
@@ -195,8 +196,6 @@ public static class WorldAdmin {
 
     public static void Store() {
         Log.Info("store world start");
-        World.OptimizeLoadedChunks();            
-        World.ValidateLoadedChunks();
         World.Persist();
         Log.Info("store world end");
     }

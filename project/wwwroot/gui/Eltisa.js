@@ -436,16 +436,6 @@ const eltisa = new function() {
     }
 
 
-    server.receiveBlockAddedHandler = function(blockMessage) {
-        chunkStore.addBlock(blockMessage);
-    }
-
-
-    server.receiveBlockRemovedHandler = function(blockMessage) {
-        chunkStore.removeBlock(blockMessage);
-    }
-
-
     server.receiveBlockChangedHandler = function(blockMessage) {
         chunkStore.changeBlock(blockMessage);
     }

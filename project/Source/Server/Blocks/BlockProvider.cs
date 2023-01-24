@@ -123,7 +123,19 @@ public class BlockProvider {
     }
 
 
-    public Chunk ReadChunk(WorldPoint worldPos)  {
+    public Chunk ReadChunk(RegionPoint regionPos, ChunkPoint chunkPos)  {
+        Region region         = regionAccess.ReadRegion(regionPos);
+        Chunk chunk           = region.GetChunk(chunkPos);
+
+        if(chunk == null) {
+            chunk = DefaultWorld.CreateChunk(regionPos, chunkPos);
+            region.SetChunk(chunk);
+        }
+        return chunk;
+    }
+
+
+    private Chunk ReadChunk(WorldPoint worldPos)  {
         RegionPoint regionPos = worldPos.GetRegionPoint();
         Region region         = regionAccess.ReadRegion(regionPos);
         ChunkPoint chunkPos   = worldPos.GetChunkPoint();

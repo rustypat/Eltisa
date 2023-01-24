@@ -24,7 +24,7 @@ public class Chunk {
         Position = position;
         this.DefaultBlockDefinition = defaultBlockDefinition;
         if(defaultBlockDefinition == BlockDescription.Air) BlockCount = 0;
-        else                                             BlockCount = ChunkVolume;
+        else                                               BlockCount = ChunkVolume;
     }
 
 
@@ -112,6 +112,7 @@ public class Chunk {
 
     public Block CreateTransparentBlock(BlockPoint pos, ushort blockDefinition, Block.Faces faces) {
         var block    = new Block(pos, blockDefinition, faces);
+        RemoveEmptyBlock(block);
         InsertTransparentBlock(block);
         BlockCount++;
         return block;
@@ -120,6 +121,7 @@ public class Chunk {
 
     public Block CreateSolidBlock(BlockPoint pos, ushort blockDefinition, Block.Faces faces) {
         var block    = new Block(pos, blockDefinition, faces);
+        RemoveEmptyBlock(block);
         if(block.BlockFaces == Block.NoFaces) {                    
             if(IsAdditiv() || block.Definition != DefaultBlockDefinition) {
                 InsertInnerBlock(block);                
@@ -210,212 +212,9 @@ public class Chunk {
 
 
 
-
-
-
-
-    public Block AddBlock(WorldPoint worldPos, ushort blockDefinition) {
-        Assert(blockDefinition != 0);
-        var pos = worldPos.GetBlockPoint();
-
-        // check if adding is possible
-        if(HasBlockAt(pos) ) return BlockDescription.NoBlock;
-
-        if(EmptyBlocks.Size() > 0) {
-            EmptyBlocks.RemoveBlock(pos);
-        }
-
-        if(Block.IsTransparent(blockDefinition)) {
-            var faces    = DetermineVisibleFaces(worldPos, pos);
-            var block    = new Block(pos, blockDefinition, faces);
-            InsertTransparentBlock(block);
-            BlockCount++;
-            return block;
-        }
-        else {  // solid block
-            var faces    = RemoveVisibleFacesOfNeighbours(worldPos, pos);
-            var block    = new Block(pos, blockDefinition, faces);
-            if(block.BlockFaces == Block.NoFaces) {                    
-                if(IsAdditiv() || block.Definition != DefaultBlockDefinition) {
-                    InsertInnerBlock(block);                
-                }
-            }
-            else {
-                InsertBorderBlock(block);
-            }                
-            BlockCount++;
-            return block;
-        }
-    }
-
-
-    public Block RemoveVisibleBlock(WorldPoint worldPos) {
-        BlockPoint pos = worldPos.GetBlockPoint();
-        Block      block;
-
-        // remove transparent block
-        block = TransparentBlocks.RemoveBlock(pos);
-        if(block.IsBlock()) {
-            BlockCount--;
-            if(IsSubtractiv()) {
-                InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
-            }
-            return block;
-        }
-
-        // remove solid block
-        block = BorderBlocks.RemoveBlock(pos);
-        if(block.IsBlock()) {
-            BlockCount--;
-            if(IsSubtractiv()) {
-                InsertEmptyBlock(new Block(pos, BlockDescription.Air, Block.NoFaces));
-            }
-            // adjust faces and regroup neighbour blocks
-            AddVisibleFacesToNeighbours(worldPos, pos);
-            return block;
-        }
-        
-        return BlockDescription.NoBlock;
-    }
-
-
-    public Block ChangeStateOfVisibleBlock(WorldPoint worldPos, ushort blockDefinition) {
-        Assert(blockDefinition != 0);
-        var pos = worldPos.GetBlockPoint();
-
-        var oldBlock    = BorderBlocks.GetBlock(pos);
-        if(oldBlock.IsBlock()) {
-            var newBlock    = new Block(pos, blockDefinition, oldBlock.BlockFaces);  
-            if( oldBlock.GetData() == newBlock.GetData() ) {
-                return BlockDescription.NoBlock;                       
-            }
-            if(!oldBlock.EqualsExceptState(newBlock)) {
-                return BlockDescription.NoBlock;   // new block type does not match old block type
-            }
-            else {
-                ReplaceBorderBlock(newBlock);
-                return newBlock;
-            }
-        }
-
-        oldBlock = TransparentBlocks.GetBlock(pos);
-        if(oldBlock.IsBlock()) {
-            var newBlock    = new Block(pos, blockDefinition, oldBlock.BlockFaces);            
-            if(!oldBlock.EqualsExceptState(newBlock)) {
-                return BlockDescription.NoBlock;
-            }
-            else {
-                ReplaceTransparentBlock(newBlock);
-                return newBlock;
-            }
-        }
-
-        // there was no block to change
-        return BlockDescription.NoBlock;
-    }
-
-
     ///////////////////////////////////////////////////////////////////////////////////////////
     // face management
     ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-    private Block.Faces DetermineVisibleFaces(WorldPoint  worldPos, BlockPoint blockPos) {
-        Block.Faces faces = Block.NoFaces;
-        
-        if(blockPos.IsMostLeft()) {
-            if( !World.HasSolidBlockAt(worldPos.Left())   )  faces |= Block.Faces.Left;
-        }
-        else {
-            if(       !HasSolidBlockAt(blockPos.Left())   )  faces |= Block.Faces.Left;
-        }
-
-        if(blockPos.IsMostRight()) {
-            if( !World.HasSolidBlockAt(worldPos.Right())  )  faces |= Block.Faces.Right;
-        }
-        else {
-            if(       !HasSolidBlockAt(blockPos.Right())  )  faces |= Block.Faces.Right;
-        }
-
-        if(blockPos.IsMostBack()) {
-            if( !World.HasSolidBlockAt(worldPos.Back())   )  faces |= Block.Faces.Back;
-        }
-        else {
-            if(       !HasSolidBlockAt(blockPos.Back())   )  faces |= Block.Faces.Back;
-        }
-
-        if(blockPos.IsMostFront()) {
-            if( !World.HasSolidBlockAt(worldPos.Front())  )  faces |= Block.Faces.Front;
-        }
-        else {
-            if(       !HasSolidBlockAt(blockPos.Front())  )  faces |= Block.Faces.Front;
-        }
-
-        if(blockPos.IsMostBottom()) {
-            if( !World.HasSolidBlockAt(worldPos.Bottom()) )  faces |= Block.Faces.Bottom;
-        }
-        else {
-            if(       !HasSolidBlockAt(blockPos.Bottom()) )  faces |= Block.Faces.Bottom;
-        }
-
-        if(blockPos.IsMostTop()) {
-            if( !World.HasSolidBlockAt(worldPos.Top())    )  faces |= Block.Faces.Top;
-        }
-        else {
-            if(       !HasSolidBlockAt(blockPos.Top())    )  faces |= Block.Faces.Top;
-        }
-        
-        return faces;
-    }
-
-
-    private Block.Faces RemoveVisibleFacesOfNeighbours(WorldPoint  worldPos, BlockPoint blockPos) {
-        Block.Faces faces = Block.NoFaces;
-
-        Block neighbour;
-        
-        if(blockPos.IsMostLeft())   neighbour = World.RemoveFace(worldPos.Left(),  Block.Faces.Right);
-        else                        neighbour =             RemoveFace(blockPos.Left(),  Block.Faces.Right);
-        if(!neighbour.IsSolid())    faces |= Block.Faces.Left;
-
-        if(blockPos.IsMostRight())  neighbour = World.RemoveFace(worldPos.Right(), Block.Faces.Left);
-        else                        neighbour =             RemoveFace(blockPos.Right(), Block.Faces.Left);
-        if(!neighbour.IsSolid())    faces |= Block.Faces.Right;
-        
-        if(blockPos.IsMostBack())   neighbour = World.RemoveFace(worldPos.Back(),  Block.Faces.Front);
-        else                        neighbour =             RemoveFace(blockPos.Back(),  Block.Faces.Front);
-        if(!neighbour.IsSolid())    faces |= Block.Faces.Back;
-        
-        if(blockPos.IsMostFront())  neighbour = World.RemoveFace(worldPos.Front(), Block.Faces.Back);
-        else                        neighbour =             RemoveFace(blockPos.Front(), Block.Faces.Back);
-        if(!neighbour.IsSolid())    faces |= Block.Faces.Front;
-        
-        if(blockPos.IsMostBottom()) neighbour = World.RemoveFace(worldPos.Bottom(),Block.Faces.Top); 
-        else                        neighbour =             RemoveFace(blockPos.Bottom(),Block.Faces.Top); 
-        if(!neighbour.IsSolid())    faces |= Block.Faces.Bottom;
-        
-        if(blockPos.IsMostTop())    neighbour = World.RemoveFace(worldPos.Top(),   Block.Faces.Bottom); 
-        else                        neighbour =             RemoveFace(blockPos.Top(),   Block.Faces.Bottom); 
-        if(!neighbour.IsSolid())    faces |= Block.Faces.Top;
-        
-        return faces;
-    }
-
-
-    private void AddVisibleFacesToNeighbours(WorldPoint  worldPos, BlockPoint blockPos) {
-        if(blockPos.IsMostLeft())   World.AddFace(worldPos.Left(),  Block.Faces.Right);
-        else                                    AddFace(blockPos.Left(),  Block.Faces.Right);
-        if(blockPos.IsMostRight())  World.AddFace(worldPos.Right(), Block.Faces.Left);
-        else                                    AddFace(blockPos.Right(), Block.Faces.Left);
-        if(blockPos.IsMostBack())   World.AddFace(worldPos.Back(),  Block.Faces.Front);
-        else                                    AddFace(blockPos.Back(),  Block.Faces.Front);            
-        if(blockPos.IsMostFront())  World.AddFace(worldPos.Front(), Block.Faces.Back);
-        else                                    AddFace(blockPos.Front(), Block.Faces.Back);
-        if(blockPos.IsMostBottom()) World.AddFace(worldPos.Bottom(),Block.Faces.Top);
-        else                                    AddFace(blockPos.Bottom(),Block.Faces.Top);
-        if(blockPos.IsMostTop())    World.AddFace(worldPos.Top(),   Block.Faces.Bottom);
-        else                                    AddFace(blockPos.Top(),   Block.Faces.Bottom);
-    }        
 
 
     // return value is the block at pos after potential face removing
@@ -613,30 +412,28 @@ public class Chunk {
 
 
     public void Validate(RegionPoint regionPos) {
-        #if DEBUG
-            Log.Info("validate " + this);
-        #endif                        
+            Log.Info("validate " + this + " is not fully implemented!");                      
         // validate block lists
-        BorderBlocks.ForAll( block => {
-            WorldPoint  worldPos = new WorldPoint(regionPos, Position, block.Position);
-            Block.Faces faces = DetermineVisibleFaces(worldPos, block.Position);
-            Validate( faces == block.BlockFaces, "invalid faces: " + block);
-            Validate( faces != Block.NoFaces, "block in border block has no visible faces");
-            Validate( block.IsSolid(), "block in border block list is not solid: " + block);
-        });
-        InnerBlocks.ForAll( block => {
-            WorldPoint  worldPos = new WorldPoint(regionPos, Position, block.Position);
-            Block.Faces faces = DetermineVisibleFaces(worldPos, block.Position);
-            Validate( faces == block.BlockFaces, "invalid faces: " + block);
-            Validate( faces == Block.NoFaces, "block in inner block list has faces");
-            Validate( block.IsSolid(), "block in inner block list is not solid: " + block);
-        });
-        TransparentBlocks.ForAll( block => {
-            WorldPoint  worldPos = new WorldPoint(regionPos, Position, block.Position);
-            Block.Faces faces = DetermineVisibleFaces(worldPos, block.Position);
-            Validate( faces == block.BlockFaces, "invalid faces: " + block);
-            Validate( block.IsTransparent(), "block in transparent block list is not transparent: " + block);
-        });
+        // BorderBlocks.ForAll( block => {
+        //     WorldPoint  worldPos = new WorldPoint(regionPos, Position, block.Position);
+        //     Block.Faces faces = DetermineVisibleFaces(worldPos, block.Position);
+        //     Validate( faces == block.BlockFaces, "invalid faces: " + block);
+        //     Validate( faces != Block.NoFaces, "block in border block has no visible faces");
+        //     Validate( block.IsSolid(), "block in border block list is not solid: " + block);
+        // });
+        // InnerBlocks.ForAll( block => {
+        //     WorldPoint  worldPos = new WorldPoint(regionPos, Position, block.Position);
+        //     Block.Faces faces = DetermineVisibleFaces(worldPos, block.Position);
+        //     Validate( faces == block.BlockFaces, "invalid faces: " + block);
+        //     Validate( faces == Block.NoFaces, "block in inner block list has faces");
+        //     Validate( block.IsSolid(), "block in inner block list is not solid: " + block);
+        // });
+        // TransparentBlocks.ForAll( block => {
+        //     WorldPoint  worldPos = new WorldPoint(regionPos, Position, block.Position);
+        //     Block.Faces faces = DetermineVisibleFaces(worldPos, block.Position);
+        //     Validate( faces == block.BlockFaces, "invalid faces: " + block);
+        //     Validate( block.IsTransparent(), "block in transparent block list is not transparent: " + block);
+        // });
         EmptyBlocks.ForAll( block => {
             Validate( block.Definition == BlockDescription.Air, "block in empty list is not zero: " + block);
         });
@@ -700,7 +497,14 @@ public class Chunk {
     public void InsertEmptyBlock(Block block) {
         if( EmptyBlocks == null) EmptyBlocks = new BlockList();
         EmptyBlocks.Insert(block);
-    }   
+    }  
+    
+
+    public void RemoveEmptyBlock(Block block) {
+        if( EmptyBlocks == null) return;
+        if( EmptyBlocks.Size() == 0) return;
+        EmptyBlocks.Remove(block);
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////

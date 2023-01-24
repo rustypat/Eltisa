@@ -45,15 +45,6 @@ public class Actor {
         Position     = new WorldPoint(x, y, z);
         // if(RegionStore.HasSolidBlock(newPos)) return false;  TODO consider reactivating check for non admins
 
-        Region     newRegion = World.GetRegion(Position);
-        WorldPoint oldPos    = new WorldPoint(PositionX, PositionY, PositionZ);
-        Region     oldRegion = World.GetRegion(oldPos);
-
-        if(newRegion != oldRegion) {
-            newRegion?.AddActor(this);
-            oldRegion?.RemoveActor(this);
-        }
-
         PositionX = x;
         PositionY = y;
         PositionZ = z;

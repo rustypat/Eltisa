@@ -124,65 +124,28 @@ public static class InMessageHandler {
     static void HandleRemoveBlock(HomeSocket socket, byte[] inBuffer) {
         var inMessage = InMessage.ToRemoveBlockMessage(inBuffer);
         var position     = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
-        if( !Policy.CanModifyBlock(socket.GetActor(), position)) return;
-
-        Block removedBlock = World.RemoveVisibleBlock(position);
-        if(removedBlock.IsNoBlock() ) return;
-        if(removedBlock.HasResource() ) {
-            ResourcePersister.DeleteText(position);
-        }
-
-        Block[] neighbours = new Block[6];
-        neighbours[0] = World.GetBlock(position.Left());
-        neighbours[1] = World.GetBlock(position.Right());
-        neighbours[2] = World.GetBlock(position.Front());
-        neighbours[3] = World.GetBlock(position.Back());
-        neighbours[4] = World.GetBlock(position.Top());
-        neighbours[5] = World.GetBlock(position.Bottom());
-
-        var removeMessage = OutMessage.createBlockRemovedMessage(position, neighbours);
-        OutMessageHandler.SendMessageToRange(removeMessage, position, ClientCacheBlockRadius);                
+        World.RemoveVisibleBlock(socket.GetActor(), position);
     }
 
 
     static void HandleAddBlock(HomeSocket socket, byte[] inBuffer) {
         var inMessage = InMessage.ToAddBlockMessage(inBuffer);
-        if(inMessage.BlockInfo >= BlockDescription.MaxBlockDefinition) return;
-        var position = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
-        if( !Policy.CanModifyBlock(socket.GetActor(), position)) return;
-        
-        Block block = World.AddBlock(position, inMessage.BlockInfo);
-        if(block.IsBlock()) {
-            var addMessage = OutMessage.createBlockAddedMessage(position, block);
-            OutMessageHandler.SendMessageToRange(addMessage, position, ClientCacheBlockRadius);                
-        }
+        var position = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);        
+        World.AddBlock(socket.GetActor(), position, inMessage.BlockInfo);
     }
 
 
     static void HandleChangeBlock(HomeSocket socket, byte[] inBuffer) {
         var inMessage = InMessage.ToChangeBlockMessage(inBuffer);
         var position = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
-        if( !Policy.CanModifyBlock(socket.GetActor(), position)) return;
-
-        Block block = World.ChangeStateOfVisibleBlock(position, inMessage.BlockInfo);
-        if(block.IsBlock()) {
-            var changeMessage = OutMessage.createBlocksChangedMessage(position, block);
-            OutMessageHandler.SendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
-        }
+        World.ChangeStateOfVisibleBlock(socket.GetActor(), position, inMessage.BlockInfo);
     }
 
 
     static void HandleSwitchBlocks(HomeSocket socket, byte[] inBuffer) {
         var actor = socket.GetActor();
-        var          inMessage          = InMessage.ToSwitchBlockMessage(inBuffer);
-        Block[]      switchedBlocks     = new Block[32];
-        WorldPoint[] switchedPositions  = new WorldPoint[32];
-        int          switchedCount      = BlockActions.SwitchBlocks(inMessage, switchedPositions, switchedBlocks);
-        if(switchedCount > 0) {
-            var position      = inMessage.GetPosition(0);
-            var changeMessage = OutMessage.createBlocksChangedMessage(switchedCount, switchedPositions, switchedBlocks);
-            OutMessageHandler.SendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                
-        }
+        var          inMessage          = InMessage.ToSwitchBlockMessage(inBuffer);        
+        World.SwitchBlocks(socket.GetActor(), inMessage.Positions);
     }
 
 
@@ -194,7 +157,7 @@ public static class InMessageHandler {
         int responseChunkCount= 0;
 
         for(int i=0; i < requestChunkCount; i++ ) {
-            Chunk chunk         = World.GetChunk(inMessage.Regions[i], inMessage.Chunks[i]);
+            Chunk chunk         = World.GetChunk(socket.GetActor(), inMessage.Regions[i], inMessage.Chunks[i]);
             if(chunk != null) {
                 chunks[i] = chunk;
                 responseChunkCount++;

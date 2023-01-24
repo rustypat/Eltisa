@@ -15,10 +15,10 @@ public class BlockList: List<Block> {
     public BlockList() {}
     public BlockList(int capacity): base(capacity) { }
 
-    private static readonly BlockPositionComparer comparer = new BlockPositionComparer();
+    private static readonly BlockPositionComparer positionComparer = new BlockPositionComparer();
 
     public void Insert(Block block) {
-        var index = BinarySearch(block, comparer);
+        var index = BinarySearch(block, positionComparer);
         if (index < 0) {
             index = ~index;
             Insert(index, block);
@@ -30,9 +30,21 @@ public class BlockList: List<Block> {
 
 
     public void Replace(Block block) {
-        var index = BinarySearch(block, comparer);
+        var index = BinarySearch(block, positionComparer);
         if (index >= 0) {
             this[index] = block;
+        }
+        else {
+            throw new Exception("list contains no block at " + block.Position);
+        }
+    }
+
+
+    // ignores the block type, checks only for the position
+    public new void Remove(Block block) {
+        var index = BinarySearch(block, positionComparer);
+        if (index >= 0) {
+            this.RemoveAt(index);
         }
         else {
             throw new Exception("list contains no block at " + block.Position);
