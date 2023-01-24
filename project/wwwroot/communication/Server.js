@@ -115,7 +115,6 @@ function Server(serverLocation, webSocketPath) {
     this.receiveActorListHandler       = function(message) {};
     this.receiveChatHandler            = function(message) {};
     this.receiveChunksHandler          = function(message) {};
-    this.receiveBlockChangedHandler    = function(message) {};
     this.receiveVideoChatHandler       = function(message) {};
     this.receiveBlockResourceHandler   = function(message) {};
     this.connectionLostHandler         = function(message) {};
