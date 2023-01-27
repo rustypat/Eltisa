@@ -96,8 +96,6 @@ public class ResourcePersister {
     }
 
     public void WriteText(WorldPoint blockPosition, int type, string text, string password="", string newPassword="") {
-        Log.Trace("Store block resource for " + blockPosition);
-
         //check permission
         string  fileName = GetTextFileNameFromPosition(blockPosition);
         if(File.Exists(fileName)) {
@@ -113,11 +111,6 @@ public class ResourcePersister {
                 if(storedPassword != "" && storedPassword != password) return;
             }
         }
-        else Log.Trace("File doen't exist");
-
-
-
-
 
         if(String.IsNullOrWhiteSpace(text) ) {
             DeleteText(blockPosition);

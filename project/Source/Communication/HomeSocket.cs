@@ -51,7 +51,6 @@ public class HomeSocket {
             Log.Error("WebSocket: could not connect");
             return null;
         }
-        Log.Trace("WebSocket: opened");
 
         return homeSocket;            
     }
@@ -69,12 +68,10 @@ public class HomeSocket {
 
 
     public async Task CloseSocket() {
-        Log.Trace("WebSocket: closing");
         try {                
             await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "good by", CancellationToken.None);
         }catch(Exception e) {
-            if(IsClientClosedWebsocketException(e)) Log.Trace(e.Message);
-            else Log.Error(e);
+            if(!IsClientClosedWebsocketException(e)) Log.Error(e);
         }
         if(actor != null) {
             ActorStore.RemoveActor(actor);
@@ -108,7 +105,6 @@ public class HomeSocket {
 
                 // check for close
                 if(inResult.CloseStatus.HasValue) {
-                    Log.Trace("WebSocket: received close request");
                     return;
                 }
                 if(webSocket.State != WebSocketState.Open && webSocket.State != WebSocketState.Connecting ) {
@@ -119,11 +115,9 @@ public class HomeSocket {
                 InMessageHandler.HandleSocketMessage(this, inBuffer, inCount);
 
             }catch(AuthenticationException e) {
-                Log.Trace(e.Message);
                 return;
             }catch(Exception e) {
-                if(IsClientClosedWebsocketException(e)) Log.Trace(e.Message);
-                else Log.Error(e);
+                if(!IsClientClosedWebsocketException(e)) Log.Error(e);
                 return;
             }
         }

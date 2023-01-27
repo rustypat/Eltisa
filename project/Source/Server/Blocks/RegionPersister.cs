@@ -26,7 +26,6 @@ public class RegionPersister : IRegionAccess {
     public Region ReadRegion(RegionPoint pos) {
         string  fileName = GetFileNameFromPosition(pos); 
         if(!File.Exists(fileName)) return null;
-        Log.Trace("Read region from " + fileName);
 
         using(FileStream regionStream = File.OpenRead(fileName)) {
             //DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Decompress);
@@ -98,7 +97,6 @@ public class RegionPersister : IRegionAccess {
     public void WriteRegion(Region region) {
         Directory.CreateDirectory(regionDirectory);
         string fileName = GetFileNameFromPosition(region.Position); 
-        Log.Trace("Store region to " + fileName);
 
         using(FileStream regionStream = File.OpenWrite(fileName)) {
             //DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Compress);

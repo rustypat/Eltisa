@@ -40,7 +40,6 @@ public static class OutMessage {
         builder.WriteInt(   EndTag);
 
         byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " actor list, length " + message.Length);
         return message;
     }
 
@@ -62,7 +61,6 @@ public static class OutMessage {
         builder.WriteInt(   EndTag);
 
         byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " move actor, length " + message.Length);
         return message;
     }
 
@@ -84,7 +82,6 @@ public static class OutMessage {
         builder.WriteInt(   EndTag);
 
         byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " delete actor, length " + message.Length);
         return message;
     }
 
@@ -110,7 +107,6 @@ public static class OutMessage {
         builder.WriteInt(EndTag);
 
         byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " login reply, length " + message.Length);
         return message;
     }
 
@@ -150,7 +146,6 @@ public static class OutMessage {
         builder.WriteInt(EndTag);
 
         byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " chunk descriptions, length " + message.Length);
         return message;
     }
 
@@ -166,7 +161,6 @@ public static class OutMessage {
         builder.WriteInt(EndTag);
 
         byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " chat message, length " + message.Length);
         return message;
     }
 
@@ -187,7 +181,6 @@ public static class OutMessage {
         builder.WriteInt(EndTag);
 
         byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " blocks changed, length " + message.Length);
         return message;
     }
 
@@ -205,7 +198,6 @@ public static class OutMessage {
         builder.WriteInt(EndTag);
 
         byte[] videoChatMessage = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " video chat message, length " + videoChatMessage.Length);
         return videoChatMessage;
     }
 
@@ -224,7 +216,6 @@ public static class OutMessage {
         builder.WriteInt(EndTag);
 
         byte[] message = builder.ToArray();
-        Log.Trace("send message " + messageCounter + " block resource, length " + message.Length);
         return message;
     }
 

@@ -19,6 +19,11 @@ function Server(serverLocation, webSocketPath) {
         VideoChatMessage:    44,
         GetBlockResource:    52,
         SaveBlockResource:   54,
+
+        CreateResourceRequest:         60,
+        ReadResourceRequest:           62,
+        UpdateResourceRequest:         64,
+        DeleteResourceRequest:         66        
     }
     
     const InMessageType = {
@@ -32,6 +37,11 @@ function Server(serverLocation, webSocketPath) {
         Chat:                41,
         VideoChat:           43,
         BlockResource:       51,
+
+        CreateResourceResponse:        61,
+        ReadResourceResponse:          63,
+        UpdateResourceResponse:        65,
+        DeleteResourceResponse:        67        
     }
     
     var   webSocket   = {};    

@@ -97,10 +97,8 @@ public class McImporter {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     public void ImportMcMap() {            
-        Log.Info("import mc map start");
         string[] regionFiles = Directory.GetFiles(sourceDirectory, "*.mca");
         foreach(string regionFile in regionFiles) {   
-            Log.Trace("Read Region File: " + regionFile);                                             
             foreach(long chunkPos in ReadChunkPositions(regionFile)) {
                 if(chunkPos > 0) {
                     ChunkData chunkData = new ChunkData();
@@ -315,7 +313,6 @@ public class McImporter {
                     if(chunkData.sectionHeight >= 0) {
                         chunkData.blocks[chunkData.sectionHeight] = chunkData.sectionBlocks;
                         chunkData.states[chunkData.sectionHeight] = chunkData.sectionStates;
-                        Log.Trace("Read section " + chunkData.x + "/" + chunkData.sectionHeight + "/" + chunkData.z);
                     }
                 }
                 else {

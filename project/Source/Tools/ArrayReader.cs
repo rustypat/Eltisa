@@ -54,4 +54,12 @@ public class ArrayReader {
         return str;
     }        
 
+
+    public byte[] ReadBytes() {
+        int length = reader.ReadInt32();
+        byte[] buffer = new byte[length];
+        reader.Read(buffer, 0, length);
+        return buffer;
+    }        
+
 }

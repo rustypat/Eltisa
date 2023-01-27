@@ -9,7 +9,7 @@ using static System.Diagnostics.Debug;
 
 public static class InMessage {
 
-    const int EndTag = 666999;
+    public const int EndTag = 666999;
 
     public class Login {
         public const byte Id = 10;
@@ -321,8 +321,4 @@ public static class InMessage {
         return message;
     }
     
-
-    
-
-
 }

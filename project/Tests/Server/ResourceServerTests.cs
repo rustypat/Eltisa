@@ -13,7 +13,7 @@ using Eltisa.Tools;
 public class ResourceServerTests {
     
     [TestMethod]
-    public void CRUDResourceTest() {
+    public void CRUDTest() {
         var resourcePersister = new ResourcePersister(".\\resources\\");
         var resourceCache     = new ResourceCache(resourcePersister);
         var resourceControl   = new ResourceControl(resourceCache);
@@ -23,7 +23,7 @@ public class ResourceServerTests {
         Computer.DeleteDirectory(".\\resources\\");
 
         // create
-        var resType = resourceControl.CreateResource(actor, pos, Tresor, AccessRights.Everybody, "secret", Encoding.UTF8.GetBytes("Hello Resource World"));
+        var resType = resourceControl.CreateResource(actor, pos, Tresor, "secret", Encoding.UTF8.GetBytes("Hello Resource World"));
         resourceCache.PersistResources();
         Assert.AreEqual(resType, Ok);
         Assert.FiileExists(".\\resources\\17_66_19.rsc");
@@ -49,7 +49,7 @@ public class ResourceServerTests {
 
     [TestMethod]
     public void PasswordTest() {
-       var resourcePersister = new ResourcePersister(".\\resources\\");
+        var resourcePersister = new ResourcePersister(".\\resources\\");
         var resourceCache     = new ResourceCache(resourcePersister);
         var resourceControl   = new ResourceControl(resourceCache);
 
@@ -58,7 +58,7 @@ public class ResourceServerTests {
         Computer.DeleteDirectory(".\\resources\\");
 
         // create
-        var resType = resourceControl.CreateResource(actor, pos, Tresor, AccessRights.Everybody, "secret", Encoding.UTF8.GetBytes("Hello World"));
+        var resType = resourceControl.CreateResource(actor, pos, Tresor, "secret", Encoding.UTF8.GetBytes("Hello World"));
         resourceCache.PersistResources();
         Assert.AreEqual(resType, Ok);
         Assert.FiileExists(".\\resources\\17_66_19.rsc");
@@ -72,5 +72,6 @@ public class ResourceServerTests {
         Assert.AreEqual(result.Result, ResourceResultType.PasswordInvalid);
         Assert.IsNull(result.Resource);
     }
+
 
 }

@@ -35,7 +35,6 @@ public class RegionCache : IRegionAccess {
 
     public int WriteRegions(bool validate=false) {
         int storedRegions = 0;
-        Log.TraceStart("region persistance");
         foreach(Region region in regions.Values) {
             if(region.Changed) {
                 lock(region) {
@@ -47,13 +46,11 @@ public class RegionCache : IRegionAccess {
                 }
             } 
         }
-        Log.TraceEnd("region persisted: " + storedRegions);
         return storedRegions;
     }
 
 
     public void FreeRegions(int regionsToKeep, int unusedSinceMilliseconds) {
-        Log.TraceStart("region cache clearance");
         DateTime dueTime = DateTime.Now.AddMilliseconds(-unusedSinceMilliseconds);
         Region removedRegion;
         if(regions.Count > regionsToKeep) {
@@ -63,7 +60,6 @@ public class RegionCache : IRegionAccess {
                 } 
             }
         }
-        Log.TraceEnd("region cache clearance");
     }    
 
 

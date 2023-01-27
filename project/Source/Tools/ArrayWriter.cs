@@ -56,4 +56,10 @@ public class ArrayWriter {
         writer.Write((int)utf8Array.Length);
         writer.Write(utf8Array);
     }
+
+
+    public void WriteBytes(byte[] data) {
+        writer.Write(data.Length);
+        writer.Write(data);
+    }
 }

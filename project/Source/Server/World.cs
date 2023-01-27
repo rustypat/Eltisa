@@ -28,19 +28,23 @@ static public class World {
     private static BlockNotify     blockNotify;
 
 
-    private static ResourcePersister resourcePersiter;
+    private static ResourcePersister resourcePersister;
+    private static ResourceCache     resourceCache;
+    private static ResourceControl   resourceControl;
 
 
     public static void Initialize(string regionDirectory, string resourceDirectory) {
-        regionPersister = new RegionPersister(regionDirectory);
-        regionCreator   = new RegionCreator(regionPersister);
-        regionCache     = new RegionCache(regionCreator);
-        blockProvider   = new BlockProvider(regionCache);
-        blockController = new BlockControl(blockProvider);
-        blockPermit     = new BlockPermit(blockController);
-        blockNotify     = new BlockNotify(blockPermit);
+        regionPersister      = new RegionPersister(regionDirectory);
+        regionCreator        = new RegionCreator(regionPersister);
+        regionCache          = new RegionCache(regionCreator);
+        blockProvider        = new BlockProvider(regionCache);
+        blockController      = new BlockControl(blockProvider);
+        blockPermit          = new BlockPermit(blockController);
+        blockNotify          = new BlockNotify(blockPermit);
 
-        resourcePersiter= new ResourcePersister(regionDirectory);
+        resourcePersister    = new ResourcePersister(regionDirectory);
+        resourceCache        = new ResourceCache(resourcePersister);
+        resourceControl      = new ResourceControl(resourceCache);
     }
 
 
@@ -118,12 +122,17 @@ static public class World {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     public static string ReadText(WorldPoint blockPosition, int requestedType, string password=null) {
-        return resourcePersiter.ReadText(blockPosition, requestedType, password);
+        return resourcePersister.ReadText(blockPosition, requestedType, password);
     }
 
 
     public static void WriteText(WorldPoint blockPosition, int type, string text, string password="", string newPassword="") {
-        resourcePersiter.WriteText(blockPosition, type, text, password, newPassword);
+        resourcePersister.WriteText(blockPosition, type, text, password, newPassword);
+    }
+
+
+    public static ResourceResultType CreateResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+        return resourceControl.CreateResource(actor, pos, blockType, password, data);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////

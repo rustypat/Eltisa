@@ -16,51 +16,39 @@ public static class InMessageHandler {
 
     public static void HandleSocketMessage(HomeSocket socket, byte[] message, int messageLength) {
         if(message[0] == InMessage.MoveActor.Id) {
-            Log.Trace("receive message MoveActor of length " + messageLength);
             HandleMoveActor(socket, message);
         }
         else if(message[0] == InMessage.GetChunks.Id) {
-            Log.Trace("receive message GetChunks of length " + messageLength);
             HandleGetChunks(socket, message);
         }
         else if(message[0] == InMessage.AddBlock.Id) {
-            Log.Trace("receive message AddBlock of length " + messageLength);
             HandleAddBlock(socket, message);
         }
         else if(message[0] == InMessage.RemoveBlock.Id) {
-            Log.Trace("receive message RemoveBlock of length " + messageLength);
             HandleRemoveBlock(socket, message);
         }
         else if(message[0] == InMessage.ChangeBlock.Id) {
-            Log.Trace("receive message ChangeBlock of length " + messageLength);
             HandleChangeBlock(socket, message);
         }
         else if(message[0] == InMessage.SwitchBlocks.Id) {
-            Log.Trace("receive message SwitchBlock of length " + messageLength);
             HandleSwitchBlocks(socket, message);
         }
         else if(message[0] == InMessage.GetBlockResource.Id) {
-            Log.Trace("receive message GetBlockResource of length " + messageLength);
             HandleGetBlockResource(socket, message);
         }
         else if(message[0] == InMessage.SaveBlockResource.Id) {
-            Log.Trace("receive message SaveBlockResource of length " + messageLength);
             HandleSaveBlockResource(socket, message);
         }
         else if(message[0] == InMessage.ChatMessage.Id) {
-            Log.Trace("receive message ChatMessage of length " + messageLength);
             HandleChatMessage(socket, message);
         }
         else if(message[0] == InMessage.VideoChatMessage.Id) {
-            Log.Trace("receive message VideoChatMessage of length " + messageLength);
             HandleVideoChatMessage(socket, message);
         }
         else if(message[0] == InMessage.ListActors.Id) {
-            Log.Trace("receive message ListActors of length " + messageLength);
             HandleListActors(socket, message);
         }
         else if(message[0] == InMessage.Login.Id) {
-            Log.Trace("receive message Login of length " + messageLength);
             HandleLogin(socket, message);
         }
         else {
@@ -241,6 +229,33 @@ public static class InMessageHandler {
         var outMessage        = OutMessage.createActorListMessage(actors, count);
         socket.SendMessageAsync(outMessage);                          
     }
+
+
+    public enum MessageId {
+        CreateResourceRequest = 60,
+        ReadResourceRequest   = 62,
+        UpdateResourceRequest = 64,
+        DeleteResoureRequest  = 66
+    }
+
+
+    static void HandleCreateResourceRequest(HomeSocket socket, byte[] inBuffer) {
+        var reader      = new ArrayReader(inBuffer);
+        int messageId   = reader.ReadInt();
+        Assert(messageId == (int)MessageId.CreateResourceRequest);
+        int x           = reader.ReadInt();
+        int y           = reader.ReadInt();
+        int z           = reader.ReadInt();
+        int blockType   = reader.ReadInt();
+        string password = reader.ReadString();
+        byte[] data     = reader.ReadBytes();
+
+        var position     = new WorldPoint(x, y, z);
+        int endTag       = reader.ReadInt();
+        Assert(endTag    == InMessage.EndTag);            
+        var result = World.CreateResource(socket.GetActor(), position, blockType, password, data);
+    }
+
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////

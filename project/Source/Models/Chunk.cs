@@ -314,7 +314,6 @@ public class Chunk {
 
 
     public ushort DetermineDefaultBlock() {
-        Log.Trace("DetermineDefaultBlock for chunk " + Position);
         int defaultCount = ChunkVolume - BorderBlocks.Size() - InnerBlocks.Size() - EmptyBlocks.Size();            
         if(defaultCount >= ChunkVolume / 2) return DefaultBlockDefinition;
 
@@ -355,7 +354,6 @@ public class Chunk {
 
 
     public void ConvertToNewDefaultBlockDefinition(ushort newDefaultBlockDefinition) {
-        Log.Trace("ConvertToNewDefaultBlockDefinition chunk " + Position);
         Assert(DefaultBlockDefinition != newDefaultBlockDefinition);
 
         if(DefaultBlockDefinition == BlockDescription.Air ) {   // change from additiv to subtractiv
