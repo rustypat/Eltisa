@@ -51,6 +51,17 @@ public static class Assert {
     }
 
 
+    public static void IsNull(Object obj, string errorMessage=null) 
+    {
+        if(errorMessage != null) {
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNull(obj, errorMessage); 
+        }
+        else {
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNull(obj); 
+        }
+    }
+
+
     public static void FiileExists(string file, string errorMessage=null) {
         if(File.Exists(file)) return;
         errorMessage ??= $"file {file} does not exist";

@@ -18,8 +18,8 @@ public class WorldTests {
 
     [TestMethod]
     public void AddAndRemoveBlock() {
-        Computer.DeleteDirectory(".\\RegionData\\");
-        World.Initialize(".\\RegionData\\");
+        Computer.DeleteDirectory(".\\regions\\");
+        World.Initialize(".\\regions\\", ".\\resources\\");
 
         var pos = new WorldPoint(17, 32, 19);        
         var changes = World.AddBlock(actor, pos, BlockDescription.Stone);
@@ -32,8 +32,8 @@ public class WorldTests {
 
     [TestMethod]
     public void AddAndRemoveMultipleBlocks() {
-        Computer.DeleteDirectory(".\\RegionData\\");
-        World.Initialize(".\\RegionData\\");
+        Computer.DeleteDirectory(".\\regions\\");
+        World.Initialize(".\\regions\\", ".\\resources\\");
 
         var pos1 = new WorldPoint(17, 44, 19);        
         var pos2 = new WorldPoint(17, 45, 19);        
@@ -51,8 +51,8 @@ public class WorldTests {
 
     [TestMethod]
     public void SubtractiveChunkRemoveBlock() {
-        Computer.DeleteDirectory(".\\RegionData\\");
-        World.Initialize(".\\RegionData\\");
+        Computer.DeleteDirectory(".\\regions\\");
+        World.Initialize(".\\regions\\", ".\\resources\\");
 
         Change[] changes;
         changes = World.RemoveVisibleBlock(actor, new WorldPoint(-1, 31, 0));
@@ -72,8 +72,8 @@ public class WorldTests {
 
     [TestMethod]
     public void SubtractiveChunkFaceTest() {
-        Computer.DeleteDirectory(".\\RegionData\\");
-        World.Initialize(".\\RegionData\\");
+        Computer.DeleteDirectory(".\\regions\\");
+        World.Initialize(".\\regions\\", ".\\resources\\");
         Change[] changes;
 
         // create empty pit

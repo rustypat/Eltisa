@@ -218,7 +218,7 @@ public static class InMessageHandler {
         var inMessage    = InMessage.ToGetBlockResourceMessage(inBuffer);
         var position     = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
 
-        string text      = ResourcePersister.ReadText(position, inMessage.Type, inMessage.Pwd);
+        string text      = World.ReadText(position, inMessage.Type, inMessage.Pwd);
         if(text != null) {
             var blockResourceMessage = OutMessage.createBlockResourceMessage(position, inMessage.Type, text);
             OutMessageHandler.SendMessageToRange(blockResourceMessage, position, ClientCacheBlockRadius);                
@@ -229,8 +229,8 @@ public static class InMessageHandler {
     static void HandleSaveBlockResource(HomeSocket socket, byte[] inBuffer) {
         var inMessage    = InMessage.ToSaveBlockResourceMessage(inBuffer);
         var position     = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
-        if( Policy.CanModifyBlock(socket.GetActor(), position)) {
-            ResourcePersister.WriteText(position, inMessage.Type, inMessage.Text, inMessage.Pwd, inMessage.NewPwd);
+        if( Policy.CanEdit(socket.GetActor(), position)) {
+            World.WriteText(position, inMessage.Type, inMessage.Text, inMessage.Pwd, inMessage.NewPwd);
         }
     }
 

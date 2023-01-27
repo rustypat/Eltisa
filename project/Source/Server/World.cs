@@ -8,7 +8,7 @@ using Eltisa.Administration;
 using Eltisa.Server.Blocks;
 using static Eltisa.Administration.Configuration;
 using static Eltisa.Models.Constants;
-
+using Eltisa.Server.Resources;
 
 static public class World {
 
@@ -23,29 +23,34 @@ static public class World {
     private static RegionCreator   regionCreator;
     private static RegionCache     regionCache;
     private static BlockProvider   blockProvider;
-    private static BlockController blockController;
+    private static BlockControl    blockController;
     private static BlockPermit     blockPermit;
     private static BlockNotify     blockNotify;
 
 
-    public static void Initialize(string regionDirectory) {
+    private static ResourcePersister resourcePersiter;
+
+
+    public static void Initialize(string regionDirectory, string resourceDirectory) {
         regionPersister = new RegionPersister(regionDirectory);
         regionCreator   = new RegionCreator(regionPersister);
         regionCache     = new RegionCache(regionCreator);
         blockProvider   = new BlockProvider(regionCache);
-        blockController = new BlockController(blockProvider);
+        blockController = new BlockControl(blockProvider);
         blockPermit     = new BlockPermit(blockController);
         blockNotify     = new BlockNotify(blockPermit);
+
+        resourcePersiter= new ResourcePersister(regionDirectory);
     }
 
 
     static World() {
-        Initialize(Configuration.RegionDirectory);
+        Initialize(Configuration.RegionDirectory, Configuration.ResourceDirectory);
     }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////
-    // change
+    // block services
     ///////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -108,6 +113,18 @@ static public class World {
     }
 
 
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    // resource services
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+    public static string ReadText(WorldPoint blockPosition, int requestedType, string password=null) {
+        return resourcePersiter.ReadText(blockPosition, requestedType, password);
+    }
+
+
+    public static void WriteText(WorldPoint blockPosition, int type, string text, string password="", string newPassword="") {
+        resourcePersiter.WriteText(blockPosition, type, text, password, newPassword);
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // persist
@@ -126,7 +143,7 @@ static public class World {
 
 
     public static void FreeCache() {
-        regionCache.FreeUnusedRegions(100, RegionReleaseTime);
+        regionCache.FreeRegions(100, RegionReleaseTime);
     }        
 
 

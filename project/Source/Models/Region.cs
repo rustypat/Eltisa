@@ -3,7 +3,6 @@ namespace Eltisa.Models;
 using System;
 using System.Text;
 using System.Collections.Generic;
-using Eltisa.Server;
 
 
 public class Region {
@@ -13,7 +12,7 @@ public class Region {
     public int                                     AccessRights;      
 
     private DateTime                               lastUsed;
-    private bool                                   hasChanged;  
+    public bool                                    Changed;  
     private Dictionary<ChunkPoint, Chunk>          chunks;        
 
 
@@ -22,7 +21,7 @@ public class Region {
         Owner            = owner;
         AccessRights     = accessRights;
         lastUsed         = DateTime.Now;
-        hasChanged       = false;
+        Changed          = false;
         if(chunkList != null && chunkList.Count > 0) {
             chunks = new Dictionary<ChunkPoint, Chunk>();
             foreach(Chunk chunk in chunkList) {
@@ -105,16 +104,13 @@ public class Region {
     }
 
 
-    public bool LastUsedBefore(DateTime dateTime) { return lastUsed.CompareTo(dateTime) < 0; }
-    public void SetChanged()   => hasChanged = true;
-    public void SetUnchanged() => hasChanged = false;     
-    public bool HasChanged()   => hasChanged; 
+    public bool UsedAfter(DateTime dateTime) { return lastUsed.CompareTo(dateTime) > 0; }
 
     override
     public string ToString() {
         StringBuilder strb = new StringBuilder();
         strb.Append("Region " + Position.X + "/" + Position.Y + "/" + Position.Z);
-        if( HasChanged() ) strb.Append("  changed");
+        if( Changed ) strb.Append("  changed");
         return strb.ToString();
     }
 

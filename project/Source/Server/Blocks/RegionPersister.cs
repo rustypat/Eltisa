@@ -11,7 +11,7 @@ using static System.Diagnostics.Debug;
 public class RegionPersister : IRegionAccess {
 
     public const string      FileType =  ".rgn";
-    private const int        STOREFORMAT_VERSION_1 = 01010101;
+    private const int        storeFormatVerion1 = 01010101;
     private readonly string  regionDirectory;      
 
 
@@ -24,7 +24,7 @@ public class RegionPersister : IRegionAccess {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     public Region ReadRegion(RegionPoint pos) {
-        string  fileName = GetFilePath(pos); 
+        string  fileName = GetFileNameFromPosition(pos); 
         if(!File.Exists(fileName)) return null;
         Log.Trace("Read region from " + fileName);
 
@@ -32,7 +32,7 @@ public class RegionPersister : IRegionAccess {
             //DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Decompress);
             BinaryReader  reader      = new BinaryReader(regionStream);
 
-            int version       = reader.ReadInt32();  Assert(version == STOREFORMAT_VERSION_1, "stored data has not same version format");
+            int version       = reader.ReadInt32();  Assert(version == storeFormatVerion1, "stored data has not same version format");
             int owner         = reader.ReadInt32();
             int accessRights  = reader.ReadInt32();
             int chunkCount    = reader.ReadInt32();
@@ -40,7 +40,7 @@ public class RegionPersister : IRegionAccess {
             for(int i = 0; i < chunkCount; i++) {
                 chunks.Add(ReadChunk(reader));
             }
-            int endTag        = reader.ReadInt32();  Assert(endTag == STOREFORMAT_VERSION_1);
+            int endTag        = reader.ReadInt32();  Assert(endTag == storeFormatVerion1);
             reader.Close();
 
             Region region = new Region(pos, owner, accessRights, chunks);            
@@ -97,14 +97,14 @@ public class RegionPersister : IRegionAccess {
 
     public void WriteRegion(Region region) {
         Directory.CreateDirectory(regionDirectory);
-        string fileName = GetFilePath(region.Position); 
+        string fileName = GetFileNameFromPosition(region.Position); 
         Log.Trace("Store region to " + fileName);
 
         using(FileStream regionStream = File.OpenWrite(fileName)) {
             //DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Compress);
             BinaryWriter  writer = new BinaryWriter(regionStream);
 
-            writer.Write((int)STOREFORMAT_VERSION_1);            
+            writer.Write((int)storeFormatVerion1);            
             writer.Write((int)region.Owner);            
             writer.Write((int)region.AccessRights);            
             writer.Write((int)region.GetChunks().Count(chunk => DefaultWorld.IsModifiedChunk(chunk)));
@@ -120,7 +120,7 @@ public class RegionPersister : IRegionAccess {
                     WriteChunk(writer, chunk);
                 }
             }
-            writer.Write((int)STOREFORMAT_VERSION_1);            
+            writer.Write((int)storeFormatVerion1);            
             writer.Close();
         }
     }
@@ -159,12 +159,12 @@ public class RegionPersister : IRegionAccess {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public string GetFilePath(RegionPoint pos) {
+    public string GetFileNameFromPosition(RegionPoint pos) {
         return regionDirectory + pos.X + "_" + pos.Y + "_" + pos.Z + FileType;
     }
 
 
-    public RegionPoint GetFilePosition(string fileName) {
+    public RegionPoint GetPositionFromFileName(string fileName) {
         string trimedName    = fileName.TrimEnd(FileType);
         string[] coordinates = trimedName.Split("_");
         int x                = int.Parse(coordinates[0]);

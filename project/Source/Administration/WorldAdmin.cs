@@ -5,12 +5,14 @@ using System.IO;
 using Eltisa.Models;
 using Eltisa.Server;
 using Eltisa.Server.Blocks;
+using Eltisa.Server.Resources;
 using Eltisa.Tools;
 using static System.Diagnostics.Debug;
 
 
 public static class WorldAdmin {
     private static readonly Actor actor = new Actor(1, "Importer", "notImportand", null, Actor.Type.Administrator, 1);
+    private static readonly ResourcePersister resourcePersister = new ResourcePersister(Configuration.ResourceDirectory);
 
     public static void CreateSeaPit(int xFrom, int xTo, int zFrom, int zTo, int depth) {
         Log.Info("create sea pit start");
@@ -144,9 +146,9 @@ public static class WorldAdmin {
         FileInfo[] fileInfos            = directoryInfo.GetFiles();
         foreach(FileInfo fileInfo in fileInfos) {
             if( !fileInfo.Name.EndsWith(RegionPersister.FileType) ) continue;
-            regionPos    = regionPersister.GetFilePosition(fileInfo.Name);
+            regionPos    = regionPersister.GetPositionFromFileName(fileInfo.Name);
             regionPos    = regionPos.Add(x, y, z);
-            newFullName  = regionPersister.GetFilePath(regionPos) + "n";
+            newFullName  = regionPersister.GetFileNameFromPosition(regionPos) + "n";
             File.Move(fileInfo.FullName, newFullName);
         }        
         fileInfos         = directoryInfo.GetFiles();
@@ -157,14 +159,14 @@ public static class WorldAdmin {
         }        
 
         // shift resources
-        directoryInfo  = new DirectoryInfo(ResourcePersister.GetDirectoryPath());
+        directoryInfo  = new DirectoryInfo(Configuration.ResourceDirectory);
         if( directoryInfo.Exists ) {
             fileInfos      = directoryInfo.GetFiles();
             foreach(FileInfo fileInfo in fileInfos) {
                 if( !fileInfo.Name.EndsWith(ResourcePersister.FileType) ) continue;
-                worldPos    = ResourcePersister.GetFilePosition(fileInfo.Name);
+                worldPos    = ResourcePersister.GetPositionFromFileName(fileInfo.Name);
                 worldPos    = worldPos.Add(xShift, 0, zShift);
-                newFullName  = ResourcePersister.GetFilePath(worldPos)+"n";
+                newFullName  = resourcePersister.GetFileNameFromPosition(worldPos)+"n";
                 File.Move(fileInfo.FullName, newFullName);
             }        
             fileInfos      = directoryInfo.GetFiles();
@@ -186,7 +188,7 @@ public static class WorldAdmin {
         FileInfo[] fileInfos            = directoryInfo.GetFiles();
         foreach(FileInfo fileInfo in fileInfos) {
             if( !fileInfo.Name.EndsWith(RegionPersister.FileType) ) continue;
-            RegionPoint pos  = regionPersister.GetFilePosition(fileInfo.Name);
+            RegionPoint pos  = regionPersister.GetPositionFromFileName(fileInfo.Name);
             Region region    = regionPersister.ReadRegion(pos);
             region.Validate();
         }                    

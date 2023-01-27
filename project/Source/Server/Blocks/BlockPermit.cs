@@ -16,7 +16,7 @@ public class BlockPermit : IBlockAccess {
 
 
     public Change[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
-        if(CanModifyBlock(actor, worldPos)) return blockAccess.CreateBlock(actor, worldPos, blockDescription);
+        if(Policy.CanEdit(actor, worldPos)) return blockAccess.CreateBlock(actor, worldPos, blockDescription);
         else                                return NoChanges;
     }
 
@@ -27,7 +27,7 @@ public class BlockPermit : IBlockAccess {
 
 
     public Change[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
-        if(CanModifyBlock(actor, worldPos)) return blockAccess.UpdateBlock(actor, worldPos, newBlockDefinition);
+        if(Policy.CanEdit(actor, worldPos)) return blockAccess.UpdateBlock(actor, worldPos, newBlockDefinition);
         else                                return NoChanges;        
     }
 
@@ -38,36 +38,13 @@ public class BlockPermit : IBlockAccess {
 
 
     public Change[] DeleteBlock(Actor actor, WorldPoint worldPos) {
-        if(CanModifyBlock(actor, worldPos)) return blockAccess.DeleteBlock(actor, worldPos);
+        if(Policy.CanEdit(actor, worldPos)) return blockAccess.DeleteBlock(actor, worldPos);
         else                                return NoChanges;                
     }
 
 
     public Chunk ReadChunk(Actor actor, RegionPoint regionPos, ChunkPoint chunkPos)  {
         return blockAccess.ReadChunk(actor, regionPos, chunkPos);
-    }
-
-
-    private bool CanModifyBlock(Actor actor, WorldPoint blockPos) {
-        if( Configuration.Mode == RunMode.Eltisa) {
-            if ( actor.ActorType == Actor.Type.Administrator ) return true;
-            if ( actor.ActorType == Actor.Type.Citizen       ) return true;
-            if ( actor.ActorType == Actor.Type.Visitor       ) return blockPos.X > 0 && blockPos.Z > 0;
-            return false;
-        }
-        else if( Configuration.Mode == RunMode.Server) {
-            if ( actor.ActorType == Actor.Type.Administrator ) return true;
-            if ( actor.ActorType == Actor.Type.Citizen       ) return true;
-            if ( actor.ActorType == Actor.Type.Visitor       ) return false;
-            return false;
-        }
-        else if( Configuration.Mode == RunMode.Develop) {
-            if ( actor.ActorType == Actor.Type.Administrator ) return true;
-            if ( actor.ActorType == Actor.Type.Citizen       ) return true;
-            if ( actor.ActorType == Actor.Type.Visitor       ) return false;
-            return false;
-        }
-        else throw new Exception("unknown runmode");
     }
 
 }

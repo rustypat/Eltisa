@@ -23,7 +23,7 @@ public class BlockProvider {
         BlockPoint blockPos   = worldPos.GetBlockPoint();
 
         lock(region) {
-            region.SetChanged();
+            region.Changed = true;
 
             if(chunk == null) {
                 chunk = DefaultWorld.CreateChunk(worldPos);
@@ -66,7 +66,7 @@ public class BlockProvider {
         BlockPoint blockPos   = worldPos.GetBlockPoint();
 
         lock(region) {
-            region.SetChanged();  // not entirely correct here
+            region.Changed = true;  // not entirely correct here
 
             if(chunk == null) {
                 chunk = DefaultWorld.CreateChunk(worldPos);
@@ -97,7 +97,7 @@ public class BlockProvider {
         BlockPoint blockPos   = worldPos.GetBlockPoint();
 
         lock(region) {
-            region.SetChanged();  // not entirely correct here
+            region.Changed = true;  // not entirely correct here
 
             if(chunk == null) {
                 chunk = DefaultWorld.CreateChunk(worldPos);

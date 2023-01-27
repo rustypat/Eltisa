@@ -6,11 +6,11 @@ using static Eltisa.Models.BlockDescription;
 using static Eltisa.Models.Constants;
 
 
-public class BlockController : IBlockAccess {
+public class BlockControl : IBlockAccess {
 
     private readonly BlockProvider blockProvider;
 
-    public BlockController(BlockProvider blockProvider) {   
+    public BlockControl(BlockProvider blockProvider) {   
         this.blockProvider = blockProvider;     
     }
 
@@ -79,7 +79,7 @@ public class BlockController : IBlockAccess {
     }
 
 
-    static BlockController() {
+    static BlockControl() {
         addSwitch(JackOLantern,    JackOLantern_On);
         addSwitch(Oracle,          OracleUsed);
         addSwitch(Lamp,            Lamp_On);

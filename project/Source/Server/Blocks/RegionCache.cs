@@ -28,7 +28,7 @@ public class RegionCache : IRegionAccess {
         lock(region) {
             region.Validate();
             regionCreator.WriteRegion(region);
-            region.SetUnchanged();
+            region.Changed = false;
         }
     }
 
@@ -37,13 +37,13 @@ public class RegionCache : IRegionAccess {
         int storedRegions = 0;
         Log.TraceStart("region persistance");
         foreach(Region region in regions.Values) {
-            if(region.HasChanged()) {
+            if(region.Changed) {
                 lock(region) {
                     storedRegions++;
                     region.OptimizeChunks();
                     if(validate) region.Validate();
                     regionCreator.WriteRegion(region);
-                    region.SetUnchanged();
+                    region.Changed = false;
                 }
             } 
         }
@@ -52,13 +52,13 @@ public class RegionCache : IRegionAccess {
     }
 
 
-    public void FreeUnusedRegions(int regionsToKeep, int unusedSinceMilliseconds) {
+    public void FreeRegions(int regionsToKeep, int unusedSinceMilliseconds) {
         Log.TraceStart("region cache clearance");
         DateTime dueTime = DateTime.Now.AddMilliseconds(-unusedSinceMilliseconds);
         Region removedRegion;
         if(regions.Count > regionsToKeep) {
             foreach(Region region in regions.Values) {
-                if( region.LastUsedBefore(dueTime) && !region.HasChanged() ) {
+                if( !region.UsedAfter(dueTime) && !region.Changed ) {
                     regions.TryRemove(region.Position, out removedRegion);
                 } 
             }

@@ -198,7 +198,7 @@ public static class InMessage {
         int messageId              = reader.ReadInt();
         int switchCount            = reader.ReadInt() / 3;            
 
-        if(switchCount < 3 || switchCount > Configuration.MaxSwitches) {
+        if(switchCount > Configuration.MaxSwitches) {
             throw new ArgumentOutOfRangeException("switchCount is out of range: " + switchCount);
         }
 

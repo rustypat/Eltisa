@@ -15,21 +15,21 @@ public class BlockServerTests {
     
     [TestMethod]
     public void RegionPersisterTest() {
-        Computer.DeleteDirectory(".\\RegionData\\");
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        Computer.DeleteDirectory(".\\regions\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionPos       = new RegionPoint(10, 11, 12);
         var region          = new Region(regionPos);
         regionPersister.WriteRegion(region);
         var regionLoaded    = regionPersister.ReadRegion(regionPos);        
         Assert.AreEqual(region.Position, regionLoaded.Position);
         Assert.AreEqual(region.GetChunks().Count(), regionLoaded.GetChunks().Count());
-        Assert.FiileExists(".\\Regiondata\\10_11_12.rgn");
+        Assert.FiileExists(".\\regions\\10_11_12.rgn");
     }
 
 
     [TestMethod]
     public void RegionCreatorTest() {
-        Computer.DeleteDirectory(".\\RegionData\\");
+        Computer.DeleteDirectory(".\\regions\\");
         var regionCreator   = new RegionCreator(null);
 
         var regionPos       = new RegionPoint(30, 11, 12);
@@ -39,14 +39,14 @@ public class BlockServerTests {
         Assert.AreEqual(region, regionSecond);
 
         regionCreator.WriteRegion(region);
-        Assert.FiileExistsNot(".\\Regiondata\\30_11_12.rgn");
+        Assert.FiileExistsNot(".\\regions\\30_11_12.rgn");
     }
 
 
     [TestMethod]
     public void RegionCacheSameTest() {
-        Computer.DeleteDirectory(".\\RegionData\\");
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        Computer.DeleteDirectory(".\\regions\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
 
@@ -56,14 +56,14 @@ public class BlockServerTests {
         Assert.AreSame(region, regionSecond);
 
         regionCache.WriteRegions();
-        Assert.FiileExistsNot(".\\Regiondata\\20_11_12.rgn");
+        Assert.FiileExistsNot(".\\regions\\20_11_12.rgn");
     }
 
 
     [TestMethod]
     public void RegionCacheWriteTest() {
-        Computer.DeleteDirectory(".\\RegionData\\");
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        Computer.DeleteDirectory(".\\regions\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
 
@@ -73,7 +73,7 @@ public class BlockServerTests {
         Assert.AreSame(region, regionSecond);
 
         regionCache.WriteRegions(true);
-        Assert.FiileExistsNot(".\\Regiondata\\20_11_12.rgn");
+        Assert.FiileExistsNot(".\\regions\\20_11_12.rgn");
     }
 
 
@@ -84,10 +84,10 @@ public class BlockServerTests {
 
         var regionPos       = new RegionPoint(20, 11, 12);
         regionCache.ReadRegion(regionPos);
-        Assert.Equals(regionCache.Size(), 1);
+        Assert.AreEqual(regionCache.Size(), 1);
 
-        regionCache.FreeUnusedRegions(0, 0);
-        Assert.Equals(regionCache.Size(), 0);
+        regionCache.FreeRegions(0, 0);
+        Assert.AreEqual(regionCache.Size(), 0);
     }
 
 
@@ -121,7 +121,7 @@ public class BlockServerTests {
 
     [TestMethod]
     public void AddBlockAboveWaterTest() {
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
         var blockProvider   = new BlockProvider(regionCache);
@@ -142,7 +142,7 @@ public class BlockServerTests {
 
     [TestMethod]
     public void AddBlockFailingTest() {
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
         var blockProvider   = new BlockProvider(regionCache);
@@ -155,7 +155,7 @@ public class BlockServerTests {
 
     [TestMethod]
     public void RemoveBlockTest() {
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
         var blockProvider   = new BlockProvider(regionCache);
@@ -183,7 +183,7 @@ public class BlockServerTests {
 
     [TestMethod]
     public void RemoveBlockFailingTest() {
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
         var blockProvider   = new BlockProvider(regionCache);
@@ -191,18 +191,18 @@ public class BlockServerTests {
         // at 99 there is no block to delete
         var pos = new WorldPoint(0, 99, 0);
         var changes = blockProvider.DeleteBlock(pos);
-        Assert.Equals(changes, NoChanges);
+        Assert.AreEqual(changes, NoChanges);
 
         // cannot delete a block, that is not on the visible surface
         pos = new WorldPoint(0, 0, 0);
         changes = blockProvider.DeleteBlock(pos);
-        Assert.Equals(changes, NoChanges);
+        Assert.AreEqual(changes, NoChanges);
     }
 
 
     [TestMethod]
     public void ChangeBlockTest() {
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
         var blockProvider   = new BlockProvider(regionCache);
@@ -219,7 +219,7 @@ public class BlockServerTests {
 
     [TestMethod]
     public void ChangeBlockTestFailing() {
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
         var blockProvider   = new BlockProvider(regionCache);
@@ -239,7 +239,7 @@ public class BlockServerTests {
         var regionCreator   = new RegionCreator(null);
         var regionCache     = new RegionCache(regionCreator);
         var blockProvider   = new BlockProvider(regionCache);
-        var blockController = new BlockController(blockProvider);
+        var blockController = new BlockControl(blockProvider);
 
         var pos = new WorldPoint(0, 99, 0);
         var changes = blockController.CreateBlock(null, pos, Lamp);
@@ -261,25 +261,25 @@ public class BlockServerTests {
         var regionCreator   = new RegionCreator(null);
         var regionCache     = new RegionCache(regionCreator);
         var blockProvider   = new BlockProvider(regionCache);
-        var blockController = new BlockController(blockProvider);
+        var blockController = new BlockControl(blockProvider);
 
         var pos = new WorldPoint(0, 99, 0);
         var changes = blockController.SwitchBlocks(null, pos);
-        Assert.Equals(changes, NoChanges);
+        Assert.AreEqual(changes, NoChanges);
 
         pos = new WorldPoint(0, 0, 0);
         changes = blockController.SwitchBlocks(null, pos);
-        Assert.Equals(changes, NoChanges);
+        Assert.AreEqual(changes, NoChanges);
     }
 
 
     [TestMethod]
     public void CreateAndDeleteChangeTest() {
-        var regionPersister = new RegionPersister(".\\RegionData\\");
+        var regionPersister = new RegionPersister(".\\regions\\");
         var regionCreator   = new RegionCreator(regionPersister);
         var regionCache     = new RegionCache(regionCreator);
         var blockProvider   = new BlockProvider(regionCache);
-        var blockController = new BlockController(blockProvider);
+        var blockController = new BlockControl(blockProvider);
         var blockPermit     = new BlockPermit(blockController);
         var blockNotify     = new BlockNotify(blockPermit);
 

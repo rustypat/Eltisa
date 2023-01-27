@@ -5,7 +5,7 @@ using Eltisa.Models;
 
 public static class Policy {
 
-    public static bool CanModifyBlock(Actor actor, WorldPoint blockPos) {
+    public static bool CanEdit(Actor actor, WorldPoint blockPos) {
         if( Configuration.Mode == RunMode.Eltisa) {
             if ( actor.ActorType == Actor.Type.Administrator ) return true;
             if ( actor.ActorType == Actor.Type.Citizen       ) return true;
