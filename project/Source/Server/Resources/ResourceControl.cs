@@ -33,6 +33,29 @@ public class ResourceControl {
     }
 
 
+    public ResourceResultType WriteResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+        if(!Policy.CanEdit(actor, pos)) return NotAllowed;
+        var resource = resourceCache.ReadResource(pos);
+        if(resource == null)  {
+            resource = new Resource(blockType, actor.ID, password, data);
+            resourceCache.WriteResource(pos, resource);
+            return Ok;
+        }   
+        else if(resource.BlockType != blockType) {
+            resource = new Resource(blockType, actor.ID, password, data);
+            resourceCache.WriteResource(pos, resource);
+            return Ok;
+        } 
+        else {
+            if(resource.Password != password)  return PasswordInvalid;
+            lock(resource) {
+                resource.UpdateData(data);
+            }
+            return Ok;
+        }
+    }
+
+
     public ResourceResultType UpdateResource(Actor actor, WorldPoint pos, int blockType, string password, string newPassword, byte[] newData) {
         if(!Policy.CanEdit(actor, pos)) return NotAllowed;
         var resource = resourceCache.ReadResource(pos);

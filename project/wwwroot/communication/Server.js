@@ -22,8 +22,9 @@ function Server(serverLocation, webSocketPath) {
 
         CreateResourceRequest:         60,
         ReadResourceRequest:           62,
-        UpdateResourceRequest:         64,
-        DeleteResourceRequest:         66        
+        WriteResourceRequest:          64,
+        UpdateResourceRequest:         66,
+        DeleteResourceRequest:         68        
     }
     
     const InMessageType = {
@@ -40,8 +41,9 @@ function Server(serverLocation, webSocketPath) {
 
         CreateResourceResponse:        61,
         ReadResourceResponse:          63,
-        UpdateResourceResponse:        65,
-        DeleteResourceResponse:        67        
+        WriteResourceResponse:         65,
+        UpdateResourceResponse:        67,
+        DeleteResourceResponse:        69        
     }
     
     var   webSocket   = {};    

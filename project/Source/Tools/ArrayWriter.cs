@@ -52,14 +52,24 @@ public class ArrayWriter {
 
 
     public void WriteString(string str) {
-        byte[] utf8Array = Encoding.UTF8.GetBytes(str);
-        writer.Write((int)utf8Array.Length);
-        writer.Write(utf8Array);
+        if(str == null) {
+            writer.Write((int)-1);
+        }
+        else {
+            byte[] utf8Array = Encoding.UTF8.GetBytes(str);
+            writer.Write((int)utf8Array.Length);
+            writer.Write(utf8Array);
+        }
     }
 
 
     public void WriteBytes(byte[] data) {
-        writer.Write(data.Length);
-        writer.Write(data);
+        if(data == null) {
+            writer.Write((int)-1);
+        }
+        else {
+            writer.Write((int)data.Length);
+            writer.Write(data);
+        }
     }
 }

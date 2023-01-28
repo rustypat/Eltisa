@@ -131,9 +131,21 @@ static public class World {
     }
 
 
+
+
     public static ResourceResultType CreateResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
         return resourceControl.CreateResource(actor, pos, blockType, password, data);
     }
+
+    public static ResourceResult ReadResource(Actor actor, WorldPoint pos, int blockType, string password) {
+        return resourceControl.ReadResource(actor, pos, blockType, password);
+    }
+
+    public static ResourceResultType WriteResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+        return resourceControl.WriteResource(actor, pos, blockType, password, data);
+    }
+
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // persist

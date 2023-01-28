@@ -48,6 +48,7 @@ public class ArrayReader {
 
     public string ReadString() {
         int length = reader.ReadInt32();
+        if(length < 0) return null;
         byte[] buffer = new byte[length];
         reader.Read(buffer, 0, length);
         string str = Encoding.UTF8.GetString(buffer);
@@ -57,6 +58,7 @@ public class ArrayReader {
 
     public byte[] ReadBytes() {
         int length = reader.ReadInt32();
+        if(length < 0) return null;
         byte[] buffer = new byte[length];
         reader.Read(buffer, 0, length);
         return buffer;

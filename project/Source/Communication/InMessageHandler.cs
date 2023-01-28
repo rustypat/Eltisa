@@ -232,10 +232,18 @@ public static class InMessageHandler {
 
 
     public enum MessageId {
-        CreateResourceRequest = 60,
-        ReadResourceRequest   = 62,
-        UpdateResourceRequest = 64,
-        DeleteResoureRequest  = 66
+        CreateResourceRequest     = 60,
+        ReadResourceRequest       = 62,
+        WriteResourceRequest      = 64,
+        UpdateResourceRequest     = 66,
+        DeleteResoureRequest      = 68,
+
+        CreateResourceResponse    = 61,
+        ReadResourceResponse      = 63,
+        WriteResourceResponse     = 65,
+        UpdateResourceResponse    = 67,
+        DeleteResoureResponse     = 69,
+        
     }
 
 
@@ -255,6 +263,25 @@ public static class InMessageHandler {
         Assert(endTag    == InMessage.EndTag);            
         var result = World.CreateResource(socket.GetActor(), position, blockType, password, data);
     }
+
+
+    static void HandleWriteResourceRequest(HomeSocket socket, byte[] inBuffer) {
+        var reader      = new ArrayReader(inBuffer);
+        int messageId   = reader.ReadInt();
+        Assert(messageId == (int)MessageId.ReadResourceRequest);
+        int x           = reader.ReadInt();
+        int y           = reader.ReadInt();
+        int z           = reader.ReadInt();
+        int blockType   = reader.ReadInt();
+        string password = reader.ReadString();
+        byte[] data     = reader.ReadBytes();
+
+        var position     = new WorldPoint(x, y, z);
+        int endTag       = reader.ReadInt();
+        Assert(endTag    == InMessage.EndTag);            
+        var result = World.WriteResource(socket.GetActor(), position, blockType, password, data);
+    }
+
 
 
 
