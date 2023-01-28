@@ -112,7 +112,7 @@ public class HomeSocket {
                 }
                 
                 // handle message
-                InMessageHandler.HandleSocketMessage(this, inBuffer, inCount);
+                InMessageHandler.HandleSocketMessage(this, inBuffer);
 
             }catch(AuthenticationException e) {
                 return;

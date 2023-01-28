@@ -1,6 +1,7 @@
 namespace Eltisa.Communication; 
 
 using System;
+using System.Linq;
 using System.Security.Authentication;
 using Eltisa.Models;
 using Eltisa.Tools;
@@ -10,58 +11,60 @@ using Eltisa.Administration;
 using static System.Diagnostics.Debug;
 using static Eltisa.Administration.Configuration;
 using static Eltisa.Communication.Constant;
-
+using static Eltisa.Communication.MessageId;
 
 public static class InMessageHandler {
 
+    delegate void MessageHandler(HomeSocket socket, byte[] message);
 
-    public static void HandleSocketMessage(HomeSocket socket, byte[] message, int messageLength) {
-        if(message[0] == InMessage.MoveActor.Id) {
-            HandleMoveActor(socket, message);
-        }
-        else if(message[0] == InMessage.GetChunks.Id) {
-            HandleGetChunks(socket, message);
-        }
-        else if(message[0] == InMessage.AddBlock.Id) {
-            HandleAddBlock(socket, message);
-        }
-        else if(message[0] == InMessage.RemoveBlock.Id) {
-            HandleRemoveBlock(socket, message);
-        }
-        else if(message[0] == InMessage.ChangeBlock.Id) {
-            HandleChangeBlock(socket, message);
-        }
-        else if(message[0] == InMessage.SwitchBlocks.Id) {
-            HandleSwitchBlocks(socket, message);
-        }
-        else if(message[0] == InMessage.GetBlockResource.Id) {
-            HandleGetBlockResource(socket, message);
-        }
-        else if(message[0] == InMessage.SaveBlockResource.Id) {
-            HandleSaveBlockResource(socket, message);
-        }
-        else if(message[0] == InMessage.ChatMessage.Id) {
-            HandleChatMessage(socket, message);
-        }
-        else if(message[0] == InMessage.VideoChatMessage.Id) {
-            HandleVideoChatMessage(socket, message);
-        }
-        else if(message[0] == InMessage.ListActors.Id) {
-            HandleListActors(socket, message);
-        }
-        else if(message[0] == InMessage.Login.Id) {
-            HandleLogin(socket, message);
-        }
-        else {
-            var exception = new Exception("received unknown message of type " + message[0]);
-            Log.Error(exception);
-        }
+    private static int maxMessageId = Enum.GetValues(typeof(MessageId)).Cast<int>().Max();
+    private static MessageHandler[] messageHandlers = new MessageHandler[maxMessageId];
+
+    static InMessageHandler() {
+        messageHandlers[InMessage.MoveActor.Id] = HandleMoveActor;
+        messageHandlers[InMessage.GetChunks.Id] = HandleGetChunks;
+        messageHandlers[InMessage.AddBlock.Id] = HandleAddBlock;
+        messageHandlers[InMessage.RemoveBlock.Id] = HandleRemoveBlock;
+        messageHandlers[InMessage.ChangeBlock.Id] = HandleChangeBlock;
+        messageHandlers[InMessage.SwitchBlocks.Id] = HandleSwitchBlocks;
+        messageHandlers[InMessage.GetBlockResource.Id] = HandleGetBlockResource;
+        messageHandlers[InMessage.SaveBlockResource.Id] = HandleSaveBlockResource;
+        messageHandlers[InMessage.ChatMessage.Id] = HandleChatMessage;
+        messageHandlers[InMessage.VideoChatMessage.Id] = HandleVideoChatMessage;
+        messageHandlers[InMessage.ListActors.Id] = HandleListActors;
+        messageHandlers[InMessage.Login.Id] = HandleLogin;
+        messageHandlers[(int)CreateResourceRequest] = HandleCreateResourceRequest;
+        messageHandlers[(int)ReadResourceRequest] = HandleReadResourceRequest;
+        messageHandlers[(int)WriteResourceRequest] = HandleWriteResourceRequest;
     }
 
+
+    public static void HandleSocketMessage(HomeSocket socket, byte[] message) {
+        var messageId = message[0];  // works only on Intel type processors!!
+
+        if(messageId < 0 || messageId >= maxMessageId) {
+            var exception = new Exception("received unknown message of type " + message[0]);
+            Log.Error(exception);
+            #if DEBUG
+                throw exception;
+            #endif
+        }
+
+        messageHandlers[messageId](socket, message);
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // handle received messages
     ///////////////////////////////////////////////////////////////////////////////////////////
+
+
+    static void HandleUnknownMessage(HomeSocket socket, byte[] message) {
+            var exception = new Exception("received unknown message of type " + message[0]);
+            Log.Error(exception);
+            #if DEBUG
+                throw exception;
+            #endif
+    }
 
 
     static void HandleLogin(HomeSocket socket, byte[] inBuffer) {
