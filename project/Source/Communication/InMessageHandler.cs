@@ -21,6 +21,8 @@ public static class InMessageHandler {
     private static MessageHandler[] messageHandlers = new MessageHandler[maxMessageId];
 
     static InMessageHandler() {
+        for(int i=0; i < maxMessageId; i++) messageHandlers[i] = HandleUnknownMessage;
+
         messageHandlers[InMessage.MoveActor.Id] = HandleMoveActor;
         messageHandlers[InMessage.GetChunks.Id] = HandleGetChunks;
         messageHandlers[InMessage.AddBlock.Id] = HandleAddBlock;
