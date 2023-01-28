@@ -91,6 +91,40 @@ public static class OutMessageHandler {
     }
 
 
+    public static void SendUpdateResourceResponse(HomeSocket socket, WorldPoint position, ResourceResponse result) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((int)MessageId.UpdateResourceResponse);
+        builder.WriteInt(messageCounter);
+        builder.WriteInt(position.X);
+        builder.WriteInt(position.Y);
+        builder.WriteInt(position.Z);
+        builder.WriteInt((int)result);
+        builder.WriteInt(EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageTo(socket, message);                        
+    }
+
+
+    public static void SendDeleteResourceResponse(HomeSocket socket, WorldPoint position, ResourceResponse result) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((int)MessageId.DeleteResourceResponse);
+        builder.WriteInt(messageCounter);
+        builder.WriteInt(position.X);
+        builder.WriteInt(position.Y);
+        builder.WriteInt(position.Z);
+        builder.WriteInt((int)result);
+        builder.WriteInt(EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageTo(socket, message);                        
+    }
+
+
 
     public static void SendMessageTo(HomeSocket socket, byte[] message) {
         socket.SendMessageAsync(message);

@@ -114,7 +114,7 @@ public class HomeSocket {
                 // handle message
                 InMessageHandler.HandleSocketMessage(this, inBuffer);
 
-            }catch(AuthenticationException e) {
+            }catch(AuthenticationException) {
                 return;
             }catch(Exception e) {
                 if(!IsClientClosedWebsocketException(e)) Log.Error(e);

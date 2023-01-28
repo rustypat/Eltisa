@@ -38,6 +38,8 @@ public static class InMessageHandler {
         messageHandlers[(int)CreateResourceRequest] = HandleCreateResourceRequest;
         messageHandlers[(int)ReadResourceRequest] = HandleReadResourceRequest;
         messageHandlers[(int)WriteResourceRequest] = HandleWriteResourceRequest;
+        messageHandlers[(int)UpdateResourceRequest] = HandleUpdateResourceRequest;
+        messageHandlers[(int)DeleteResourceRequest] = HandleDeleteResourceRequest;
     }
 
 
@@ -290,6 +292,44 @@ public static class InMessageHandler {
         Assert(endTag    == EndTag);            
         var response = World.WriteResource(socket.GetActor(), position, blockType, password, data);
         OutMessageHandler.SendWriteResourceResponse(socket, position, response);
+    }
+
+
+    static void HandleUpdateResourceRequest(HomeSocket socket, byte[] inBuffer) {
+        var reader      = new ArrayReader(inBuffer);
+        int messageId   = reader.ReadInt();
+        Assert(messageId == (int)MessageId.UpdateResourceRequest);
+        int x           = reader.ReadInt();
+        int y           = reader.ReadInt();
+        int z           = reader.ReadInt();
+        int blockType   = reader.ReadInt();
+        string password = reader.ReadString();
+        string newPassword = reader.ReadString();
+        byte[] newData  = reader.ReadBytes();
+
+        var position     = new WorldPoint(x, y, z);
+        int endTag       = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+        var response = World.UpdateResource(socket.GetActor(), position, blockType, password, newPassword, newData);
+        OutMessageHandler.SendUpdateResourceResponse(socket, position, response);
+    }
+
+
+    static void HandleDeleteResourceRequest(HomeSocket socket, byte[] inBuffer) {
+        var reader      = new ArrayReader(inBuffer);
+        int messageId   = reader.ReadInt();
+        Assert(messageId == (int)MessageId.UpdateResourceRequest);
+        int x           = reader.ReadInt();
+        int y           = reader.ReadInt();
+        int z           = reader.ReadInt();
+        int blockType   = reader.ReadInt();
+        string password = reader.ReadString();
+
+        var position     = new WorldPoint(x, y, z);
+        int endTag       = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+        var response = World.DeleteResource(socket.GetActor(), position, blockType, password);
+        OutMessageHandler.SendDeleteResourceResponse(socket, position, response);
     }
 
 
