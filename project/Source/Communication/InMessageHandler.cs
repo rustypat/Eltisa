@@ -9,6 +9,7 @@ using Eltisa.Server.Players;
 using Eltisa.Administration;
 using static System.Diagnostics.Debug;
 using static Eltisa.Administration.Configuration;
+using static Eltisa.Communication.Constant;
 
 
 public static class InMessageHandler {
@@ -231,22 +232,6 @@ public static class InMessageHandler {
     }
 
 
-    public enum MessageId {
-        CreateResourceRequest     = 60,
-        ReadResourceRequest       = 62,
-        WriteResourceRequest      = 64,
-        UpdateResourceRequest     = 66,
-        DeleteResoureRequest      = 68,
-
-        CreateResourceResponse    = 61,
-        ReadResourceResponse      = 63,
-        WriteResourceResponse     = 65,
-        UpdateResourceResponse    = 67,
-        DeleteResoureResponse     = 69,
-        
-    }
-
-
     static void HandleCreateResourceRequest(HomeSocket socket, byte[] inBuffer) {
         var reader      = new ArrayReader(inBuffer);
         int messageId   = reader.ReadInt();
@@ -260,15 +245,34 @@ public static class InMessageHandler {
 
         var position     = new WorldPoint(x, y, z);
         int endTag       = reader.ReadInt();
-        Assert(endTag    == InMessage.EndTag);            
+        Assert(endTag    == EndTag);            
         var result = World.CreateResource(socket.GetActor(), position, blockType, password, data);
+        OutMessageHandler.SendCreateResourceResponse(socket, position, result);
+    }
+
+
+    static void HandleReadResourceRequest(HomeSocket socket, byte[] inBuffer) {
+        var reader      = new ArrayReader(inBuffer);
+        int messageId   = reader.ReadInt();
+        Assert(messageId == (int)MessageId.ReadResourceRequest);
+        int x           = reader.ReadInt();
+        int y           = reader.ReadInt();
+        int z           = reader.ReadInt();
+        int blockType   = reader.ReadInt();
+        string password = reader.ReadString();
+
+        var position     = new WorldPoint(x, y, z);
+        int endTag       = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+        var result = World.ReadResource(socket.GetActor(), position, blockType, password);
+        OutMessageHandler.SendReadResourceResponse(socket, position, result);
     }
 
 
     static void HandleWriteResourceRequest(HomeSocket socket, byte[] inBuffer) {
         var reader      = new ArrayReader(inBuffer);
         int messageId   = reader.ReadInt();
-        Assert(messageId == (int)MessageId.ReadResourceRequest);
+        Assert(messageId == (int)MessageId.WriteResourceRequest);
         int x           = reader.ReadInt();
         int y           = reader.ReadInt();
         int z           = reader.ReadInt();
@@ -278,11 +282,10 @@ public static class InMessageHandler {
 
         var position     = new WorldPoint(x, y, z);
         int endTag       = reader.ReadInt();
-        Assert(endTag    == InMessage.EndTag);            
-        var result = World.WriteResource(socket.GetActor(), position, blockType, password, data);
+        Assert(endTag    == EndTag);            
+        var response = World.WriteResource(socket.GetActor(), position, blockType, password, data);
+        OutMessageHandler.SendWriteResourceResponse(socket, position, response);
     }
-
-
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////

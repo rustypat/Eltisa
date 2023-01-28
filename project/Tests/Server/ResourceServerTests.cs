@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Eltisa.Models;
 using Assert = Eltisa.Tools.Assert;
 using static Eltisa.Models.BlockDescription;
-using static Eltisa.Models.ResourceResultType;
+using static Eltisa.Models.ResourceResponse;
 using Eltisa.Tools;
 
 [TestClass]
@@ -30,14 +30,14 @@ public class ResourceServerTests {
 
         // read
         var result = resourceControl.ReadResource(actor, pos, Tresor, "secret");
-        Assert.AreEqual(result.Result, ResourceResultType.Ok);
+        Assert.AreEqual(result.Response, ResourceResponse.Ok);
         Assert.AreEqual(Encoding.UTF8.GetString( result.Resource.Data), "Hello Resource World");
 
         // update
         resType = resourceControl.UpdateResource(actor, pos, Tresor, "secret", "verySecret", Encoding.UTF8.GetBytes("Hello World"));
         Assert.AreEqual(resType, Ok);
         result = resourceControl.ReadResource(actor, pos, Tresor, "verySecret");
-        Assert.AreEqual(result.Result, ResourceResultType.Ok);
+        Assert.AreEqual(result.Response, ResourceResponse.Ok);
         Assert.AreEqual(Encoding.UTF8.GetString( result.Resource.Data), "Hello World");
 
         // delete
@@ -65,11 +65,11 @@ public class ResourceServerTests {
 
         // read with correct password
         var result = resourceControl.ReadResource(actor, pos, Tresor, "secret");
-        Assert.AreEqual(result.Result, ResourceResultType.Ok);
+        Assert.AreEqual(result.Response, ResourceResponse.Ok);
 
         // read with wrong password
         result = resourceControl.ReadResource(actor, pos, Tresor, "wrongPassword");
-        Assert.AreEqual(result.Result, ResourceResultType.PasswordInvalid);
+        Assert.AreEqual(result.Response, ResourceResponse.PasswordInvalid);
         Assert.IsNull(result.Resource);
     }
 

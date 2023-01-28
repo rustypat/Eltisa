@@ -3,7 +3,7 @@ namespace Eltisa.Server.Resources;
 using System;
 using Eltisa.Administration;
 using Eltisa.Models;
-using static Eltisa.Models.ResourceResultType;
+using static Eltisa.Models.ResourceResponse;
 
 public class ResourceControl {
 
@@ -14,7 +14,7 @@ public class ResourceControl {
     }
 
 
-    public ResourceResultType CreateResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+    public ResourceResponse CreateResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
         if(!Policy.CanEdit(actor, pos)) return NotAllowed;
         var resource = resourceCache.ReadResource(pos);
         if(resource != null && resource.BlockType == blockType) return ResourceAlreadyExists;
@@ -33,7 +33,7 @@ public class ResourceControl {
     }
 
 
-    public ResourceResultType WriteResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+    public ResourceResponse WriteResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
         if(!Policy.CanEdit(actor, pos)) return NotAllowed;
         var resource = resourceCache.ReadResource(pos);
         if(resource == null)  {
@@ -56,7 +56,7 @@ public class ResourceControl {
     }
 
 
-    public ResourceResultType UpdateResource(Actor actor, WorldPoint pos, int blockType, string password, string newPassword, byte[] newData) {
+    public ResourceResponse UpdateResource(Actor actor, WorldPoint pos, int blockType, string password, string newPassword, byte[] newData) {
         if(!Policy.CanEdit(actor, pos)) return NotAllowed;
         var resource = resourceCache.ReadResource(pos);
         if(resource == null)                return ResourceDoesNotExist;
@@ -70,7 +70,7 @@ public class ResourceControl {
     }
 
 
-    public ResourceResultType DeleteResource(Actor actor, WorldPoint pos, int blockType, string password) {
+    public ResourceResponse DeleteResource(Actor actor, WorldPoint pos, int blockType, string password) {
         if(!Policy.CanEdit(actor, pos)) return NotAllowed;
         var resource = resourceCache.ReadResource(pos);
         if(resource == null)                return ResourceDoesNotExist;

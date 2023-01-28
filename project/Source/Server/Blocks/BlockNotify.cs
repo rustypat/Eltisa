@@ -18,7 +18,7 @@ public class BlockNotify : IBlockAccess {
     public Change[] CreateBlock(Actor actor, WorldPoint worldPos, ushort blockDescription) {
         var changes = blockAccess.CreateBlock(actor, worldPos, blockDescription);
         if(changes != NoChanges) {
-            OutMessageHandler.BlocksChanged(worldPos, changes);
+            OutMessageHandler.SendBlocksChangedNotification(worldPos, changes);
         }
         return changes;
     }
@@ -33,7 +33,7 @@ public class BlockNotify : IBlockAccess {
     public Change[] UpdateBlock(Actor actor, WorldPoint worldPos, ushort newBlockDefinition) {
         var changes =  blockAccess.UpdateBlock(actor, worldPos, newBlockDefinition);
         if(changes != NoChanges) {
-            OutMessageHandler.BlocksChanged(worldPos, changes);
+            OutMessageHandler.SendBlocksChangedNotification(worldPos, changes);
         }
         return changes;
     }
@@ -43,7 +43,7 @@ public class BlockNotify : IBlockAccess {
         if(worldPositions.Length == 0) return NoChanges;
         var changes = blockAccess.SwitchBlocks(actor, worldPositions);
         if(changes != NoChanges) {
-            OutMessageHandler.BlocksChanged(worldPositions[0], changes);
+            OutMessageHandler.SendBlocksChangedNotification(worldPositions[0], changes);
         }
         return changes;
     }
@@ -52,7 +52,7 @@ public class BlockNotify : IBlockAccess {
     public Change[] DeleteBlock(Actor actor, WorldPoint worldPos) {
         var changes = blockAccess.DeleteBlock(actor, worldPos);
         if(changes != NoChanges) {
-            OutMessageHandler.BlocksChanged(worldPos, changes);
+            OutMessageHandler.SendBlocksChangedNotification(worldPos, changes);
         }
         return changes;
     }

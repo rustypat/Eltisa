@@ -4,10 +4,10 @@ using System;
 
 
 
-public readonly record struct ResourceResult( ResourceResultType Result, Resource Resource );
+public readonly record struct ResourceResult( ResourceResponse Response, Resource Resource );
 
 
-public enum ResourceResultType {
+public enum ResourceResponse {
     Ok,
     NotAllowed,
     ResourceDoesNotExist,

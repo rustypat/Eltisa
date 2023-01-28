@@ -9,7 +9,7 @@ using Assert = Eltisa.Tools.Assert;
 using static Eltisa.Models.BlockDescription;
 using static Eltisa.Models.Block.Faces;
 using static Eltisa.Models.Constants;
-using static Eltisa.Models.ResourceResultType;
+using static Eltisa.Models.ResourceResponse;
 
 
 [TestClass]
@@ -134,36 +134,36 @@ public class WorldTests {
         Assert.AreEqual(result, Ok);
 
         response = World.ReadResource(actor, pos, Stone, "");
-        Assert.AreEqual(response.Result, Ok);
+        Assert.AreEqual(response.Response, Ok);
         Assert.AreEqual(response.Resource.Data, data2);
 
         result = World.WriteResource(actor, pos, Grass, "Abrakadabra", data1);
         Assert.AreEqual(result, Ok);
 
         response = World.ReadResource(actor, pos, Stone, "");
-        Assert.AreEqual(response.Result, ResourceDoesNotExist);
+        Assert.AreEqual(response.Response, ResourceDoesNotExist);
         Assert.AreEqual(response.Resource, null);
 
         response = World.ReadResource(actor, pos, Grass, "");
-        Assert.AreEqual(response.Result, PasswordInvalid);
+        Assert.AreEqual(response.Response, PasswordInvalid);
         Assert.AreEqual(response.Resource, null);
 
         response = World.ReadResource(actor, pos, Grass, "Abrakadabra");
-        Assert.AreEqual(response.Result, Ok);
+        Assert.AreEqual(response.Response, Ok);
         Assert.AreEqual(response.Resource.Data, data1);
 
         result = World.WriteResource(actor, pos, Grass, "Idontknow", data2);
         Assert.AreEqual(result, PasswordInvalid);
 
         response = World.ReadResource(actor, pos, Grass, "Abrakadabra");
-        Assert.AreEqual(response.Result, Ok);
+        Assert.AreEqual(response.Response, Ok);
         Assert.AreEqual(response.Resource.Data, data1);
 
         result = World.WriteResource(actor, pos, Grass, "Abrakadabra", data2);
         Assert.AreEqual(result, Ok);
 
         response = World.ReadResource(actor, pos, Grass, "Abrakadabra");
-        Assert.AreEqual(response.Result, Ok);
+        Assert.AreEqual(response.Response, Ok);
         Assert.AreEqual(response.Resource.Data, data2);
     }
 

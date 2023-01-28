@@ -1,24 +1,100 @@
 namespace Eltisa.Communication; 
 
 using System;
-using System.Security.Authentication;
 using Eltisa.Models;
 using Eltisa.Tools;
-using Eltisa.Server;
 using Eltisa.Server.Players;
-using Eltisa.Administration;
-using static System.Diagnostics.Debug;
 using static Eltisa.Administration.Configuration;
+using static Eltisa.Communication.Constant;
 
 
 public static class OutMessageHandler {
 
+    private static int messageCounter;
 
-    public static void BlocksChanged(WorldPoint position, Change[] changes) {
-            var changeMessage = OutMessage.createBlocksChangedMessage(changes);
-            OutMessageHandler.SendMessageToRange(changeMessage, position, ClientCacheBlockRadius);                        
+
+    public static void SendBlocksChangedNotification(WorldPoint position, Change[] changes) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((int)MessageId.BlocksChangedNotification);
+        builder.WriteInt(messageCounter);
+        builder.WriteInt(changes.Length);
+        foreach(var change in changes) {
+            builder.WriteInt(change.Position.X);
+            builder.WriteInt(change.Position.Y);
+            builder.WriteInt(change.Position.Z);
+            builder.WriteUint(change.Block.GetData());
+        }
+        builder.WriteInt(EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageToRange(message, position, ClientCacheBlockRadius);                        
     }
 
+
+
+    public static void SendCreateResourceResponse(HomeSocket socket, WorldPoint position, ResourceResponse result) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((int)MessageId.CreateResourceResponse);
+        builder.WriteInt(messageCounter);
+        builder.WriteInt(position.X);
+        builder.WriteInt(position.Y);
+        builder.WriteInt(position.Z);
+        builder.WriteInt((int)result);
+        builder.WriteInt(EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageTo(socket, message);                        
+    }
+
+
+
+    public static void SendReadResourceResponse(HomeSocket socket, WorldPoint position, ResourceResult result) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((int)MessageId.ReadResourceResponse);
+        builder.WriteInt(messageCounter);
+        builder.WriteInt(position.X);
+        builder.WriteInt(position.Y);
+        builder.WriteInt(position.Z);
+        builder.WriteInt((int)result.Response);
+        if(result.Response == ResourceResponse.Ok) {
+            builder.WriteInt(result.Resource.BlockType);
+            builder.WriteBytes(result.Resource.Data);
+        }
+        builder.WriteInt(EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageTo(socket, message);                        
+    }
+
+
+
+    public static void SendWriteResourceResponse(HomeSocket socket, WorldPoint position, ResourceResponse result) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((int)MessageId.WriteResourceResponse);
+        builder.WriteInt(messageCounter);
+        builder.WriteInt(position.X);
+        builder.WriteInt(position.Y);
+        builder.WriteInt(position.Z);
+        builder.WriteInt((int)result);
+        builder.WriteInt(EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageTo(socket, message);                        
+    }
+
+
+
+    public static void SendMessageTo(HomeSocket socket, byte[] message) {
+        socket.SendMessageAsync(message);
+    }
 
 
     public static void SendMessageToAll(byte[] message) {

@@ -5,11 +5,10 @@ using Eltisa.Models;
 using Eltisa.Tools;
 using Eltisa.Administration;
 using static System.Diagnostics.Debug;
-
+using static Eltisa.Communication.Constant;
 
 public static class InMessage {
 
-    public const int EndTag = 666999;
 
     public class Login {
         public const byte Id = 10;

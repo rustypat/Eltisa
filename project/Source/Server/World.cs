@@ -133,7 +133,7 @@ static public class World {
 
 
 
-    public static ResourceResultType CreateResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+    public static ResourceResponse CreateResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
         return resourceControl.CreateResource(actor, pos, blockType, password, data);
     }
 
@@ -141,7 +141,7 @@ static public class World {
         return resourceControl.ReadResource(actor, pos, blockType, password);
     }
 
-    public static ResourceResultType WriteResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+    public static ResourceResponse WriteResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
         return resourceControl.WriteResource(actor, pos, blockType, password, data);
     }
 

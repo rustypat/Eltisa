@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using Eltisa.Models;
 using Eltisa.Tools;
 using static System.Diagnostics.Debug;
+using static Eltisa.Communication.Constant;
 
 
 public static class OutMessage {
 
     public enum ActorChange { Login=1, Moved=2, Logout=3 };
 
-    const int EndTag = 666999;
 
     private enum OutMessageType{
         Login            = 11,
