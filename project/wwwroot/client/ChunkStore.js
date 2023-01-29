@@ -42,10 +42,11 @@ function ChunkStore(_viewport) {
         const chunk = chunks.get(key);
         if( !chunk ) return null;
         if(BlockData.hasFaces(blockdata)) {
+            if(!chunk.blocks) chunk.blocks = new IntegerArray(64, 64);
             chunk.blocks.replaceOrAdd(blockdata, BlockData.equalLocation);
         }
         else {
-            chunk.blocks.removeFirstMatch(blockdata, BlockData.equalLocation)
+            if(chunk.blocks) chunk.blocks.removeFirstMatch(blockdata, BlockData.equalLocation)
         }
         return chunk;
     }
