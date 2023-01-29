@@ -45,6 +45,16 @@ function Server(serverLocation, webSocketPath) {
         UpdateResourceResponse:        67,
         DeleteResourceResponse:        69        
     }
+
+
+    const ResourceResponse = {
+        Ok:                            0,
+        NotAllowed:                    1,
+        ResourceDoesNotExist:          2,
+        ResourceAlreadyExists:         3,
+        PasswordInvalid:               4
+    }
+
     
     var   webSocket   = {};    
     const self        = this;
@@ -80,12 +90,14 @@ function Server(serverLocation, webSocketPath) {
 
             receiveChunksMessage(reader, messageType);
             receiveActorChangedMessage(reader, messageType);
+            receiveBlocksChangedMessage(reader, messageType);
             receiveActorListMessage(reader, messageType);
             receiveChatMessage(reader, messageType);
-            receiveBlocksChangedMessage(reader, messageType);
             receiveLoginMessage(reader, messageType);
             receiveVideoChatMessage(reader, messageType);
             receiveBlockResourceMessage(reader, messageType);
+            receiveReadResourceResponseMessage(reader, messageType);
+            receiveWriteResourceResponseMessage(reader, messageType);
         };
 
         webSocket.onerror = function(error) {
@@ -105,11 +117,11 @@ function Server(serverLocation, webSocketPath) {
 
     function getMessageTypeDescription(messageType) {
         switch(messageType) {
-            case InMessageType.Login:            return "Login";
-            case InMessageType.ActorChanged:     return "ActorChanged";
-            case InMessageType.ActorList:        return "ActorList";
             case InMessageType.Chunks:           return "Chunks";
             case InMessageType.BlocksChanged:    return "BlocksChanged";
+            case InMessageType.ActorChanged:     return "ActorChanged";
+            case InMessageType.Login:            return "Login";
+            case InMessageType.ActorList:        return "ActorList";
             case InMessageType.BlockResource:    return "BlockResource";
             case InMessageType.Chat:             return "Chat";
             case InMessageType.VideoChat:        return "VideoChat";
@@ -280,6 +292,42 @@ function Server(serverLocation, webSocketPath) {
         message.text         = reader.readString();
         assert(endTag == reader.readInteger());
         self.receiveBlockResourceHandler(message);
+        return true;        
+    }
+
+
+    function receiveReadResourceResponseMessage(reader, messageType) {
+        if(messageType != InMessageType.ReadResourceResponse) return false;
+
+        const message        = {};
+        message.x            = reader.readInteger();
+        message.y            = reader.readInteger();
+        message.z            = reader.readInteger();
+        message.response     = reader.readInteger();
+        if(message.response == ResourceResponse.Ok) {
+            message.type         = reader.readInteger();
+            message.text         = reader.readString();    
+        }
+        else {
+            message.type     = -1;
+            message.text     = null;
+        }
+        assert(endTag == reader.readInteger());
+        self.receiveResourceHandler(message);
+        return true;        
+    }
+
+
+    function receiveWriteResourceResponseMessage(reader, messageType) {
+        if(messageType != InMessageType.ReadResourceResponse) return false;
+
+        const message        = {};
+        message.x            = reader.readInteger();
+        message.y            = reader.readInteger();
+        message.z            = reader.readInteger();
+        message.response     = reader.readInteger();
+        assert(endTag == reader.readInteger());
+        self.receiveResourceHandler(message);
         return true;        
     }
 
@@ -511,6 +559,39 @@ function Server(serverLocation, webSocketPath) {
         
         const message = writer.ToArrayBuffer();
         Log.trace("send message " + (++outMessageCount) + ", save block resource");
+        sendMessage(message, 3);
+    }
+
+
+    this.readResourceRequest = function(blockPos, type, password) {
+        writer.reset();
+        writer.writeInteger(OutMessageType.ReadResourceRequest);
+        writer.writeInteger(blockPos.x);
+        writer.writeInteger(blockPos.y);
+        writer.writeInteger(blockPos.z);
+        writer.writeInteger(type);
+        writer.writeString(password);
+        writer.writeInteger(endTag);
+        
+        const message = writer.ToArrayBuffer();
+        Log.trace("send message " + (++outMessageCount) + ", read resource");
+        sendMessage(message, 3);
+    }
+
+
+    this.writeResourceRequest = function(blockPos, type, password, stringData) {
+        writer.reset();
+        writer.writeInteger(OutMessageType.WriteResourceRequest);
+        writer.writeInteger(blockPos.x);
+        writer.writeInteger(blockPos.y);
+        writer.writeInteger(blockPos.z);
+        writer.writeInteger(type);
+        writer.writeString(password);
+        writer.writeString(data);
+        writer.writeInteger(endTag);
+        
+        const message = writer.ToArrayBuffer();
+        Log.trace("send message " + (++outMessageCount) + ", write resource");
         sendMessage(message, 3);
     }
 

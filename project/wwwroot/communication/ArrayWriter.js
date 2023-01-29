@@ -41,15 +41,20 @@ function ArrayWriter(maxBufferLength) {
 
     const encoder = new TextEncoder("utf-8");
     this.writeString = function(str) {
-        if( str==null) str = "";        
-        const uint8Array = encoder.encode(str);
+        if( str == null) {
+            dataView.setInt32(pos, -1, true);        
+            pos += 4;
+        }
+        else {
+            const uint8Array = encoder.encode(str);
 
-        dataView.setInt32(pos, uint8Array.byteLength, true);        
-        pos += 4;
-        
-        for(var i=0; i < uint8Array.byteLength; i++) {
-            dataView.setUint8(pos, uint8Array[i]);
-            pos += 1;
+            dataView.setInt32(pos, uint8Array.byteLength, true);        
+            pos += 4;
+            
+            for(var i=0; i < uint8Array.byteLength; i++) {
+                dataView.setUint8(pos, uint8Array[i]);
+                pos += 1;
+            }    
         }
     }
 
