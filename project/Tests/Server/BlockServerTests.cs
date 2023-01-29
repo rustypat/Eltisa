@@ -291,14 +291,14 @@ public class BlockServerTests {
         Block block   = changes[0].Block;
         Assert.BlockHasFaces(block, Top, Left, Right, Front, Back, Bottom);
         Assert.BlockIs(block, Stone);
-        Assert.BlockPositionIs(block, 1, 2, 3);
+        Assert.PositionIs(block, 1, 2, 3);
         
         changes = blockNotify.DeleteBlock(actor, pos);
         Assert.SizeIs(changes, 1);
         block   = changes[0].Block;
         Assert.BlockHasFacesNot(block, Top, Left, Right, Front, Back, Bottom);
         Assert.BlockIs(block, Air);
-        Assert.BlockPositionIs(block, 1, 2, 3);
+        Assert.PositionIs(block, 1, 2, 3);
     }
 
 

@@ -25,6 +25,11 @@ public class WorldTests {
         var pos = new WorldPoint(17, 32, 19);        
         var changes = World.AddBlock(actor, pos, BlockDescription.Stone);
         Assert.SizeIs(changes, 2);
+        Assert.PositionIs(changes[0].Position, 17, 31, 19);
+        Assert.BlockHasFacesNot(changes[0].Block, Top, Left, Right, Front, Back, Bottom);
+        Assert.PositionIs(changes[1].Position, 17, 32, 19);
+        Assert.BlockHasFaces(changes[1].Block, Top, Left, Right, Front, Back);
+        Assert.BlockHasFacesNot(changes[1].Block, Bottom);
 
         changes = World.RemoveVisibleBlock(actor, pos);
         Assert.SizeIs(changes, 2);

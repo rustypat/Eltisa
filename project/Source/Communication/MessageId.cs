@@ -10,13 +10,13 @@ public enum MessageId {
     ReadResourceRequest       = 62,
     WriteResourceRequest      = 64,
     UpdateResourceRequest     = 66,
-    DeleteResoureRequest      = 68,
+    DeleteResourceRequest     = 68,
 
     CreateResourceResponse    = 61,
     ReadResourceResponse      = 63,
     WriteResourceResponse     = 65,
     UpdateResourceResponse    = 67,
-    DeleteResoureResponse     = 69,
+    DeleteResourceResponse    = 69,
     
 }
 

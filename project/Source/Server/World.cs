@@ -145,6 +145,14 @@ static public class World {
         return resourceControl.WriteResource(actor, pos, blockType, password, data);
     }
 
+    public static ResourceResponse UpdateResource(Actor actor, WorldPoint pos, int blockType, string password, string newPassword, byte[] newData) {
+        return resourceControl.UpdateResource(actor, pos, blockType, password, newPassword, newData);
+    }
+
+    public static ResourceResponse DeleteResource(Actor actor, WorldPoint pos, int blockType, string password) {
+        return resourceControl.DeleteResource(actor, pos, blockType, password);
+    }
+
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////
