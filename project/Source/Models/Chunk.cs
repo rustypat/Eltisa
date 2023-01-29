@@ -2,7 +2,6 @@ namespace Eltisa.Models;
 
 using System;
 using System.Linq;
-using Eltisa.Server;
 using Eltisa.Tools;
 using static System.Diagnostics.Debug;
 using static Eltisa.Administration.Configuration;

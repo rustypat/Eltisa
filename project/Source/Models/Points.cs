@@ -302,7 +302,7 @@ public struct WorldPoint {
     }
 
 
-    public int GetChunkPointY() {
+    public int GetChunkWorldPointY() {
         return Y >> 4;
     }
 

@@ -31,25 +31,25 @@ public static class DefaultWorld {
 
 
     public static Chunk CreateChunk(WorldPoint position) {
-        int y = position.GetChunkPointY();
+        int y = position.GetChunkWorldPointY();
 
         if( y == - ChunkRadiusVertical ) return CreateMagmaChunk(position.GetChunkPoint());
         else if( y  < 0 )                return CreateEarthChunk(position.GetChunkPoint());
         else if( y == 0 )                return CreateSeaChunk(position.GetChunkPoint());
         else if( y == 1 )                return CreateSeaSurfaceChunk(position.GetChunkPoint());
-        else if( y  > 0 )                return CreateSkyChunk(position.GetChunkPoint());
+        else if( y  > 1 )                return CreateSkyChunk(position.GetChunkPoint());
         else throw new Exception("this should never happen");
     }
 
 
     public static Chunk CreateChunk(RegionPoint regionPos, ChunkPoint chunkPos) {
-        int y = regionPos.Y * chunkPos.Y * 16;
+        int y = (regionPos.Y * 16) + chunkPos.Y;
 
         if( y == - ChunkRadiusVertical ) return CreateMagmaChunk(chunkPos);
         else if( y  < 0 )                return CreateEarthChunk(chunkPos);
         else if( y == 0 )                return CreateSeaChunk(chunkPos);
         else if( y == 1 )                return CreateSeaSurfaceChunk(chunkPos);
-        else if( y  > 0 )                return CreateSkyChunk(chunkPos);
+        else if( y  > 1 )                return CreateSkyChunk(chunkPos);
         else throw new Exception("this should never happen");
     }
 
