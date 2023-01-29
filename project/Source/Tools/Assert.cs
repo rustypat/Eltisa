@@ -97,10 +97,17 @@ public static class Assert {
     }
 
 
-    public static void BlockPositionIs(Block block, byte x, byte y, byte z, string errorMessage=null) {
+    public static void PositionIs(Block block, byte x, byte y, byte z, string errorMessage=null) {
         var blockPosInChunk = block.Position;
         if(blockPosInChunk.X == x && blockPosInChunk.Y == y && blockPosInChunk.Z == z ) return;
         errorMessage ??= $"block in chunk position is  {blockPosInChunk.X}/{blockPosInChunk.Z}/{blockPosInChunk.Z} instead of {x}/{y}/{z}";
+        throw new AssertFailedException(errorMessage);
+    }
+
+
+    public static void PositionIs(WorldPoint pos, int x, int y, int z, string errorMessage=null) {
+        if( pos.X == x &&  pos.Y == y &&  pos.Z == z ) return;
+        errorMessage ??= $"block in chunk position is  { pos.X}/{ pos.Z}/{ pos.Z} instead of {x}/{y}/{z}";
         throw new AssertFailedException(errorMessage);
     }
 
