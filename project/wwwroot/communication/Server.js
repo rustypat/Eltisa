@@ -1,5 +1,14 @@
 'use strict';
 
+const ResourceResponse = {
+    Ok:                            0,
+    NotAllowed:                    1,
+    ResourceDoesNotExist:          2,
+    ResourceAlreadyExists:         3,
+    PasswordInvalid:               4
+}
+
+
 function Server(serverLocation, webSocketPath) {
     
     const endTag        = 666999;
@@ -47,15 +56,6 @@ function Server(serverLocation, webSocketPath) {
     }
 
 
-    const ResourceResponse = {
-        Ok:                            0,
-        NotAllowed:                    1,
-        ResourceDoesNotExist:          2,
-        ResourceAlreadyExists:         3,
-        PasswordInvalid:               4
-    }
-
-    
     var   webSocket   = {};    
     const self        = this;
     const writer      = new ArrayWriter(Config.maxMessageLength);
@@ -125,6 +125,11 @@ function Server(serverLocation, webSocketPath) {
             case InMessageType.BlockResource:    return "BlockResource";
             case InMessageType.Chat:             return "Chat";
             case InMessageType.VideoChat:        return "VideoChat";
+            case InMessageType.CreateResourceResponse: return "CreateResourceResponse";
+            case InMessageType.ReadResourceResponse:   return "ReadResourceResponse";
+            case InMessageType.WriteResourceResponse:  return "WriteResourceResponse";
+            case InMessageType.UpdateResourceResponse: return "UpdateResourceResponse";
+            case InMessageType.DeleteResourceResponse: return "DeleteResourceResponse";
             default:                             return messageType;
         }
     }
@@ -299,35 +304,29 @@ function Server(serverLocation, webSocketPath) {
     function receiveReadResourceResponseMessage(reader, messageType) {
         if(messageType != InMessageType.ReadResourceResponse) return false;
 
-        const message        = {};
-        message.x            = reader.readInteger();
-        message.y            = reader.readInteger();
-        message.z            = reader.readInteger();
-        message.response     = reader.readInteger();
-        if(message.response == ResourceResponse.Ok) {
-            message.type         = reader.readInteger();
-            message.text         = reader.readString();    
-        }
-        else {
-            message.type     = -1;
-            message.text     = null;
-        }
+        const x            = reader.readInteger();
+        const y            = reader.readInteger();
+        const z            = reader.readInteger();
+        const blockType    = reader.readInteger();
+        const response     = reader.readInteger();
+        const resourceType = reader.readInteger();
+        const resourceText = reader.readString();    
         assert(endTag == reader.readInteger());
-        self.receiveResourceHandler(message);
+        self.receiveResourceHandler(blockType, response, resourceText);
         return true;        
     }
 
 
     function receiveWriteResourceResponseMessage(reader, messageType) {
-        if(messageType != InMessageType.ReadResourceResponse) return false;
+        if(messageType != InMessageType.WriteResourceResponse) return false;
 
-        const message        = {};
-        message.x            = reader.readInteger();
-        message.y            = reader.readInteger();
-        message.z            = reader.readInteger();
-        message.response     = reader.readInteger();
+        const x            = reader.readInteger();
+        const y            = reader.readInteger();
+        const z            = reader.readInteger();
+        const blockType    = reader.readInteger();
+        const response     = reader.readInteger();
         assert(endTag == reader.readInteger());
-        self.receiveResourceHandler(message);
+        self.receiveResourceHandler(blockType, response, null);
         return true;        
     }
 
@@ -587,7 +586,7 @@ function Server(serverLocation, webSocketPath) {
         writer.writeInteger(blockPos.z);
         writer.writeInteger(type);
         writer.writeString(password);
-        writer.writeString(data);
+        writer.writeString(stringData);
         writer.writeInteger(endTag);
         
         const message = writer.ToArrayBuffer();

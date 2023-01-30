@@ -55,7 +55,7 @@ public class BlockServerTests {
         var regionSecond    = regionCache.ReadRegion(regionPos);
         Assert.AreSame(region, regionSecond);
 
-        regionCache.WriteRegions();
+        regionCache.PersistRegions();
         Assert.FiileExistsNot(".\\regions\\20_11_12.rgn");
     }
 
@@ -72,7 +72,7 @@ public class BlockServerTests {
         var regionSecond    = regionCache.ReadRegion(regionPos);
         Assert.AreSame(region, regionSecond);
 
-        regionCache.WriteRegions(true);
+        regionCache.PersistRegions();
         Assert.FiileExistsNot(".\\regions\\20_11_12.rgn");
     }
 

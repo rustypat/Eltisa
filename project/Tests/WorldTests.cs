@@ -17,11 +17,25 @@ public class WorldTests {
 
     Actor actor = new Actor(1, "Tester", "noSecret", null, Actor.Type.Administrator, 1, null);
 
+
+
+    [TestInitialize]
+    public void TestInitialize() {
+        Computer.DeleteDirectory(".\\regions\\");
+        Computer.DeleteDirectory(".\\resources\\");
+        World.Initialize(".\\regions\\", ".\\resources\\");
+    }
+
+
+    [TestCleanup]
+    public void TestCleanup() {
+        Computer.DeleteDirectory(".\\regions\\");
+        Computer.DeleteDirectory(".\\resources\\");
+    }
+
+
     [TestMethod]
     public void AddAndRemoveBlock() {
-        Computer.DeleteDirectory(".\\regions\\");
-        World.Initialize(".\\regions\\", ".\\resources\\");
-
         var pos = new WorldPoint(17, 32, 19);        
         var changes = World.AddBlock(actor, pos, BlockDescription.Stone);
         Assert.SizeIs(changes, 2);
@@ -38,9 +52,6 @@ public class WorldTests {
 
     [TestMethod]
     public void AddAndRemoveMultipleBlocks() {
-        Computer.DeleteDirectory(".\\regions\\");
-        World.Initialize(".\\regions\\", ".\\resources\\");
-
         var pos1 = new WorldPoint(17, 44, 19);        
         var pos2 = new WorldPoint(17, 45, 19);        
         var changes = World.AddBlock(actor, pos1, BlockDescription.Stone);
@@ -57,9 +68,6 @@ public class WorldTests {
 
     [TestMethod]
     public void SubtractiveChunkRemoveBlock() {
-        Computer.DeleteDirectory(".\\regions\\");
-        World.Initialize(".\\regions\\", ".\\resources\\");
-
         Change[] changes;
         changes = World.RemoveVisibleBlock(actor, new WorldPoint(-1, 31, 0));
         changes = World.RemoveVisibleBlock(actor, new WorldPoint( 0, 31, 0));
@@ -78,8 +86,6 @@ public class WorldTests {
 
     [TestMethod]
     public void SubtractiveChunkFaceTest() {
-        Computer.DeleteDirectory(".\\regions\\");
-        World.Initialize(".\\regions\\", ".\\resources\\");
         Change[] changes;
 
         // create empty pit
@@ -121,9 +127,6 @@ public class WorldTests {
 
     [TestMethod]
     public void WriteResource() {
-        Computer.DeleteDirectory(".\\resources\\");
-        World.Initialize(".\\regions\\", ".\\resources\\");
-
         var actor   = new Actor(1, "Tester", "noSecret", null, Actor.Type.Administrator, 1, null);
         var pos     = new WorldPoint(18, 66, 19);
         var data1   = new byte[] { 1, 2, 3 };

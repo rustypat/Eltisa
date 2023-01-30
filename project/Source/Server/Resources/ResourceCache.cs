@@ -3,7 +3,7 @@ namespace Eltisa.Server.Resources;
 using System;
 using System.Collections.Concurrent;
 using Eltisa.Models;
-
+using Eltisa.Tools;
 
 public class ResourceCache {
 
@@ -42,6 +42,7 @@ public class ResourceCache {
 
 
     public void PersistResources() {
+        Log.Info("store resource changes");
         foreach(var resource in resources) {
             if(resource.Value.Modified) {
                 lock(resource.Value) {

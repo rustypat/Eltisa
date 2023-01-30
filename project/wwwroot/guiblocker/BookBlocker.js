@@ -69,7 +69,7 @@ function BookBlocker(body, activateGame, deactivateGame, server, player) {
             return false;
         }
 
-        server.requestSaveBlockResource(blockPos, Block.Book, text); 
+        server.writeResourceRequest(blockPos, Block.Book, "", text); 
         errorText.clearText();
         return false;
     }
@@ -84,7 +84,7 @@ function BookBlocker(body, activateGame, deactivateGame, server, player) {
             return false;
         }
 
-        server.requestSaveBlockResource(blockPos, Block.Book, text); 
+        server.writeResourceRequest(blockPos, Block.Book, "", text); 
         errorText.clearText();
 
         closeAction(event);
@@ -103,7 +103,7 @@ function BookBlocker(body, activateGame, deactivateGame, server, player) {
 
     function refreshAction(event) {
         event.stopPropagation();
-        server.requestBlockResource(blockPos, Block.Book); 
+        server.readResourceRequest(blockPos, Block.Book, ""); 
         errorText.clearText();
         return false;
     }
@@ -141,7 +141,7 @@ function BookBlocker(body, activateGame, deactivateGame, server, player) {
         quill.setContents([]);
         saveButton.disabled  = true;
         storeButton.disabled = true;
-        server.requestBlockResource(blockPos, Block.Book); 
+        server.readResourceRequest(blockPos, Block.Book, ""); 
     
         return true;
     }
@@ -152,11 +152,9 @@ function BookBlocker(body, activateGame, deactivateGame, server, player) {
     }
 
 
-    this.handleBlockResourceMessage = function(resourceMessage) {
-        if( self.isVisible() ) {
-            const deltaContent = JSON.parse(resourceMessage.text);
-            quill.setContents(deltaContent);
-        }
+    this.updateContent = function(jsonText) {
+        const deltaContent = JSON.parse(jsonText);
+        quill.setContents(deltaContent);
     }
 
 

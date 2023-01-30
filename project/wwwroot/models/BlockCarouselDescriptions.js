@@ -382,7 +382,7 @@ function initializeBlockCarouselDescriptions() {
     
     blockInfo( b.Sign,             "sign",           "sign.png", "writing on a sign is not yet implemented" );
     blockInfo( b.SignWall,         "wall sign",      "sign_wall.png", "writing on a sign is not yet implemented" );
-    blockInfo( b.Book,             "book",           "book.png", "writing in a book is not yet implemented");      
+    blockInfo( b.Book,             "book",           "book.png", "write a formated text with pictures!");      
     blockInfo( b.SecretEntry,      "Secret Entry",   "secret_entry.png", "this blocks look like normal blocks, \n but they are permeable. \nUse F3 to change.");
     blockInfo( b.Camera,           "Camera",         "camera.png");
 

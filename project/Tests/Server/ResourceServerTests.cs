@@ -44,6 +44,7 @@ public class ResourceServerTests {
         resType = resourceControl.DeleteResource(actor, pos, Tresor, "verySecret");
         Assert.AreEqual(resType, Ok);
         Assert.FiileExistsNot(".\\resources\\17_66_19.rsc");
+        Computer.DeleteDirectory(".\\resources\\");
     }
 
 
@@ -71,6 +72,7 @@ public class ResourceServerTests {
         result = resourceControl.ReadResource(actor, pos, Tresor, "wrongPassword");
         Assert.AreEqual(result.Response, ResourceResponse.PasswordInvalid);
         Assert.IsNull(result.Resource);
+        Computer.DeleteDirectory(".\\resources\\");
     }
 
 

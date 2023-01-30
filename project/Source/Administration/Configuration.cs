@@ -50,8 +50,8 @@ public static class Configuration {
     public static int MaxVisitors                 { get; private set; }
     public static int MaxStoredChatMessages       { get; private set; }
     public static int WebSocketKeepAliveSeconds   { get; private set; }
-    public static int RegionReleaseTime           { get; private set; }
-    public static int RegionStoreTime             { get; private set; }
+    public static int CacheReleaseTime            { get; private set; }
+    public static int CacheStoreTime              { get; private set; }
     public static RunMode Mode                    { get; private set; }
 
     public static string GetDescription() {
@@ -77,8 +77,8 @@ public static class Configuration {
         MaxVisitors                = config.MaxVisitors;
         MaxStoredChatMessages      = config.MaxStoredChatMessages;
         WebSocketKeepAliveSeconds  = config.WebSocketKeepAliveSeconds;
-        RegionReleaseTime          = config.RegionReleaseTime;
-        RegionStoreTime            = config.RegionStoreTime;
+        CacheReleaseTime          = config.RegionReleaseTime;
+        CacheStoreTime            = config.RegionStoreTime;
 
         #pragma warning disable
         if( VersionType == "Develop" )  Mode = RunMode.Develop;

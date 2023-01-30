@@ -450,9 +450,6 @@ const eltisa = new function() {
         if( BlockData.isScripture(message.type) ) {
             scriptureBlocker.handleBlockResourceMessage(message);
         }
-        else if( BlockData.isBook(message.type) ) {
-            bookBlocker.handleBlockResourceMessage(message);
-        }
         else if( BlockData.isTresor(message.type) ) {
             tresorBlocker.handleBlockResourceMessage(message);
         }
@@ -466,6 +463,15 @@ const eltisa = new function() {
         }
         else if( BlockData.isCamera(message.type) ) {
             cameraBlocker.handleBlockResourceMessage(message);
+        }
+    }
+
+
+    server.receiveResourceHandler = function(blockType, resourceResponse, text) {
+        if( blockType == Block.Book ) {
+            if( resourceResponse == ResourceResponse.Ok) {
+                bookBlocker.updateContent(text);
+            }
         }
     }
 

@@ -12,7 +12,7 @@ using Eltisa.Server.Resources;
 
 static public class World {
 
-    private static readonly PeriodicThread maintenanceThread = new PeriodicThread(RegionStoreTime, () => {
+    private static readonly PeriodicThread maintenanceThread = new PeriodicThread(CacheStoreTime, () => {
         Persist();
         FreeCache();
     });
@@ -42,7 +42,7 @@ static public class World {
         blockPermit          = new BlockPermit(blockController);
         blockNotify          = new BlockNotify(blockPermit);
 
-        resourcePersister    = new ResourcePersister(regionDirectory);
+        resourcePersister    = new ResourcePersister(resourceDirectory);
         resourceCache        = new ResourceCache(resourcePersister);
         resourceControl      = new ResourceControl(resourceCache);
     }
@@ -160,19 +160,18 @@ static public class World {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public static int Persist() {
+    public static void Persist() {
         lock(changeLock) {
-            #if DEBUG
-                return regionCache.WriteRegions(true);
-            #else
-                return regionCache.WriteRegions(false);
-            #endif                                                
+            regionCache.PersistRegions();
+            resourceCache.PersistResources();
         }
+
     }
 
 
     public static void FreeCache() {
-        regionCache.FreeRegions(100, RegionReleaseTime);
+        regionCache.FreeRegions(100, CacheReleaseTime);
+        resourceCache.FreeResources(100, CacheReleaseTime);
     }        
 
 

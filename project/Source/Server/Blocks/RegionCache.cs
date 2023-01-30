@@ -33,20 +33,17 @@ public class RegionCache : IRegionAccess {
     }
 
 
-    public int WriteRegions(bool validate=false) {
-        int storedRegions = 0;
+    public void PersistRegions() {
+        Log.Info("store region changes");
         foreach(Region region in regions.Values) {
             if(region.Changed) {
                 lock(region) {
-                    storedRegions++;
                     region.OptimizeChunks();
-                    if(validate) region.Validate();
                     regionCreator.WriteRegion(region);
                     region.Changed = false;
                 }
             } 
         }
-        return storedRegions;
     }
 
 

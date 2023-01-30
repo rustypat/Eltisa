@@ -34,7 +34,7 @@ public static class OutMessageHandler {
 
 
 
-    public static void SendCreateResourceResponse(HomeSocket socket, WorldPoint position, ResourceResponse result) {
+    public static void SendCreateResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResponse result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -43,6 +43,7 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
+        builder.WriteInt(blockType);
         builder.WriteInt((int)result);
         builder.WriteInt(EndTag);
 
@@ -52,7 +53,7 @@ public static class OutMessageHandler {
 
 
 
-    public static void SendReadResourceResponse(HomeSocket socket, WorldPoint position, ResourceResult result) {
+    public static void SendReadResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResult result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -61,20 +62,18 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
+        builder.WriteInt(blockType);
         builder.WriteInt((int)result.Response);
-        if(result.Response == ResourceResponse.Ok) {
-            builder.WriteInt(result.Resource.BlockType);
-            builder.WriteBytes(result.Resource.Data);
-        }
+        builder.WriteInt(result.Resource != null ? result.Resource.BlockType : -1);
+        builder.WriteBytes(result.Resource?.Data);
         builder.WriteInt(EndTag);
-
         byte[] message = builder.ToArray();
         SendMessageTo(socket, message);                        
     }
 
 
 
-    public static void SendWriteResourceResponse(HomeSocket socket, WorldPoint position, ResourceResponse result) {
+    public static void SendWriteResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResponse result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -83,6 +82,7 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
+        builder.WriteInt(blockType);
         builder.WriteInt((int)result);
         builder.WriteInt(EndTag);
 
@@ -91,7 +91,7 @@ public static class OutMessageHandler {
     }
 
 
-    public static void SendUpdateResourceResponse(HomeSocket socket, WorldPoint position, ResourceResponse result) {
+    public static void SendUpdateResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResponse result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -100,6 +100,7 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
+        builder.WriteInt(blockType);
         builder.WriteInt((int)result);
         builder.WriteInt(EndTag);
 
@@ -108,7 +109,7 @@ public static class OutMessageHandler {
     }
 
 
-    public static void SendDeleteResourceResponse(HomeSocket socket, WorldPoint position, ResourceResponse result) {
+    public static void SendDeleteResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResponse result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -117,6 +118,7 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
+        builder.WriteInt(blockType);
         builder.WriteInt((int)result);
         builder.WriteInt(EndTag);
 

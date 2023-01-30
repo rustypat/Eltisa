@@ -63,6 +63,7 @@ function ArrayReader(messageArrayBuffer) {
     this.readString = function() {
         const length  = dataView.getInt32(pos, true);
         pos += 4;
+        if(length < 0 ) return null;
         const decoder = new TextDecoder("utf-8");
         const view    = new DataView(message, pos, length);
         pos += length;

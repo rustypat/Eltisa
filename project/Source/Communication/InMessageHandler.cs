@@ -254,7 +254,7 @@ public static class InMessageHandler {
         int endTag       = reader.ReadInt();
         Assert(endTag    == EndTag);            
         var result = World.CreateResource(socket.GetActor(), position, blockType, password, data);
-        OutMessageHandler.SendCreateResourceResponse(socket, position, result);
+        OutMessageHandler.SendCreateResourceResponse(socket, position, blockType, result);
     }
 
 
@@ -272,7 +272,7 @@ public static class InMessageHandler {
         int endTag       = reader.ReadInt();
         Assert(endTag    == EndTag);            
         var result = World.ReadResource(socket.GetActor(), position, blockType, password);
-        OutMessageHandler.SendReadResourceResponse(socket, position, result);
+        OutMessageHandler.SendReadResourceResponse(socket, position, blockType, result);
     }
 
 
@@ -291,7 +291,7 @@ public static class InMessageHandler {
         int endTag       = reader.ReadInt();
         Assert(endTag    == EndTag);            
         var response = World.WriteResource(socket.GetActor(), position, blockType, password, data);
-        OutMessageHandler.SendWriteResourceResponse(socket, position, response);
+        OutMessageHandler.SendWriteResourceResponse(socket, position, blockType, response);
     }
 
 
@@ -311,7 +311,7 @@ public static class InMessageHandler {
         int endTag       = reader.ReadInt();
         Assert(endTag    == EndTag);            
         var response = World.UpdateResource(socket.GetActor(), position, blockType, password, newPassword, newData);
-        OutMessageHandler.SendUpdateResourceResponse(socket, position, response);
+        OutMessageHandler.SendUpdateResourceResponse(socket, position, blockType, response);
     }
 
 
@@ -329,7 +329,7 @@ public static class InMessageHandler {
         int endTag       = reader.ReadInt();
         Assert(endTag    == EndTag);            
         var response = World.DeleteResource(socket.GetActor(), position, blockType, password);
-        OutMessageHandler.SendDeleteResourceResponse(socket, position, response);
+        OutMessageHandler.SendDeleteResourceResponse(socket, position, blockType, response);
     }
 
 
@@ -340,8 +340,8 @@ public static class InMessageHandler {
 
     static void HandleAdministratorCommand(Actor admin, string message) {
         if(message == "$store regions") {
-            int storedRegions = World.Persist();
-            var chatMessage  = OutMessage.createChatMessage("System", "regions stored " +  storedRegions);
+            World.Persist();
+            var chatMessage  = OutMessage.createChatMessage("System", "cache stored ");
             admin.Socket.SendMessageAsync(chatMessage);
         }
         else if(message == "$version") {
