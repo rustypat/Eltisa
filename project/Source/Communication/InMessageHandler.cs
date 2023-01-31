@@ -168,9 +168,28 @@ public static class InMessageHandler {
 
 
     static void HandleSwitchBlocks(HomeSocket socket, byte[] inBuffer) {
+        var reader                 = new ArrayReader(inBuffer);
+        
+        int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.SwitchBlock);
+        int switchCount            = reader.ReadInt() / 3;            
+
+        if(switchCount > Configuration.MaxSwitches) {
+            throw new ArgumentOutOfRangeException("switchCount is out of range: " + switchCount);
+        }
+
+        var switchPositions        = new WorldPoint[switchCount];
+        for(int i=0; i < switchCount; i++) {
+            var x = reader.ReadInt();
+            var y = reader.ReadInt();
+            var z = reader.ReadInt();
+            switchPositions[i] = new WorldPoint(x, y, z);
+        }
+        int endTag                 = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+
         var actor = socket.GetActor();
-        var          inMessage          = InMessage.ToSwitchBlockMessage(inBuffer);        
-        World.SwitchBlocks(socket.GetActor(), inMessage.Positions);
+        World.SwitchBlocks(socket.GetActor(), switchPositions);
     }
 
 

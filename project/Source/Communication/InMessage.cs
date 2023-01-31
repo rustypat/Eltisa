@@ -103,41 +103,7 @@ public static class InMessage {
         Assert(endTag    == EndTag);     
 
         return message;
-    }
-
-
-    public class SwitchBlocks {
-        public readonly WorldPoint[] Positions;
-
-        public SwitchBlocks(int numberOfBlocksToSwitch) {
-            Positions = new WorldPoint[numberOfBlocksToSwitch];
-        }
-    }
-
-    static public SwitchBlocks ToSwitchBlockMessage(byte[] inBuffer) {
-        var reader                 = new ArrayReader(inBuffer);
-        int messageId              = reader.ReadInt();
-        Assert(messageId == (int)MessageId.SwitchBlock);
-        int switchCount            = reader.ReadInt() / 3;            
-
-        if(switchCount > Configuration.MaxSwitches) {
-            throw new ArgumentOutOfRangeException("switchCount is out of range: " + switchCount);
-        }
-
-        var switchBlockMessage     = new SwitchBlocks(switchCount);
-        for(int i=0; i < switchCount; i++) {
-            var x = reader.ReadInt();
-            var y = reader.ReadInt();
-            var z = reader.ReadInt();
-            var pos = new WorldPoint(x, y, z);
-            switchBlockMessage.Positions[i] = pos;
-        }
-        int endTag                 = reader.ReadInt();
-        Assert(endTag    == EndTag);            
-
-        return switchBlockMessage;
-    }
-    
+    }    
 
     public class ChatMessage {
         public string Message;
