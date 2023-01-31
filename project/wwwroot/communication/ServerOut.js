@@ -177,6 +177,23 @@ function ServerOut(serverSocket) {
     }
 
 
+    this.requestCreateResource = function(blockPos, type, password, stringData) {
+        writer.reset();
+        writer.writeInteger(SM_CreateResourceRequest);
+        writer.writeInteger(blockPos.x);
+        writer.writeInteger(blockPos.y);
+        writer.writeInteger(blockPos.z);
+        writer.writeInteger(type);
+        writer.writeString(password);
+        writer.writeString(stringData);
+        writer.writeInteger(SMT_EndTag);
+        
+        const message = writer.ToArrayBuffer();
+        Log.trace("send message read resource");
+        serverSocket.sendMessage(message, 3);
+    }
+
+
     this.requestReadResource = function(blockPos, type, password) {
         writer.reset();
         writer.writeInteger(SM_ReadResourceRequest);
@@ -202,6 +219,40 @@ function ServerOut(serverSocket) {
         writer.writeInteger(type);
         writer.writeString(password);
         writer.writeString(stringData);
+        writer.writeInteger(SMT_EndTag);
+        
+        const message = writer.ToArrayBuffer();
+        Log.trace("send message write resource");
+        serverSocket.sendMessage(message, 3);
+    }
+
+
+    this.requestUpdateResource = function(blockPos, type, password, newPassword, newStringData) {
+        writer.reset();
+        writer.writeInteger(SM_UpdateResourceRequest);
+        writer.writeInteger(blockPos.x);
+        writer.writeInteger(blockPos.y);
+        writer.writeInteger(blockPos.z);
+        writer.writeInteger(type);
+        writer.writeString(password);
+        writer.writeString(newPassword);
+        writer.writeString(newStringData);
+        writer.writeInteger(SMT_EndTag);
+        
+        const message = writer.ToArrayBuffer();
+        Log.trace("send message write resource");
+        serverSocket.sendMessage(message, 3);
+    }
+
+
+    this.requestDeleteResource = function(blockPos, type, password) {
+        writer.reset();
+        writer.writeInteger(SM_DeleteResourceRequest);
+        writer.writeInteger(blockPos.x);
+        writer.writeInteger(blockPos.y);
+        writer.writeInteger(blockPos.z);
+        writer.writeInteger(type);
+        writer.writeString(password);
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();

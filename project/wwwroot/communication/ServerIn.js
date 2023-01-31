@@ -20,8 +20,11 @@ function ServerIn(serversocket) {
         if(receiveChatMessage(reader, messageType)) return;
         if(receiveLoginMessage(reader, messageType)) return;
         if(receiveVideoChatMessage(reader, messageType)) return;
+        if(receiveCreateResourceResponseMessage(reader, messageType)) return;
         if(receiveReadResourceResponseMessage(reader, messageType)) return;
         if(receiveWriteResourceResponseMessage(reader, messageType)) return;
+        if(receiveUpdateResourceResponseMessage(reader, messageType)) return;
+        if(receiveDeleteResourceResponseMessage(reader, messageType)) return;
         Log.trace("received unknown message " + messageType + "  (" + event.data.byteLength + " bytes)");
     }
 
@@ -38,7 +41,7 @@ function ServerIn(serversocket) {
     this.receiveVideoChatHandler       = function(message) {};
     this.updateBlock                   = function(x, y, z, blockData) {};
     this.updateChunk                   = function(chunk) {};
-    this.receiveResourceHandler        = function(blockType, response, resourceText) {};
+    this.receiveResourceHandler        = function(messageType, blockType, response, resourceText) {};
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,6 +182,20 @@ function ServerIn(serversocket) {
     }
 
 
+    function receiveCreateResourceResponseMessage(reader, messageType) {
+        if(messageType != SM_CreateResourceResponse) return false;
+
+        const x            = reader.readInteger();
+        const y            = reader.readInteger();
+        const z            = reader.readInteger();
+        const blockType    = reader.readInteger();
+        const response     = reader.readInteger();
+        assert(SMT_EndTag == reader.readInteger());
+        self.receiveResourceHandler(SM_CreateResourceResponse, blockType, response, null);
+        return true;        
+    }
+
+
     function receiveReadResourceResponseMessage(reader, messageType) {
         if(messageType != SM_ReadResourceResponse) return false;
 
@@ -190,7 +207,7 @@ function ServerIn(serversocket) {
         const resourceType = reader.readInteger();
         const resourceText = reader.readString();    
         assert(SMT_EndTag == reader.readInteger());
-        self.receiveResourceHandler(blockType, response, resourceText);
+        self.receiveResourceHandler(SM_ReadResourceResponse, blockType, response, resourceText);
         return true;        
     }
 
@@ -204,7 +221,35 @@ function ServerIn(serversocket) {
         const blockType    = reader.readInteger();
         const response     = reader.readInteger();
         assert(SMT_EndTag == reader.readInteger());
-        self.receiveResourceHandler(blockType, response, null);
+        self.receiveResourceHandler(SM_WriteResourceResponse, blockType, response, null);
+        return true;        
+    }
+
+
+    function receiveUpdateResourceResponseMessage(reader, messageType) {
+        if(messageType != SM_UpdateResourceResponse) return false;
+
+        const x            = reader.readInteger();
+        const y            = reader.readInteger();
+        const z            = reader.readInteger();
+        const blockType    = reader.readInteger();
+        const response     = reader.readInteger();
+        assert(SMT_EndTag == reader.readInteger());
+        self.receiveResourceHandler(SM_UpdateResourceResponse, blockType, response, null);
+        return true;        
+    }
+
+
+    function receiveDeleteResourceResponseMessage(reader, messageType) {
+        if(messageType != SM_DeleteResourceResponse) return false;
+
+        const x            = reader.readInteger();
+        const y            = reader.readInteger();
+        const z            = reader.readInteger();
+        const blockType    = reader.readInteger();
+        const response     = reader.readInteger();
+        assert(SMT_EndTag == reader.readInteger());
+        self.receiveResourceHandler(SM_DeleteResourceResponse, blockType, response, null);
         return true;        
     }
 

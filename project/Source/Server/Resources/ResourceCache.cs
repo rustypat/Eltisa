@@ -44,7 +44,7 @@ public class ResourceCache {
     public void PersistResources() {
         Log.Info("store resource changes");
         foreach(var resource in resources) {
-            if(resource.Value.Modified) {
+            if(resource.Value != null && resource.Value.Modified) {
                 lock(resource.Value) {
                     resourcePersister.WriteResource(resource.Key, resource.Value);
                     resource.Value.Modified = false;

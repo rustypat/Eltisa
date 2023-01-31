@@ -448,14 +448,14 @@ const eltisa = new function() {
     }
 
 
-    serverIn.receiveResourceHandler = function(blockType, resourceResponse, text) {
+    serverIn.receiveResourceHandler = function(messageType, blockType, resourceResponse, text) {
         if( blockType == Block.Scripture) {
             if( resourceResponse == SR_Ok) {
                 scriptureBlocker.updateText(text);
             }
         }
         else if( blockType == Block.Tresor ) {
-            tresorBlocker.update(resourceResponse, text);
+            tresorBlocker.update(messageType, resourceResponse, text);
         }
         else if( blockType == Block.Portal ) {
             if( resourceResponse == SR_Ok) {

@@ -115,7 +115,7 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
     }
 
 
-    this.update = function(resourceResponse, text) {
+    this.update = function(messageType, resourceResponse, text) {
         if( self.isVisible() ) {
             textArea.value = text;
             if(text === "PASSWORD REQUIRED" || text === "WRONG PASSWORD") textArea.disabled = true;
