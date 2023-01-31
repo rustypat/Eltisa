@@ -450,10 +450,12 @@ const eltisa = new function() {
 
     serverIn.receiveResourceHandler = function(blockType, resourceResponse, text) {
         if( blockType == Block.Scripture) {
-            scriptureBlocker.updateText(text);
+            if( resourceResponse == SR_Ok) {
+                scriptureBlocker.updateText(text);
+            }
         }
         else if( blockType == Block.Tresor ) {
-            tresorBlocker.updateText(text);
+            tresorBlocker.update(resourceResponse, text);
         }
         else if( blockType == Block.Portal ) {
             if( resourceResponse == SR_Ok) {
@@ -462,7 +464,9 @@ const eltisa = new function() {
             }
         }
         else if( blockType == Block.Camera ) {
-            cameraBlocker.updatePicture(text);
+            if( resourceResponse == SR_Ok) {
+                cameraBlocker.updatePicture(text);
+            }
         }
         else if( blockType == Block.Book ) {
             if( resourceResponse == SR_Ok) {
@@ -470,8 +474,10 @@ const eltisa = new function() {
             }
         }
         else if( blockType == Block.Oracle) {
-            if(oracleBlocker.isVisible() )   oracleBlocker.updateOracle(text);
-            else                             oracleShower.updateStatusbar(text);
+            if( resourceResponse == SR_Ok) {
+                if(oracleBlocker.isVisible() )   oracleBlocker.updateOracle(text);
+                else                             oracleShower.updateStatusbar(text);
+            }
         }
     }
 
