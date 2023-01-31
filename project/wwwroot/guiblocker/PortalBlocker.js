@@ -82,7 +82,7 @@ function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
         const targetPos = getTargetPos();
         if( !targetPos ) return;
         const text = JSON.stringify(targetPos);
-        server.requestSaveBlockResource(blockPos, Block.Portal, text); 
+        server.requestWriteResource(blockPos, Block.Portal, "", text); 
         closeAction();
         return false;
     }
@@ -135,7 +135,7 @@ function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
         description.setText("");
         targetX.select();
         
-        server.requestBlockResource(blockPos, Block.Portal); 
+        server.requestReadResource(blockPos, Block.Portal, ""); 
         deacitvateGame();
 
         return true;
@@ -157,12 +157,12 @@ function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
         const blockData  = chunkStore.getBlockData(blockPos);
         if( !BlockData.isPortal(blockData) ) return false;
         jumpRequestTime = performance.now();
-        server.requestBlockResource(blockPos, Block.Portal); 
+        server.requestReadResource(blockPos, Block.Portal, ""); 
     }
 
-    this.handleBlockResourceMessage = function(resourceMessage, player) {
+    this.updateOrJump = function(resourceMessage, player) {
         if( self.isVisible() ) {
-            const targetPos = JSON.parse(resourceMessage.text);
+            const targetPos = JSON.parse(resourceMessage);
             targetX.value              = targetPos.x;
             targetY.value              = targetPos.y;
             targetZ.value              = targetPos.z;            
@@ -170,7 +170,7 @@ function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
             teleportButton.disabled    = false;        
         }
         else if (performance.now()-jumpRequestTime < 5000 ) {
-            const targetPos = JSON.parse(resourceMessage.text);
+            const targetPos = JSON.parse(resourceMessage);
             player.setPosition(targetPos.x, targetPos.y, targetPos.z);
             jumpRequestTime = 0;
         }

@@ -27,7 +27,7 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
     function getBlockResource() {
         password = textAreaPass.value.trim();
         console.log("pwd : " + password);
-        server.requestBlockResource(blockPos, Block.Tresor, password);
+        server.requestReadResource(blockPos, Block.Tresor, password);
     }
     
 
@@ -37,7 +37,7 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
         const text = textArea.value.trim();
         const newPassword = textAreaPass.value.trim();
         console.log("Save Tresor NewPassword : " + newPassword)
-        server.requestSaveBlockResource(blockPos, Block.Tresor, text, password, newPassword); 
+        server.requestWriteResource(blockPos, Block.Tresor, password, text); 
         body.removeChild(baseDiv);      
         document.removeEventListener("keydown", keypressHandler);
         activateGame();     
@@ -53,7 +53,7 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
 
     function deleteAction(event) {
         if(event) event.stopPropagation();
-        server.requestSaveBlockResource(blockPos, Block.Tresor, "", password, "");
+        server.requestWriteResource(blockPos, Block.Tresor, password, "");
         body.removeChild(baseDiv);      
         document.removeEventListener("keydown", keypressHandler);
         activateGame();
@@ -115,10 +115,10 @@ function TresorBlocker(body, activateGame, deacitvateGame, server) {
     }
 
 
-    this.handleBlockResourceMessage = function(resourceMessage) {
+    this.updateText = function(resourceMessage) {
         if( self.isVisible() ) {
-            textArea.value = resourceMessage.text;
-            if(resourceMessage.text === "PASSWORD REQUIRED" || resourceMessage.text === "WRONG PASSWORD") textArea.disabled = true;
+            textArea.value = resourceMessage;
+            if(resourceMessage === "PASSWORD REQUIRED" || resourceMessage === "WRONG PASSWORD") textArea.disabled = true;
             else textArea.disabled = false;
         }
     }

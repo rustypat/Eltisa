@@ -20,7 +20,6 @@ function ServerIn(serversocket) {
         if(receiveChatMessage(reader, messageType)) return;
         if(receiveLoginMessage(reader, messageType)) return;
         if(receiveVideoChatMessage(reader, messageType)) return;
-        if(receiveBlockResourceMessage(reader, messageType)) return;
         if(receiveReadResourceResponseMessage(reader, messageType)) return;
         if(receiveWriteResourceResponseMessage(reader, messageType)) return;
         Log.trace("received unknown message " + messageType + "  (" + event.data.byteLength + " bytes)");
@@ -37,7 +36,6 @@ function ServerIn(serversocket) {
     this.receiveChatHandler            = function(message) {};
     this.receiveChunksHandler          = function(message) {};
     this.receiveVideoChatHandler       = function(message) {};
-    this.receiveBlockResourceHandler   = function(message) {};
     this.updateBlock                   = function(x, y, z, blockData) {};
     this.updateChunk                   = function(chunk) {};
     this.receiveResourceHandler        = function(blockType, response, resourceText) {};
@@ -177,21 +175,6 @@ function ServerIn(serversocket) {
 
         assert(SMT_EndTag == reader.readInteger());
         self.receiveChunksHandler(message);
-        return true;        
-    }
-
-
-    function receiveBlockResourceMessage(reader, messageType) {
-        if(messageType != SM_GetBlockResourceResponse) return false;
-
-        const message        = {};
-        message.x            = reader.readInteger();
-        message.y            = reader.readInteger();
-        message.z            = reader.readInteger();
-        message.type         = reader.readInteger();
-        message.text         = reader.readString();
-        assert(SMT_EndTag == reader.readInteger());
-        self.receiveBlockResourceHandler(message);
         return true;        
     }
 

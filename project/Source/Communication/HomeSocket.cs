@@ -75,7 +75,7 @@ public class HomeSocket {
         }
         if(actor != null) {
             ActorStore.RemoveActor(actor);
-            var actorMessage = OutMessage.createActorLogoutMessage(actor);
+            var actorMessage = OutMessage.createActorChangedMessage(actor, OutMessage.ActorChange.Logout);
             OutMessageHandler.SendMessageToAll(actorMessage, actor);                            
             Log.Info(actor.Name + " logged out");
         }

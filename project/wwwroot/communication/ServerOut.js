@@ -177,40 +177,6 @@ function ServerOut(serverSocket) {
     }
 
 
-    this.requestBlockResource = function(blockPos, type, password) {
-        writer.reset();
-        writer.writeInteger(SM_GetBlockResourceRequest);
-        writer.writeInteger(blockPos.x);
-        writer.writeInteger(blockPos.y);
-        writer.writeInteger(blockPos.z);
-        writer.writeInteger(type);
-        writer.writeString(password);
-        writer.writeInteger(SMT_EndTag);
-        
-        const message = writer.ToArrayBuffer();
-        Log.trace("send message request block resource");
-        serverSocket.sendMessage(message, 3);
-    }
-
-
-    this.requestSaveBlockResource = function(blockPos, type, text, password, newPassword) {
-        writer.reset();
-        writer.writeInteger(SM_SaveBlockResource);
-        writer.writeInteger(blockPos.x);
-        writer.writeInteger(blockPos.y);
-        writer.writeInteger(blockPos.z);
-        writer.writeInteger(type);
-        writer.writeString(password);
-        writer.writeString(newPassword);
-        writer.writeString(text);
-        writer.writeInteger(SMT_EndTag);
-        
-        const message = writer.ToArrayBuffer();
-        Log.trace("send message save block resource");
-        serverSocket.sendMessage(message, 3);
-    }
-
-
     this.requestReadResource = function(blockPos, type, password) {
         writer.reset();
         writer.writeInteger(SM_ReadResourceRequest);

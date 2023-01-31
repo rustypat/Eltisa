@@ -37,13 +37,13 @@ function CameraBlocker(body, activateGame, deactivateGame, server) {
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
         const dataString        = canvas.toDataURL('image/jpeg');
         //const dataString     = dataUrl.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
-        server.requestSaveBlockResource(blockPos, Block.Camera, dataString); 
+        server.requestWriteResource(blockPos, Block.Camera, "", dataString); 
     }
 
 
     function clearPicture() {
         canvas.clear();
-        server.requestSaveBlockResource(blockPos, Block.Camera, ""); 
+        server.requestWriteResource(blockPos, Block.Camera, "", ""); 
     }
 
 
@@ -86,7 +86,7 @@ function CameraBlocker(body, activateGame, deactivateGame, server) {
         
         navigator.mediaDevices.getUserMedia( {video: true} )
         .then( (stream) => { video.srcObject = stream; });
-        server.requestBlockResource(blockPos, Block.Camera);             
+        server.requestReadResource(blockPos, Block.Camera, "");             
     }
 
 
@@ -95,13 +95,13 @@ function CameraBlocker(body, activateGame, deactivateGame, server) {
     }
 
     
-    this.handleBlockResourceMessage = function(resourceMessage) {
+    this.updatePicture = function(text) {
         if( self.isVisible() ) {
             var image = new Image();
             image.onload = function() {
                 canvas.getContext('2d').drawImage(image, 0, 0);
             };
-            image.src = resourceMessage.text; 
+            image.src = text; 
         }
     }
 

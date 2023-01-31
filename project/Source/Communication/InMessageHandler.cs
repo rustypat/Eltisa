@@ -29,8 +29,6 @@ public static class InMessageHandler {
         messageHandlers[(int)RemoveBlock] = HandleRemoveBlock;
         messageHandlers[(int)ChangeBlock] = HandleChangeBlock;
         messageHandlers[(int)SwitchBlock] = HandleSwitchBlocks;
-        messageHandlers[(int)GetBlockResourceRequest] = HandleGetBlockResource;
-        messageHandlers[(int)SaveBlockResourceRequest] = HandleSaveBlockResource;
         messageHandlers[(int)ChatMessageRequest] = HandleChatMessage;
         messageHandlers[(int)VideoChatMessageRequest] = HandleVideoChatMessage;
         messageHandlers[(int)ListActorsRequest] = HandleListActors;
@@ -252,27 +250,6 @@ public static class InMessageHandler {
         else {
             var chatMessage  = OutMessage.createVideoChatMessage(inMessage.Sender, inMessage.Receiver, inMessage.MessageType, inMessage.JsonMessage);
             receiver.Socket.SendMessageAsync(chatMessage);
-        }
-    }
-
-
-    static void HandleGetBlockResource(HomeSocket socket, byte[] inBuffer) {
-        var inMessage    = InMessage.ToGetBlockResourceMessage(inBuffer);
-        var position     = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
-
-        string text      = World.ReadText(position, inMessage.Type, inMessage.Pwd);
-        if(text != null) {
-            var blockResourceMessage = OutMessage.createBlockResourceMessage(position, inMessage.Type, text);
-            OutMessageHandler.SendMessageToRange(blockResourceMessage, position, ClientCacheBlockRadius);                
-        }
-    }
-
-
-    static void HandleSaveBlockResource(HomeSocket socket, byte[] inBuffer) {
-        var inMessage    = InMessage.ToSaveBlockResourceMessage(inBuffer);
-        var position     = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
-        if( Policy.CanEdit(socket.GetActor(), position)) {
-            World.WriteText(position, inMessage.Type, inMessage.Text, inMessage.Pwd, inMessage.NewPwd);
         }
     }
 

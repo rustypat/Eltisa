@@ -448,25 +448,23 @@ const eltisa = new function() {
     }
 
 
-    serverIn.receiveBlockResourceHandler = function(message) {
-        if( BlockData.isScripture(message.type) ) {
-            scriptureBlocker.handleBlockResourceMessage(message);
-        }
-        else if( BlockData.isTresor(message.type) ) {
-            tresorBlocker.handleBlockResourceMessage(message);
-        }
-        else if( BlockData.isPortal(message.type) ) {
-            portalBlocker.handleBlockResourceMessage(message, player);
-            portalShower.handleBlockResourceMessage(message);
-        }
-        else if( BlockData.isCamera(message.type) ) {
-            cameraBlocker.handleBlockResourceMessage(message);
-        }
-    }
-
-
     serverIn.receiveResourceHandler = function(blockType, resourceResponse, text) {
-        if( blockType == Block.Book ) {
+        if( blockType == Block.Scripture) {
+            scriptureBlocker.updateText(text);
+        }
+        else if( blockType == Block.Tresor ) {
+            tresorBlocker.updateText(text);
+        }
+        else if( blockType == Block.Portal ) {
+            if( resourceResponse == SR_Ok) {
+                portalBlocker.updateOrJump(text, player);
+                portalShower.updateStatusbar(text);
+            }
+        }
+        else if( blockType == Block.Camera ) {
+            cameraBlocker.updatePicture(text);
+        }
+        else if( blockType == Block.Book ) {
             if( resourceResponse == SR_Ok) {
                 bookBlocker.updateContent(text);
             }

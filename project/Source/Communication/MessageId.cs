@@ -34,10 +34,6 @@ public enum MessageId {
     WriteResourceResponse         = 55,
     UpdateResourceResponse        = 57,
     DeleteResourceResponse        = 59,    
-
-    GetBlockResourceRequest       = 60,
-    GetBlockResourceResponse      = 61,
-    SaveBlockResourceRequest      = 62,
 }
 
 

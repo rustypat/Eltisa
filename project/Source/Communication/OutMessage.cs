@@ -13,17 +13,6 @@ public static class OutMessage {
     public enum ActorChange { Login=1, Moved=2, Logout=3 };
 
 
-    private enum OutMessageType{
-        Login            = 11,
-        ActorChanged     = 21,
-        ActorList        = 23,
-        Chunks           = 31,
-        BlocksChanged    = 39,
-        Chat             = 41,
-        VideoChat        = 43,
-        BlockResource    = 61
-    }
-
     private static int messageCounter;
 
 
@@ -31,7 +20,7 @@ public static class OutMessage {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt(   (int)OutMessageType.ActorList);
+        builder.WriteInt(   (int)MessageId.ListActorsResponse);
         builder.WriteInt(   messageCounter);
         builder.WriteInt(   count);
         foreach(var actor in actors) {
@@ -48,7 +37,7 @@ public static class OutMessage {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt(   (int)OutMessageType.ActorChanged);
+        builder.WriteInt(   (int)MessageId.ActorChanged);
         builder.WriteInt(   messageCounter);
         builder.WriteInt(   (int)change);            
         builder.WriteInt(   actor.ID);
@@ -65,32 +54,11 @@ public static class OutMessage {
     }
 
 
-    public static byte[] createActorLogoutMessage(Actor actor) {
-        messageCounter += 1;
-
-        ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt(   (int)OutMessageType.ActorChanged);
-        builder.WriteInt(   messageCounter);
-        builder.WriteInt(   (int)ActorChange.Logout);            
-        builder.WriteInt(   actor.ID);
-        builder.WriteString(actor.Name);         
-        builder.WriteInt(   actor.Color);
-        builder.WriteFloat( float.MaxValue);
-        builder.WriteFloat( float.MaxValue);
-        builder.WriteFloat( float.MaxValue);
-        builder.WriteFloat( float.MaxValue);
-        builder.WriteInt(   EndTag);
-
-        byte[] message = builder.ToArray();
-        return message;
-    }
-
-
     public static byte[] createLoginMessage(Actor actor, string errorMessage) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)OutMessageType.Login);
+        builder.WriteInt((byte)MessageId.LoginResponse);
         builder.WriteInt(messageCounter);
         if(actor != null) {
             builder.WriteInt(actor.ID);
@@ -116,7 +84,7 @@ public static class OutMessage {
         Assert(positions.Length == chunks.Length);
 
         ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((int)OutMessageType.Chunks);
+        builder.WriteInt((int)MessageId.GetChunksResponse);
         builder.WriteInt(messageCounter);
         builder.WriteInt(requestId);
         builder.WriteInt(chunkCount);
@@ -154,7 +122,7 @@ public static class OutMessage {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)OutMessageType.Chat);
+        builder.WriteInt((byte)MessageId.ChatMessageResponse);
         builder.WriteInt(messageCounter);
         builder.WriteString(text);
         builder.WriteString(sender);
@@ -169,7 +137,7 @@ public static class OutMessage {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)OutMessageType.BlocksChanged);
+        builder.WriteInt((byte)MessageId.BlocksChangedNotification);
         builder.WriteInt(messageCounter);
         builder.WriteInt(changes.Length);
         foreach(var change in changes) {
@@ -189,7 +157,7 @@ public static class OutMessage {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)OutMessageType.VideoChat);
+        builder.WriteInt((byte)MessageId.VideoChatMessageResponse);
         builder.WriteInt(messageCounter);
         builder.WriteString(sender);
         builder.WriteString(receiver);            
@@ -199,24 +167,6 @@ public static class OutMessage {
 
         byte[] videoChatMessage = builder.ToArray();
         return videoChatMessage;
-    }
-
-
-    public static byte[] createBlockResourceMessage(WorldPoint blockPos, int type, string text) {
-        messageCounter += 1;
-
-        ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)OutMessageType.BlockResource);
-        builder.WriteInt(messageCounter);
-        builder.WriteInt(blockPos.X);
-        builder.WriteInt(blockPos.Y);
-        builder.WriteInt(blockPos.Z);
-        builder.WriteInt(type);
-        builder.WriteString(text);
-        builder.WriteInt(EndTag);
-
-        byte[] message = builder.ToArray();
-        return message;
     }
 
 

@@ -27,7 +27,7 @@ function ScriptureBlocker(body, activateGame, deacitvateGame, server) {
         if( changedScriptureDefinition != null ) {
             server.requestSwitchBlock(blockPos.x, blockPos.y, blockPos.z);
         }
-        server.requestSaveBlockResource(blockPos, Block.Scripture, text); 
+        server.requestWriteResource(blockPos, Block.Scripture, "", text); 
         body.removeChild(baseDiv);      
         document.removeEventListener("keydown", keypressHandler);
         activateGame();     
@@ -73,7 +73,7 @@ function ScriptureBlocker(body, activateGame, deacitvateGame, server) {
         noKeyPressed         = true;
         saveButton.disabled  = true;
         
-        server.requestBlockResource(blockPos, Block.Scripture); 
+        server.requestReadResource(blockPos, Block.Scripture, ""); 
         deacitvateGame();
 
         return true;
@@ -85,9 +85,9 @@ function ScriptureBlocker(body, activateGame, deacitvateGame, server) {
     }
 
 
-    this.handleBlockResourceMessage = function(resourceMessage) {
+    this.updateText = function(text) {
         if( self.isVisible() ) {
-            textArea.value = resourceMessage.text;
+            textArea.value = text;
         }
     }
 

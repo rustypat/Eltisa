@@ -40,8 +40,8 @@ function PortalShower(chunkStore, statusbar, server) {
     var showDescription;
     var text;
 
-    this.handleBlockResourceMessage = function(resourceMessage) {
-        const target         = JSON.parse(resourceMessage.text);
+    this.updateStatusbar = function(resourceText) {
+        const target         = JSON.parse(resourceText);
         text                 = target.description;
         statusbar.setOracleMessage(text);
     }
@@ -53,7 +53,7 @@ function PortalShower(chunkStore, statusbar, server) {
         if( BlockData.isPortal(blockData) ) {
             if (!showDescription) {
                 showDescription   = true;
-                server.requestBlockResource(blockPos, Block.Portal); 
+                server.requestReadResource(blockPos, Block.Portal, ""); 
                 return true;
                 }
         }
