@@ -249,11 +249,11 @@ public static class InMessageHandler {
         int blockType   = reader.ReadInt();
         string password = reader.ReadString();
         byte[] data     = reader.ReadBytes();
-
-        var position     = new WorldPoint(x, y, z);
-        int endTag       = reader.ReadInt();
-        Assert(endTag    == EndTag);            
-        var result = World.CreateResource(socket.GetActor(), position, blockType, password, data);
+        int endTag      = reader.ReadInt();
+        Assert(endTag == EndTag);         
+           
+        var position    = new WorldPoint(x, y, z);
+        var result      = World.CreateResource(socket.GetActor(), position, blockType, password, data);
         OutMessageHandler.SendCreateResourceResponse(socket, position, blockType, result);
     }
 
@@ -267,11 +267,11 @@ public static class InMessageHandler {
         int z           = reader.ReadInt();
         int blockType   = reader.ReadInt();
         string password = reader.ReadString();
+        int endTag      = reader.ReadInt();
+        Assert(endTag == EndTag);            
 
-        var position     = new WorldPoint(x, y, z);
-        int endTag       = reader.ReadInt();
-        Assert(endTag    == EndTag);            
-        var result = World.ReadResource(socket.GetActor(), position, blockType, password);
+        var position    = new WorldPoint(x, y, z);
+        var result      = World.ReadResource(socket.GetActor(), position, blockType, password);
         OutMessageHandler.SendReadResourceResponse(socket, position, blockType, result);
     }
 
@@ -286,11 +286,11 @@ public static class InMessageHandler {
         int blockType   = reader.ReadInt();
         string password = reader.ReadString();
         byte[] data     = reader.ReadBytes();
+        int endTag      = reader.ReadInt();
+        Assert(endTag == EndTag);        
 
-        var position     = new WorldPoint(x, y, z);
-        int endTag       = reader.ReadInt();
-        Assert(endTag    == EndTag);            
-        var response = World.WriteResource(socket.GetActor(), position, blockType, password, data);
+        var position    = new WorldPoint(x, y, z);
+        var response    = World.WriteResource(socket.GetActor(), position, blockType, password, data);
         OutMessageHandler.SendWriteResourceResponse(socket, position, blockType, response);
     }
 
@@ -306,11 +306,11 @@ public static class InMessageHandler {
         string password = reader.ReadString();
         string newPassword = reader.ReadString();
         byte[] newData  = reader.ReadBytes();
+        int endTag      = reader.ReadInt();
+        Assert(endTag == EndTag);        
 
-        var position     = new WorldPoint(x, y, z);
-        int endTag       = reader.ReadInt();
-        Assert(endTag    == EndTag);            
-        var response = World.UpdateResource(socket.GetActor(), position, blockType, password, newPassword, newData);
+        var position    = new WorldPoint(x, y, z);
+        var response    = World.UpdateResource(socket.GetActor(), position, blockType, password, newPassword, newData);
         OutMessageHandler.SendUpdateResourceResponse(socket, position, blockType, response);
     }
 
@@ -324,11 +324,11 @@ public static class InMessageHandler {
         int z           = reader.ReadInt();
         int blockType   = reader.ReadInt();
         string password = reader.ReadString();
+        int endTag      = reader.ReadInt();
+        Assert(endTag == EndTag);      
 
-        var position     = new WorldPoint(x, y, z);
-        int endTag       = reader.ReadInt();
-        Assert(endTag    == EndTag);            
-        var response = World.DeleteResource(socket.GetActor(), position, blockType, password);
+        var position    = new WorldPoint(x, y, z);
+        var response    = World.DeleteResource(socket.GetActor(), position, blockType, password);
         OutMessageHandler.SendDeleteResourceResponse(socket, position, blockType, response);
     }
 

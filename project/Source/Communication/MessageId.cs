@@ -1,10 +1,7 @@
 namespace Eltisa.Communication;
 
 
-
-
 public enum MessageId {
-
     LoginRequest                  = 10,
     LoginResponse                 = 11,
 
