@@ -12,25 +12,27 @@ const eltisa = new function() {
     const actorStore             = new ActorStore(viewport);
     const chunkStore             = new ChunkStore(viewport);
     const player                 = new Player(viewport, chunkStore);
-    const server                 = new Server(document.location, "/ws");
+    const serverSocket           = new ServerSocket(document.location, "/ws");
+    const serverIn               = new ServerIn(serverSocket);
+    const serverOut              = new ServerOut(serverSocket);
 
-    const loginBlocker           = new LoginBlocker(body, activateGame, deactivateGame, server);
-    const introBlocker           = new IntroBlocker(body, activateGame, deactivateGame, server);
+    const loginBlocker           = new LoginBlocker(body, activateGame, deactivateGame, serverSocket, serverOut);
+    const introBlocker           = new IntroBlocker(body, activateGame, deactivateGame, serverOut);
     const errorBlocker           = new ErrorBlocker(body, activateGame, deactivateGame);
     const bossBlocker            = new BossBlocker(body, activateGame, deactivateGame);
-    const scriptureBlocker       = new ScriptureBlocker(body, activateGame, deactivateGame, server);
-    const tresorBlocker          = new TresorBlocker(body, activateGame, deactivateGame, server);
-    const portalBlocker          = new PortalBlocker(body, activateGame, deactivateGame, server, player);
-    const videoChatBlocker       = new VideoChatBlocker(body, activateGame, deactivateGame, server);
+    const scriptureBlocker       = new ScriptureBlocker(body, activateGame, deactivateGame, serverOut);
+    const tresorBlocker          = new TresorBlocker(body, activateGame, deactivateGame, serverOut);
+    const portalBlocker          = new PortalBlocker(body, activateGame, deactivateGame, serverOut, player);
+    const videoChatBlocker       = new VideoChatBlocker(body, activateGame, deactivateGame, serverOut);
     const tetrisBlocker          = new TetrisBlocker(body, activateGame, deactivateGame);
     const blockBlocker           = new BlockBlocker(body, activateGame, deactivateGame, carousel);
     const bookmarkBlocker        = new BookmarkBlocker(body, activateGame, deactivateGame);
-    const oracleBlocker          = new OracleBlocker(body, activateGame, deactivateGame, server);
-    const bookBlocker            = new BookBlocker(body, activateGame, deactivateGame, server, player);
-    const cameraBlocker          = new CameraBlocker(body, activateGame, deactivateGame, server);
+    const oracleBlocker          = new OracleBlocker(body, activateGame, deactivateGame, serverOut);
+    const bookBlocker            = new BookBlocker(body, activateGame, deactivateGame, serverOut, player);
+    const cameraBlocker          = new CameraBlocker(body, activateGame, deactivateGame, serverOut);
 
-    const oracleShower           = new OracleShower(chunkStore, statusbar, server);
-    const portalShower           = new PortalShower(chunkStore, statusbar, server);
+    const oracleShower           = new OracleShower(chunkStore, statusbar, serverOut);
+    const portalShower           = new PortalShower(chunkStore, statusbar, serverOut);
 
     const switchWaitWatch        = new WaitWatch(0.5);
     const changeWaitWatch        = new WaitWatch(0.5);
@@ -114,7 +116,7 @@ const eltisa = new function() {
             const addTargetPos = player.getPosition().add(addDirection);
             const addPos       = Vector.roundToFloor(addTargetPos);
             if( Policy.canModifyBlock(player, addPos) ) {
-                Behavior.addBlock(server, chunkStore, actorStore, player, addPos, null, blockDefinition);
+                Behavior.addBlock(serverOut, chunkStore, actorStore, player, addPos, null, blockDefinition);
             }
             return false;
         }
@@ -133,7 +135,7 @@ const eltisa = new function() {
             const outDirection   = player.getDirection().scale(-0.01);
             const outTargetPos   = targetPos.add(outDirection);
             const addPos         = Vector.roundToFloor(outTargetPos);
-            Behavior.addBlock(server, chunkStore, actorStore, player, addPos, attachPos, blockDefinition);
+            Behavior.addBlock(serverOut, chunkStore, actorStore, player, addPos, attachPos, blockDefinition);
             return false;
         }
         else{
@@ -155,7 +157,7 @@ const eltisa = new function() {
         const inDirection    = player.getDirection().scale(+0.01);
         const inTargetPos    = targetPos.add(inDirection);
         const removePos      = Vector.roundToFloor(inTargetPos);
-        Behavior.removeBlock(server, chunkStore, removePos);
+        Behavior.removeBlock(serverOut, chunkStore, removePos);
         return false;
     }
         
@@ -214,7 +216,7 @@ const eltisa = new function() {
             if( player.targetIsActor() && !text.indexOf("@") > -1 ) {
                 text = "@" + player.getTargetInfo() + " " + text;   // dedicate message to player pointed at
             }
-            server.requestChat(text, peerName);
+            serverOut.requestChat(text, peerName);
             return false;
         }
 
@@ -246,7 +248,7 @@ const eltisa = new function() {
             var            handled = portalBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = oracleBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = cameraBlocker.show(chunkStore, blockPos);
-            if( !handled ) handled = Behavior.changeState(server, chunkStore, blockPos);
+            if( !handled ) handled = Behavior.changeState(serverOut, chunkStore, blockPos);
             if( handled ) return false;
         }
 
@@ -294,7 +296,7 @@ const eltisa = new function() {
             const inTargetPos    = targetPos.add(direction);
             const blockPos       = Vector.roundToFloor(inTargetPos);
            
-            var            handled = Behavior.switchState(server, chunkStore, blockPos);
+            var            handled = Behavior.switchState(serverOut, chunkStore, blockPos);
             if( !handled ) handled = scriptureBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = bookBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = tetrisBlocker.show(chunkStore, blockPos);
@@ -381,7 +383,7 @@ const eltisa = new function() {
     // server message handler
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    server.receiveLoginHandler = function(loginMessage) {
+    serverIn.receiveLoginHandler = function(loginMessage) {
         if(loginMessage.actorId > 0) {
             player.setId(loginMessage.actorId);
             player.setType(loginMessage.actorType);
@@ -391,13 +393,13 @@ const eltisa = new function() {
         }
         else {
             Log.error("login failed, try again");
-            server.close();
+            serverSocket.close();
             loginBlocker.show(player);
         }
     }
 
 
-    server.receiveActorChangedHandler = function(message) {
+    serverIn.receiveActorChangedHandler = function(message) {
         if(message.id == player.getId()) {
             Log.error("got my own change notification of type " + message.change);
             return;
@@ -420,33 +422,33 @@ const eltisa = new function() {
     }
 
 
-    server.receiveActorListHandler = function(message) {
+    serverIn.receiveActorListHandler = function(message) {
         introBlocker.handleActorListMessage(message);
         videoChatBlocker.handleActorListMessage(message);
     }
 
 
-    server.receiveChunksHandler = function(chunksMessage) {
+    serverIn.receiveChunksHandler = function(chunksMessage) {
         chunkStore.handleChunkMessage(chunksMessage);
     }
 
 
-    server.receiveChatHandler = function(chatMessage) {
+    serverIn.receiveChatHandler = function(chatMessage) {
         chat.addMessage(chatMessage.sender, chatMessage.message);
     }
 
 
-    server.updateBlock = function(x, y, z, blockData) {
+    serverIn.updateBlock = function(x, y, z, blockData) {
         return chunkStore.updateBlock(x, y, z, blockData);
     }
 
 
-    server.updateChunk = function(chunk) {
+    serverIn.updateChunk = function(chunk) {
         return chunkStore.updateChunk(chunk);
     }
 
 
-    server.receiveBlockResourceHandler = function(message) {
+    serverIn.receiveBlockResourceHandler = function(message) {
         if( BlockData.isScripture(message.type) ) {
             scriptureBlocker.handleBlockResourceMessage(message);
         }
@@ -467,16 +469,16 @@ const eltisa = new function() {
     }
 
 
-    server.receiveResourceHandler = function(blockType, resourceResponse, text) {
+    serverIn.receiveResourceHandler = function(blockType, resourceResponse, text) {
         if( blockType == Block.Book ) {
-            if( resourceResponse == ResourceResponse.Ok) {
+            if( resourceResponse == SR_Ok) {
                 bookBlocker.updateContent(text);
             }
         }
     }
 
 
-    server.receiveVideoChatHandler = function(message) {
+    serverIn.receiveVideoChatHandler = function(message) {
         if(message.type==VideoMessageType.RequestChat && !videoChatBlocker.isVisible() ) {
             statusbar.setInfoMessage( message.sender + " wants to video chat, press F4 to accept", Config.videoChatTimeOut);
         }
@@ -489,7 +491,7 @@ const eltisa = new function() {
     }
 
 
-    server.connectionLostHandler = function(message) {
+    serverSocket.connectionLostHandler = function(message) {
         document.exitPointerLock();
         player.deactivateControls();    
         errorBlocker.show(ErrorType.ConnectionLost);
@@ -514,7 +516,7 @@ const eltisa = new function() {
         player.update();
         
         chunkStore.timeOutRequest();
-        chunkStore.sendRequest(server);
+        chunkStore.sendRequest(serverOut);
         chunkStore.updateNewChunks(breakTime);
 
         chunkStore.updateCenterPosition(player.getPosition());
@@ -525,7 +527,7 @@ const eltisa = new function() {
 
         updateCounter++;
         if( updateCounter % 16 == 1 ) {
-            player.sendMove(server);
+            player.sendMove(serverOut);
         }    
         else if( updateCounter % 16 == 2 ) {
             statusbar.setStatus(player, viewport);
@@ -559,8 +561,8 @@ const eltisa = new function() {
             const playerPosZ             = urlParams.get('z');    
             player.setPosition(playerPosX, playerPosY, playerPosZ);    
             
-            server.connect();
-            server.requestLogin(playerName, playerPassword);
+            serverSocket.connect();
+            serverOut.requestLogin(playerName, playerPassword);
         }
     }
 }

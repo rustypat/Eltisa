@@ -1,14 +1,5 @@
 'use strict';
 
-const ResourceResponse = {
-    Ok:                            0,
-    NotAllowed:                    1,
-    ResourceDoesNotExist:          2,
-    ResourceAlreadyExists:         3,
-    PasswordInvalid:               4
-}
-
-
 function Server(serverLocation, webSocketPath) {
     
     const endTag        = 666999;
@@ -24,16 +15,17 @@ function Server(serverLocation, webSocketPath) {
         ChangeBlock:         36,
         SwitchBlock:         38,
 
-        ChatMessage:         42,
-        VideoChatMessage:    44,
-        GetBlockResource:    52,
-        SaveBlockResource:   54,
+        ChatMessage:         40,
+        VideoChatMessage:    42,
 
-        CreateResourceRequest:         60,
-        ReadResourceRequest:           62,
-        WriteResourceRequest:          64,
-        UpdateResourceRequest:         66,
-        DeleteResourceRequest:         68        
+        CreateResourceRequest:         50,
+        ReadResourceRequest:           52,
+        WriteResourceRequest:          54,
+        UpdateResourceRequest:         56,
+        DeleteResourceRequest:         58,
+
+        GetBlockResource:    60,
+        SaveBlockResource:   62,
     }
     
     const InMessageType = {
@@ -42,17 +34,18 @@ function Server(serverLocation, webSocketPath) {
         ActorList:           23,
 
         Chunks:              31,
-        BlocksChanged:       37,
+        BlocksChanged:       39,
 
         Chat:                41,
         VideoChat:           43,
-        BlockResource:       51,
 
-        CreateResourceResponse:        61,
-        ReadResourceResponse:          63,
-        WriteResourceResponse:         65,
-        UpdateResourceResponse:        67,
-        DeleteResourceResponse:        69        
+        CreateResourceResponse:        51,
+        ReadResourceResponse:          53,
+        WriteResourceResponse:         55,
+        UpdateResourceResponse:        57,
+        DeleteResourceResponse:        59,
+
+        BlockResource:       61,
     }
 
 
@@ -146,7 +139,6 @@ function Server(serverLocation, webSocketPath) {
     this.receiveChunksHandler          = function(message) {};
     this.receiveVideoChatHandler       = function(message) {};
     this.receiveBlockResourceHandler   = function(message) {};
-    this.connectionLostHandler         = function(message) {};
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,25 +328,6 @@ function Server(serverLocation, webSocketPath) {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     var outMessageCount = 0;
-
-    function sendMessage(message, tries) {
-        if(tries <= 0) return;
-        if(webSocket.readyState == WebSocket.OPEN) {
-            webSocket.send(message);
-        }
-        else if(webSocket.readyState == WebSocket.CONNECTING) {
-            setTimeout(function() {
-                Log.trace("WebSocket retry send");
-                sendMessage(message, tries - 1);
-            }, 100);
-        }
-        else {
-            Log.trace("WebSocket connection lost");
-            self.connectionLostHandler();            
-        }
-
-    }
-
 
     this.requestLogin = function(name, password) {
         name   = name.substring(0, 30);

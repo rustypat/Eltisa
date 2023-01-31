@@ -11,7 +11,6 @@ public static class InMessage {
 
 
     public class Login {
-        public const byte Id = 10;
         public string     Name;
         public string     Password;
     }
@@ -21,18 +20,17 @@ public static class InMessage {
         var loginMessage           = new Login();
 
         int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.LoginRequest);
         loginMessage.Name          = reader.ReadString();
         loginMessage.Password      = reader.ReadString();
         int endTag                 = reader.ReadInt();
-
-        Assert(messageId == Login.Id);
         Assert(endTag    == EndTag);            
+
         return loginMessage;
     }        
 
 
     public class MoveActor {
-        public const byte Id = 20;
         public float PositionX;
         public float PositionY;
         public float PositionZ;
@@ -44,20 +42,19 @@ public static class InMessage {
         var moveActorMessage       = new MoveActor();
 
         int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.MoveActor);
         moveActorMessage.PositionX = reader.ReadFloat();
         moveActorMessage.PositionY = reader.ReadFloat();
         moveActorMessage.PositionZ = reader.ReadFloat();
         moveActorMessage.RotationY = reader.ReadFloat();
         int endTag                 = reader.ReadInt();
 
-        Assert(messageId == MoveActor.Id);
         Assert(endTag    == EndTag);            
         return moveActorMessage;
     }
     
 
     public class ListActors {
-        public const byte Id = 22;
     }
 
     static public ListActors ToListActorsMessage(byte[] inBuffer) {
@@ -65,16 +62,15 @@ public static class InMessage {
         var message                = new ListActors();
 
         int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.ListActorsRequest);
         int endTag                 = reader.ReadInt();
-
-        Assert(messageId == ListActors.Id);
         Assert(endTag    == EndTag);            
+
         return message;
     }
     
 
     public class GetChunks {
-        public const byte     Id             = 30;
         public int            RequestId;
         public RegionPoint[]  Regions;
         public ChunkPoint[]   Chunks;
@@ -85,6 +81,7 @@ public static class InMessage {
         var message                = new GetChunks();
 
         int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.GetChunksRequest);
         message.RequestId          = reader.ReadInt();
         int chunkCount             = reader.ReadInt();
         int regionCount            = reader.ReadInt();
@@ -103,15 +100,13 @@ public static class InMessage {
             }                
         }
         int endTag                 = reader.ReadInt();
+        Assert(endTag    == EndTag);     
 
-        Assert(messageId == GetChunks.Id);
-        Assert(endTag    == EndTag);            
         return message;
     }
 
 
     public class AddBlock {
-        public const byte Id = 32;
         public int  PosX;
         public int  PosY;
         public int  PosZ;
@@ -123,20 +118,19 @@ public static class InMessage {
         var addBlockMessage        = new AddBlock();
 
         int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.AddBlock);
         addBlockMessage.PosX       = reader.ReadInt();
         addBlockMessage.PosY       = reader.ReadInt();
         addBlockMessage.PosZ       = reader.ReadInt();
         addBlockMessage.BlockInfo  = reader.ReadUShort();
         int endTag                 = reader.ReadInt();
-
-        Assert(messageId == AddBlock.Id);
         Assert(endTag    == EndTag);            
+
         return addBlockMessage;
     }
     
 
     public class RemoveBlock {
-        public const byte Id = 34;
         public int  PosX;
         public int  PosY;
         public int  PosZ;
@@ -147,19 +141,18 @@ public static class InMessage {
         var removeBlockMessage     = new RemoveBlock();
 
         int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.RemoveBlock);
         removeBlockMessage.PosX    = reader.ReadInt();
         removeBlockMessage.PosY    = reader.ReadInt();
         removeBlockMessage.PosZ    = reader.ReadInt();
         int endTag                 = reader.ReadInt();
-
-        Assert(messageId == RemoveBlock.Id);
         Assert(endTag    == EndTag);            
+
         return removeBlockMessage;
     }
     
 
     public class ChangeBlock {
-        public const byte Id = 36;
         public int  PosX;
         public int  PosY;
         public int  PosZ;
@@ -171,20 +164,18 @@ public static class InMessage {
         var changeBlockMessage = new ChangeBlock();
 
         int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.ChangeBlock);
         changeBlockMessage.PosX    = reader.ReadInt();
         changeBlockMessage.PosY    = reader.ReadInt();
         changeBlockMessage.PosZ    = reader.ReadInt();
         changeBlockMessage.BlockInfo = reader.ReadUShort();
         int endTag                 = reader.ReadInt();
-
-        Assert(messageId == ChangeBlock.Id);
         Assert(endTag    == EndTag);            
         return changeBlockMessage;
     }
     
 
     public class SwitchBlocks {
-        public const byte Id = 38;
         public readonly WorldPoint[] Positions;
 
         public SwitchBlocks(int numberOfBlocksToSwitch) {
@@ -195,6 +186,7 @@ public static class InMessage {
     static public SwitchBlocks ToSwitchBlockMessage(byte[] inBuffer) {
         var reader                 = new ArrayReader(inBuffer);
         int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.SwitchBlock);
         int switchCount            = reader.ReadInt() / 3;            
 
         if(switchCount > Configuration.MaxSwitches) {
@@ -202,7 +194,6 @@ public static class InMessage {
         }
 
         var switchBlockMessage     = new SwitchBlocks(switchCount);
-
         for(int i=0; i < switchCount; i++) {
             var x = reader.ReadInt();
             var y = reader.ReadInt();
@@ -211,14 +202,13 @@ public static class InMessage {
             switchBlockMessage.Positions[i] = pos;
         }
         int endTag                 = reader.ReadInt();
-        Assert(messageId == SwitchBlocks.Id);
         Assert(endTag    == EndTag);            
+
         return switchBlockMessage;
     }
     
 
     public class ChatMessage {
-        public const byte Id = 42;
         public string Message;
     }
 
@@ -230,7 +220,7 @@ public static class InMessage {
         message.Message            = reader.ReadString();
         int endTag                 = reader.ReadInt();
 
-        Assert(messageId == ChatMessage.Id);
+        Assert(messageId == (int)MessageId.ChatMessageRequest);
         Assert(endTag    == EndTag);            
         return message;
     }
@@ -239,7 +229,6 @@ public static class InMessage {
     public class VideoChatMessage {
         public enum Type  {RequestChat= 1, StopChat= 2, SendSdpOffer= 3, SendSdpAnswer= 4, SendIce= 5};
 
-        public const byte     Id = 44;
         public string         Sender;
         public string         Receiver;
         public int            MessageType;
@@ -251,20 +240,19 @@ public static class InMessage {
         var message                = new VideoChatMessage();
 
         int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.VideoChatMessageRequest);
         message.Sender             = reader.ReadString();
         message.Receiver           = reader.ReadString();
         message.MessageType        = reader.ReadInt();
         message.JsonMessage            = reader.ReadString();
         int endTag                 = reader.ReadInt();
-
-        Assert(messageId == VideoChatMessage.Id);
         Assert(endTag    == EndTag);            
+
         return message;
     }
 
 
     public class GetBlockResource {
-        public const byte Id = 52;
         public int        PosX;
         public int        PosY;
         public int        PosZ;
@@ -277,21 +265,20 @@ public static class InMessage {
         var message = new GetBlockResource();
 
         int messageId    = reader.ReadInt();
+        Assert(messageId == (int)MessageId.GetBlockResourceRequest);
         message.PosX     = reader.ReadInt();
         message.PosY     = reader.ReadInt();
         message.PosZ     = reader.ReadInt();
         message.Type     = reader.ReadInt();
         message.Pwd      = reader.ReadString();
         int endTag       = reader.ReadInt();
-
-        Assert(messageId == GetBlockResource.Id);
         Assert(endTag    == EndTag);            
+
         return message;
     }
     
 
     public class SaveBlockResource {
-        public const byte Id = 54;
         public int        PosX;
         public int        PosY;
         public int        PosZ;
@@ -315,7 +302,7 @@ public static class InMessage {
         message.Text     = reader.ReadString();
         int endTag       = reader.ReadInt();
 
-        Assert(messageId == SaveBlockResource.Id);
+        Assert(messageId == (int)MessageId.SaveBlockResourceRequest);
         Assert(endTag    == EndTag);            
         return message;
     }

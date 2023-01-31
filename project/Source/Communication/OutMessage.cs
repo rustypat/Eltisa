@@ -18,10 +18,10 @@ public static class OutMessage {
         ActorChanged     = 21,
         ActorList        = 23,
         Chunks           = 31,
-        BlocksChanged    = 37,
+        BlocksChanged    = 39,
         Chat             = 41,
         VideoChat        = 43,
-        BlockResource    = 51
+        BlockResource    = 61
     }
 
     private static int messageCounter;

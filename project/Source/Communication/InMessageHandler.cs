@@ -18,23 +18,23 @@ public static class InMessageHandler {
     delegate void MessageHandler(HomeSocket socket, byte[] message);
 
     private static int maxMessageId = Enum.GetValues(typeof(MessageId)).Cast<int>().Max();
-    private static MessageHandler[] messageHandlers = new MessageHandler[maxMessageId];
+    private static MessageHandler[] messageHandlers = new MessageHandler[maxMessageId+1];
 
     static InMessageHandler() {
         for(int i=0; i < maxMessageId; i++) messageHandlers[i] = HandleUnknownMessage;
 
-        messageHandlers[InMessage.MoveActor.Id] = HandleMoveActor;
-        messageHandlers[InMessage.GetChunks.Id] = HandleGetChunks;
-        messageHandlers[InMessage.AddBlock.Id] = HandleAddBlock;
-        messageHandlers[InMessage.RemoveBlock.Id] = HandleRemoveBlock;
-        messageHandlers[InMessage.ChangeBlock.Id] = HandleChangeBlock;
-        messageHandlers[InMessage.SwitchBlocks.Id] = HandleSwitchBlocks;
-        messageHandlers[InMessage.GetBlockResource.Id] = HandleGetBlockResource;
-        messageHandlers[InMessage.SaveBlockResource.Id] = HandleSaveBlockResource;
-        messageHandlers[InMessage.ChatMessage.Id] = HandleChatMessage;
-        messageHandlers[InMessage.VideoChatMessage.Id] = HandleVideoChatMessage;
-        messageHandlers[InMessage.ListActors.Id] = HandleListActors;
-        messageHandlers[InMessage.Login.Id] = HandleLogin;
+        messageHandlers[(int)MoveActor] = HandleMoveActor;
+        messageHandlers[(int)GetChunksRequest] = HandleGetChunks;
+        messageHandlers[(int)AddBlock] = HandleAddBlock;
+        messageHandlers[(int)RemoveBlock] = HandleRemoveBlock;
+        messageHandlers[(int)ChangeBlock] = HandleChangeBlock;
+        messageHandlers[(int)SwitchBlock] = HandleSwitchBlocks;
+        messageHandlers[(int)GetBlockResourceRequest] = HandleGetBlockResource;
+        messageHandlers[(int)SaveBlockResourceRequest] = HandleSaveBlockResource;
+        messageHandlers[(int)ChatMessageRequest] = HandleChatMessage;
+        messageHandlers[(int)VideoChatMessageRequest] = HandleVideoChatMessage;
+        messageHandlers[(int)ListActorsRequest] = HandleListActors;
+        messageHandlers[(int)LoginRequest] = HandleLogin;
         messageHandlers[(int)CreateResourceRequest] = HandleCreateResourceRequest;
         messageHandlers[(int)ReadResourceRequest] = HandleReadResourceRequest;
         messageHandlers[(int)WriteResourceRequest] = HandleWriteResourceRequest;

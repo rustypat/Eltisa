@@ -76,6 +76,9 @@ public static class Log {
 
     public static void Error(Exception e) {
         Console.WriteLine("ERROR: " + e.Message);
+        if(e.InnerException != null) {
+            Console.WriteLine("    caused by: " + e.InnerException);
+        }
         Console.WriteLine(e.StackTrace);
         if(logFile != null) {
             using (StreamWriter fileWriter = File.AppendText(logFile)) {

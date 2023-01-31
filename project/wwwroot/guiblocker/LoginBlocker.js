@@ -1,6 +1,6 @@
 'use strict';
 
-function LoginBlocker(body, activateGame, deactivateGame, server) {
+function LoginBlocker(body, activateGame, deactivateGame, serverSocket, serverOut) {
 
     var player;
     
@@ -54,8 +54,8 @@ function LoginBlocker(body, activateGame, deactivateGame, server) {
         const playerPosY             = urlParams.get('y');
         const playerPosZ             = urlParams.get('z');
         player.setPosition(playerPosX, playerPosY, playerPosZ);    
-        server.connect();
-        server.requestLogin(name, password);
+        serverSocket.connect();
+        serverOut.requestLogin(name, password);
                 
         return false;
     }
