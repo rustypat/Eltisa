@@ -117,24 +117,53 @@ public static class InMessageHandler {
     }
 
 
+    static void HandleAddBlock(HomeSocket socket, byte[] inBuffer) {
+        var reader                 = new ArrayReader(inBuffer);
+
+        int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.AddBlock);
+        int x                      = reader.ReadInt();
+        int y                      = reader.ReadInt();
+        int z                      = reader.ReadInt();
+        ushort blockDescription    = reader.ReadUShort();
+        int endTag                 = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+
+        var position = new WorldPoint(x, y, z);        
+        World.AddBlock(socket.GetActor(), position, blockDescription);
+    }
+
+
     static void HandleRemoveBlock(HomeSocket socket, byte[] inBuffer) {
-        var inMessage = InMessage.ToRemoveBlockMessage(inBuffer);
-        var position     = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
+        var reader                 = new ArrayReader(inBuffer);
+
+        int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.RemoveBlock);
+        int x                      = reader.ReadInt();
+        int y                      = reader.ReadInt();
+        int z                      = reader.ReadInt();
+        int endTag                 = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+
+        var position     = new WorldPoint(x, y, z);
         World.RemoveVisibleBlock(socket.GetActor(), position);
     }
 
 
-    static void HandleAddBlock(HomeSocket socket, byte[] inBuffer) {
-        var inMessage = InMessage.ToAddBlockMessage(inBuffer);
-        var position = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);        
-        World.AddBlock(socket.GetActor(), position, inMessage.BlockInfo);
-    }
-
-
     static void HandleChangeBlock(HomeSocket socket, byte[] inBuffer) {
-        var inMessage = InMessage.ToChangeBlockMessage(inBuffer);
-        var position = new WorldPoint(inMessage.PosX, inMessage.PosY, inMessage.PosZ);
-        World.ChangeStateOfVisibleBlock(socket.GetActor(), position, inMessage.BlockInfo);
+        var reader = new ArrayReader(inBuffer);
+
+        int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.ChangeBlock);
+        int x                      = reader.ReadInt();
+        int y                      = reader.ReadInt();
+        int z                      = reader.ReadInt();
+        ushort blockDescription    = reader.ReadUShort();
+        int endTag                 = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+
+        var position = new WorldPoint(x, y, z);
+        World.ChangeStateOfVisibleBlock(socket.GetActor(), position, blockDescription);
     }
 
 
