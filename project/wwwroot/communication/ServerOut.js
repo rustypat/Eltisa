@@ -211,7 +211,7 @@ function ServerOut(serverSocket) {
     }
 
 
-    this.readResourceRequest = function(blockPos, type, password) {
+    this.requestReadResource = function(blockPos, type, password) {
         writer.reset();
         writer.writeInteger(SM_ReadResourceRequest);
         writer.writeInteger(blockPos.x);
@@ -227,7 +227,7 @@ function ServerOut(serverSocket) {
     }
 
 
-    this.writeResourceRequest = function(blockPos, type, password, stringData) {
+    this.requestWriteResource = function(blockPos, type, password, stringData) {
         writer.reset();
         writer.writeInteger(SM_WriteResourceRequest);
         writer.writeInteger(blockPos.x);

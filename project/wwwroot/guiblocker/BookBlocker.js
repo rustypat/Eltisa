@@ -69,7 +69,7 @@ function BookBlocker(body, activateGame, deactivateGame, server, player) {
             return false;
         }
 
-        server.writeResourceRequest(blockPos, Block.Book, "", text); 
+        server.requestWriteResource(blockPos, Block.Book, "", text); 
         errorText.clearText();
         return false;
     }
@@ -84,7 +84,7 @@ function BookBlocker(body, activateGame, deactivateGame, server, player) {
             return false;
         }
 
-        server.writeResourceRequest(blockPos, Block.Book, "", text); 
+        server.requestWriteResource(blockPos, Block.Book, "", text); 
         errorText.clearText();
 
         closeAction(event);
@@ -103,7 +103,7 @@ function BookBlocker(body, activateGame, deactivateGame, server, player) {
 
     function refreshAction(event) {
         event.stopPropagation();
-        server.readResourceRequest(blockPos, Block.Book, ""); 
+        server.requestReadResource(blockPos, Block.Book, ""); 
         errorText.clearText();
         return false;
     }
@@ -141,7 +141,7 @@ function BookBlocker(body, activateGame, deactivateGame, server, player) {
         quill.setContents([]);
         saveButton.disabled  = true;
         storeButton.disabled = true;
-        server.readResourceRequest(blockPos, Block.Book, ""); 
+        server.requestReadResource(blockPos, Block.Book, ""); 
     
         return true;
     }

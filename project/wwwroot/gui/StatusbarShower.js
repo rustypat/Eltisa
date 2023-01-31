@@ -6,8 +6,8 @@ function OracleShower(chunkStore, statusbar, server) {
     var showOracle;
     var text;
 
-    this.handleBlockResourceMessage = function(resourceMessage) {
-        text                 = resourceMessage.text;
+    this.updateStatusbar = function(newText) {
+        text = newText;
         statusbar.setOracleMessage(text);
     }
 
@@ -18,7 +18,7 @@ function OracleShower(chunkStore, statusbar, server) {
         if( BlockData.isOracleUsed(blockData) ) {
             if (!showOracle) {
                 showOracle   = true;
-                server.requestBlockResource(blockPos, Block.Oracle); 
+                server.requestReadResource(blockPos, Block.Oracle, ""); 
                 return true;
                 }
         }

@@ -459,10 +459,6 @@ const eltisa = new function() {
             portalBlocker.handleBlockResourceMessage(message, player);
             portalShower.handleBlockResourceMessage(message);
         }
-        else if( BlockData.isOracle(message.type) ) {
-            if(oracleBlocker.isVisible() )   oracleBlocker.handleBlockResourceMessage(message, statusbar);
-            else                             oracleShower.handleBlockResourceMessage(message);
-        }
         else if( BlockData.isCamera(message.type) ) {
             cameraBlocker.handleBlockResourceMessage(message);
         }
@@ -474,6 +470,10 @@ const eltisa = new function() {
             if( resourceResponse == SR_Ok) {
                 bookBlocker.updateContent(text);
             }
+        }
+        else if( blockType == Block.Oracle) {
+            if(oracleBlocker.isVisible() )   oracleBlocker.updateOracle(text);
+            else                             oracleShower.updateStatusbar(text);
         }
     }
 

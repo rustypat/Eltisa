@@ -13,16 +13,17 @@ function ServerIn(serversocket) {
         const messageCounter = reader.readInteger();
         Log.trace("received message " + messageType + "  (" + event.data.byteLength + " bytes)");
 
-        receiveChunksMessage(reader, messageType);
-        receiveActorChangedMessage(reader, messageType);
-        receiveBlocksChangedMessage(reader, messageType);
-        receiveActorListMessage(reader, messageType);
-        receiveChatMessage(reader, messageType);
-        receiveLoginMessage(reader, messageType);
-        receiveVideoChatMessage(reader, messageType);
-        receiveBlockResourceMessage(reader, messageType);
-        receiveReadResourceResponseMessage(reader, messageType);
-        receiveWriteResourceResponseMessage(reader, messageType);
+        if(receiveChunksMessage(reader, messageType)) return;
+        if(receiveActorChangedMessage(reader, messageType)) return;
+        if(receiveBlocksChangedMessage(reader, messageType)) return;
+        if(receiveActorListMessage(reader, messageType)) return;
+        if(receiveChatMessage(reader, messageType)) return;
+        if(receiveLoginMessage(reader, messageType)) return;
+        if(receiveVideoChatMessage(reader, messageType)) return;
+        if(receiveBlockResourceMessage(reader, messageType)) return;
+        if(receiveReadResourceResponseMessage(reader, messageType)) return;
+        if(receiveWriteResourceResponseMessage(reader, messageType)) return;
+        Log.trace("received unknown message " + messageType + "  (" + event.data.byteLength + " bytes)");
     }
 
 

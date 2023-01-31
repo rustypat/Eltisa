@@ -42,7 +42,7 @@ function OracleBlocker(body, activateGame, deacitvateGame, server) {
         if( changedOracleDefinition != null ) {
             server.requestSwitchBlock(blockPos.x, blockPos.y, blockPos.z);
         }
-        server.requestSaveBlockResource(blockPos, Block.Oracle, text); 
+        server.requestWriteResource(blockPos, Block.Oracle, "", text); 
         closeAction();
         return false;
     }
@@ -86,7 +86,7 @@ function OracleBlocker(body, activateGame, deacitvateGame, server) {
         textField.focus();
         saveButton.disabled = true;        
 
-        server.requestBlockResource(_blockPos, Block.Oracle); 
+        server.requestReadResource(_blockPos, Block.Oracle, ""); 
         blockPos             = _blockPos;
         deacitvateGame();
         return true;
@@ -98,9 +98,9 @@ function OracleBlocker(body, activateGame, deacitvateGame, server) {
     }
 
 
-    this.handleBlockResourceMessage = function(resourceMessage, statusbar) {
-        textField.value  = resourceMessage.text;
-        text             = resourceMessage.text;
+    this.updateOracle = function(newText) {
+        textField.value  = newText;
+        text             = newText;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
