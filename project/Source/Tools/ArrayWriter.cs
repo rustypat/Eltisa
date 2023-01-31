@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 
 
-public class ArrayWriter {
+public struct ArrayWriter {
     private MemoryStream stream;
     private BinaryWriter writer;
 

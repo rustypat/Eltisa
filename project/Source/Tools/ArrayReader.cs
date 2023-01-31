@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 
 
-public class ArrayReader {
+public struct ArrayReader {
 
     private Stream       stream;
     private BinaryReader reader;
