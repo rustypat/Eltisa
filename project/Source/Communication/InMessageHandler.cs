@@ -172,11 +172,9 @@ public static class InMessageHandler {
         
         int messageId              = reader.ReadInt();
         Assert(messageId == (int)MessageId.SwitchBlock);
+        
         int switchCount            = reader.ReadInt() / 3;            
-
-        if(switchCount > Configuration.MaxSwitches) {
-            throw new ArgumentOutOfRangeException("switchCount is out of range: " + switchCount);
-        }
+        if(switchCount > Configuration.MaxSwitches)  throw new ArgumentOutOfRangeException("switchCount is out of range: " + switchCount);
 
         var switchPositions        = new WorldPoint[switchCount];
         for(int i=0; i < switchCount; i++) {
