@@ -4,7 +4,7 @@ function ServerIn(serversocket) {
     
     const self        = this;
     
-    serversocket.setOnMessageHandler( handleInputMessage);
+    serversocket.setMessageHandler( handleInputMessage);
         
     function handleInputMessage(event) {
         assert(event.data instanceof ArrayBuffer);

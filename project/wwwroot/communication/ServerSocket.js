@@ -4,10 +4,10 @@ function ServerSocket(serverLocation, webSocketPath) {
     
     const self             = this;
     var   webSocket        = {};    
-    var   onMessageHandler = function(event) {};
+    var   messageHandler   = function(event) {};
 
-    this.setOnMessageHandler = function(handler) {
-        onMessageHandler    = handler;
+    this.setMessageHandler = function(handler) {
+        messageHandler      = handler;
         webSocket.onmessage = handler;
     };
 
@@ -26,7 +26,7 @@ function ServerSocket(serverLocation, webSocketPath) {
         }
 
         webSocket.binaryType = "arraybuffer";
-        webSocket.onmessage = onMessageHandler;
+        webSocket.onmessage = messageHandler;
 
         webSocket.onerror = function(error) {
             Log.error("WebSocket Error: " + error);

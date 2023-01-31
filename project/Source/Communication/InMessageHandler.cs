@@ -46,7 +46,7 @@ public static class InMessageHandler {
     public static void HandleSocketMessage(HomeSocket socket, byte[] message) {
         var messageId = message[0];  // works only on Intel type processors!!
 
-        if(messageId < 0 || messageId >= maxMessageId) {
+        if(messageId < 0 || messageId > maxMessageId) {
             var exception = new Exception("received unknown message of type " + message[0]);
             Log.Error(exception);
             #if DEBUG
@@ -251,7 +251,7 @@ public static class InMessageHandler {
         byte[] data     = reader.ReadBytes();
         int endTag      = reader.ReadInt();
         Assert(endTag == EndTag);         
-           
+
         var position    = new WorldPoint(x, y, z);
         var result      = World.CreateResource(socket.GetActor(), position, blockType, password, data);
         OutMessageHandler.SendCreateResourceResponse(socket, position, blockType, result);
