@@ -54,12 +54,13 @@ public static class DefaultWorld {
     }
 
 
-    public static bool IsModifiedChunk(Chunk chunk) {
-        if( chunk.Position.Y == - ChunkRadiusVertical ) return IsModifiedMagmaChunk(chunk);
-        else if( chunk.Position.Y  < 0 )                return IsModifiedEarthChunk(chunk);
-        else if( chunk.Position.Y == 0 )                return IsModifiedSeaChunk(chunk);
-        else if( chunk.Position.Y == 1 )                return IsModifiedSeaSurfaceChunk(chunk);
-        else if( chunk.Position.Y  > 0 )                return IsModifiedSkyChunk(chunk);
+    public static bool IsDefaultChunk(RegionPoint regionPos, Chunk chunk) {
+        int y = (regionPos.Y * 16) + chunk.Position.Y;
+        if( y == - ChunkRadiusVertical ) return IsDefaultMagmaChunk(chunk);
+        else if( y  < 0 )                return IsDefaultEarthChunk(chunk);
+        else if( y == 0 )                return IsDefaultSeaChunk(chunk);
+        else if( y == 1 )                return IsDefaultSeaSurfaceChunk(chunk);
+        else if( y  > 0 )                return IsDefaultSkyChunk(chunk);
         else throw new Exception("this should never happen");
     }
 
@@ -69,9 +70,13 @@ public static class DefaultWorld {
     }
 
 
-    private static bool IsModifiedMagmaChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockDescription.Lava) return true;
-        return chunk.IsModified();
+    private static bool IsDefaultMagmaChunk(Chunk chunk) {
+        if(chunk.DefaultBlockDefinition != BlockDescription.Lava) return false;
+        if(chunk.BlockCount != ChunkVolume) return false;
+        if(chunk.BorderBlocks.Size() != 0) return false;
+        if(chunk.InnerBlocks.Size() != 0) return false;
+        if(chunk.EmptyBlocks.Size() != 0) return false;
+        return true;
     }
 
 
@@ -80,9 +85,13 @@ public static class DefaultWorld {
     }
 
 
-    private static bool IsModifiedEarthChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockDescription.Stone) return true;
-        return chunk.IsModified();
+    private static bool IsDefaultEarthChunk(Chunk chunk) {
+        if(chunk.DefaultBlockDefinition != BlockDescription.Stone) return false;
+        if(chunk.BlockCount != ChunkVolume) return false;
+        if(chunk.BorderBlocks.Size() != 0) return false;
+        if(chunk.InnerBlocks.Size() != 0) return false;
+        if(chunk.EmptyBlocks.Size() != 0) return false;
+        return true;
     }
 
 
@@ -91,9 +100,13 @@ public static class DefaultWorld {
     }
 
 
-    private static bool IsModifiedSeaChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockDescription.Water) return true;
-        return chunk.IsModified();
+    public static bool IsDefaultSeaChunk(Chunk chunk) {
+        if(chunk.DefaultBlockDefinition != BlockDescription.Water) return false;
+        if(chunk.BlockCount != ChunkVolume) return false;
+        if(chunk.BorderBlocks.Size() != 0) return false;
+        if(chunk.InnerBlocks.Size() != 0) return false;
+        if(chunk.EmptyBlocks.Size() != 0) return false;
+        return true;
     }
 
 
@@ -111,13 +124,13 @@ public static class DefaultWorld {
     }
 
 
-    private static bool IsModifiedSeaSurfaceChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockDescription.Water) return true;
-        if(chunk.BlockCount != ChunkVolume) return true;
-        if(chunk.BorderBlocks.Size() != ChunkSize * ChunkSize) return true;
-        if(chunk.InnerBlocks.Size() > 0) return true;
-        if(chunk.EmptyBlocks.Size() > 0) return true;
-        return true;
+    public static bool IsDefaultSeaSurfaceChunk(Chunk chunk) {
+        if(chunk.DefaultBlockDefinition != BlockDescription.Water) return false;
+        if(chunk.BlockCount != ChunkVolume) return false;
+        if(chunk.BorderBlocks.Size() != ChunkSize * ChunkSize) return false;   
+        if(chunk.InnerBlocks.Size() > 0) return false;
+        if(chunk.EmptyBlocks.Size() > 0) return false;
+        return !chunk.IsModified();
     }
 
 
@@ -126,9 +139,10 @@ public static class DefaultWorld {
     }
 
 
-    private static bool IsModifiedSkyChunk(Chunk chunk) {
-        if(chunk.DefaultBlockDefinition != BlockDescription.Air) return true;
-        return chunk.IsModified();
+    private static bool IsDefaultSkyChunk(Chunk chunk) {
+        if(chunk.DefaultBlockDefinition != BlockDescription.Air) return false;
+        if(chunk.BlockCount != 0) return false;
+        return true;
     }
 
 

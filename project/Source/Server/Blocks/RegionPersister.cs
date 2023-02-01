@@ -37,7 +37,14 @@ public class RegionPersister : IRegionAccess {
             int chunkCount    = reader.ReadInt32();
             List<Chunk> chunks = new List<Chunk>(chunkCount);
             for(int i = 0; i < chunkCount; i++) {
-                chunks.Add(ReadChunk(reader));
+                var chunk = ReadChunk(reader);
+
+                // fix for sins of the past
+                if( pos.Y != 0 || chunk.Position.Y > 1 ) {
+                    if(DefaultWorld.IsDefaultSeaChunk(chunk)) continue;
+                    if(DefaultWorld.IsDefaultSeaSurfaceChunk(chunk)) continue;
+                }
+                chunks.Add(chunk);
             }
             int endTag        = reader.ReadInt32();  Assert(endTag == storeFormatVerion1);
             reader.Close();
@@ -104,19 +111,22 @@ public class RegionPersister : IRegionAccess {
 
             writer.Write((int)storeFormatVerion1);            
             writer.Write((int)region.Owner);            
-            writer.Write((int)region.AccessRights);            
-            writer.Write((int)region.GetChunks().Count(chunk => DefaultWorld.IsModifiedChunk(chunk)));
-            
-            foreach(Chunk chunk in region.GetChunks()) {
-                if(DefaultWorld.IsModifiedChunk(chunk)) {
+            writer.Write((int)region.AccessRights);      
 
-                    // optimize storage 
-                    ushort defaultBlockDefinition = chunk.RecommendDefaultBlock();
-                    if(defaultBlockDefinition != chunk.DefaultBlockDefinition) {
-                        chunk.ConvertToNewDefaultBlockDefinition(defaultBlockDefinition);  // TODO: needs a mutex lock
-                    }
-                    WriteChunk(writer, chunk);
+            // optimize storage 
+            foreach(Chunk chunk in region.GetChunks()) {
+                if(DefaultWorld.IsDefaultChunk(region.Position, chunk)) continue;
+                ushort defaultBlockDefinition = chunk.RecommendDefaultBlock();
+                if(defaultBlockDefinition != chunk.DefaultBlockDefinition) {
+                    chunk.ConvertToNewDefaultBlockDefinition(defaultBlockDefinition);  // TODO: needs a mutex lock
                 }
+            }
+
+            // store chunks
+            writer.Write((int)region.GetChunks().Count(chunk => !DefaultWorld.IsDefaultChunk(region.Position, chunk)));            
+            foreach(Chunk chunk in region.GetChunks()) {
+                if(DefaultWorld.IsDefaultChunk(region.Position, chunk)) continue;
+                WriteChunk(writer, chunk);
             }
             writer.Write((int)storeFormatVerion1);            
             writer.Close();

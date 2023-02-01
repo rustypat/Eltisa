@@ -1,7 +1,7 @@
 'use strict';
 
 
-function ScriptureBlocker(body, activateGame, deacitvateGame, server) {
+function ScriptureEditor(body, activateGame, deacitvateGame, server) {
 
     const baseDiv            = GuiTools.createBaseDiv();
     const textArea           = GuiTools.createTextArrea(baseDiv, "80%", "80%");

@@ -34,7 +34,7 @@ public class ResourceControl {
 
 
     public ResourceResponse WriteResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
-        if(!Policy.CanEdit(actor, pos)) return NotAllowed;
+        if(!Policy.CanEdit(actor, pos) && blockType != BlockDescription.Book) return NotAllowed;
         var resource = resourceCache.ReadResource(pos);
         if(resource == null)  {
             resource = new Resource(blockType, actor.ID, password, data);

@@ -20,7 +20,8 @@ const eltisa = new function() {
     const introBlocker           = new IntroBlocker(body, activateGame, deactivateGame, serverOut);
     const errorBlocker           = new ErrorBlocker(body, activateGame, deactivateGame);
     const bossBlocker            = new BossBlocker(body, activateGame, deactivateGame);
-    const scriptureBlocker       = new ScriptureBlocker(body, activateGame, deactivateGame, serverOut);
+    const scriptureEditor        = new ScriptureEditor(body, activateGame, deactivateGame, serverOut);
+    const scriptureViewer        = new ScriptureViewer(body, activateGame, deactivateGame, serverOut);
     const tresorBlocker          = new TresorBlocker(body, activateGame, deactivateGame, serverOut);
     const portalBlocker          = new PortalBlocker(body, activateGame, deactivateGame, serverOut, player);
     const videoChatBlocker       = new VideoChatBlocker(body, activateGame, deactivateGame, serverOut);
@@ -29,7 +30,8 @@ const eltisa = new function() {
     const bookmarkBlocker        = new BookmarkBlocker(body, activateGame, deactivateGame);
     const oracleBlocker          = new OracleBlocker(body, activateGame, deactivateGame, serverOut);
     const bookBlocker            = new BookBlocker(body, activateGame, deactivateGame, serverOut, player);
-    const cameraBlocker          = new CameraBlocker(body, activateGame, deactivateGame, serverOut);
+    const cameraEditor           = new CameraEditor(body, activateGame, deactivateGame, serverOut);
+    const cameraViewer           = new CameraViewer(body, activateGame, deactivateGame, serverOut);
 
     const oracleShower           = new OracleShower(chunkStore, statusbar, serverOut);
     const portalShower           = new PortalShower(chunkStore, statusbar, serverOut);
@@ -247,7 +249,8 @@ const eltisa = new function() {
 
             var            handled = portalBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = oracleBlocker.show(chunkStore, blockPos);
-            if( !handled ) handled = cameraBlocker.show(chunkStore, blockPos);
+            if( !handled ) handled = scriptureEditor.show(chunkStore, blockPos);
+            if( !handled ) handled = cameraEditor.show(chunkStore, blockPos);
             if( !handled ) handled = Behavior.changeState(serverOut, chunkStore, blockPos);
             if( handled ) return false;
         }
@@ -297,10 +300,11 @@ const eltisa = new function() {
             const blockPos       = Vector.roundToFloor(inTargetPos);
            
             var            handled = Behavior.switchState(serverOut, chunkStore, blockPos);
-            if( !handled ) handled = scriptureBlocker.show(chunkStore, blockPos);
+            if( !handled ) handled = scriptureViewer.show(chunkStore, blockPos);
             if( !handled ) handled = bookBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = tetrisBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = tresorBlocker.show(chunkStore, blockPos);
+            if( !handled ) handled = cameraViewer.show(chunkStore, blockPos);
             if( !handled ) handled = portalBlocker.requestTeleportation(chunkStore, blockPos);
             if( !handled ) handled = chat.addText(" ");
             if( handled ) return false;
@@ -365,10 +369,12 @@ const eltisa = new function() {
         if( bossBlocker.isVisible() ) return true;
         if( introBlocker.isVisible() ) return true;
         if( errorBlocker.isVisible() ) return true;
-        if( scriptureBlocker.isVisible() ) return true;
+        if( scriptureEditor.isVisible() ) return true;
+        if( scriptureViewer.isVisible() ) return true;
         if( tresorBlocker.isVisible() ) return true;    
         if( bookBlocker.isVisible() ) return true;    
-        if( cameraBlocker.isVisible() ) return true;    
+        if( cameraEditor.isVisible() ) return true;    
+        if( cameraViewer.isVisible() ) return true;    
         if( portalBlocker.isVisible() ) return true;    
         if( videoChatBlocker.isVisible() ) return true;    
         if( tetrisBlocker.isVisible() ) return true;    
@@ -451,7 +457,8 @@ const eltisa = new function() {
     serverIn.receiveResourceHandler = function(messageType, blockType, resourceResponse, text) {
         if( blockType == Block.Scripture) {
             if( resourceResponse == SR_Ok) {
-                scriptureBlocker.updateText(text);
+                scriptureEditor.updateText(text);
+                scriptureViewer.updateText(text);
             }
         }
         else if( blockType == Block.Tresor ) {
@@ -465,7 +472,8 @@ const eltisa = new function() {
         }
         else if( blockType == Block.Camera ) {
             if( resourceResponse == SR_Ok && messageType == SM_ReadResourceResponse) {
-                cameraBlocker.updatePicture(text);
+                cameraEditor.updatePicture(text);
+                cameraViewer.updatePicture(text);
             }
         }
         else if( blockType == Block.Book ) {

@@ -571,6 +571,10 @@ function isValidString(str) {
 
 }
 
+function sleep(milliseconds) {
+    return new Promise(r => setTimeout(r, milliseconds));
+}
+
 function getNextRailBlock(chunkStore, blockPosRailJet, lastRailPosition){
     let blockDataRailJet = chunkStore.getBlockData(blockPosRailJet);
     let blockType    = BlockData.getDefinitionWithoutState(blockDataRailJet);

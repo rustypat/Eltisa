@@ -1,26 +1,27 @@
 'use strict';
 
-function CameraBlocker(body, activateGame, deactivateGame, server) {
+function CameraEditor(body, activateGame, deactivateGame, server) {
     const self               = this;
     var   blockPos;
+    let   videoStream        = null;
 
     const baseDiv            = GuiTools.createBaseDiv();    
     const panel              = GuiTools.createTabletDiv(baseDiv);
-    panel.style.width        = '90%';
+    panel.style.width        = '600px';
+    panel.style.height       = '500px';
     
     const closeDiv           = GuiTools.createCloseButtonDiv(panel);    
     GuiTools.createCloseButton(closeDiv, exitAction);
 
-    GuiTools.createLineBreak(panel, 1);
+    GuiTools.createLineBreak(panel, 4);
     GuiTools.createText(panel, "Take a snapshot");
 
     GuiTools.createLineBreak(panel, 2);
     const video              = GuiTools.createVideo(null, true);
     const canvas             = GuiTools.createCanvas(panel, 320, 240, null, 'LightGrey');
     canvas.style.borderStyle = 'double';
-    GuiTools.createLineBreak(panel, 2);
+    GuiTools.createLineBreak(panel, 3);
     const pictureButton      = GuiTools.createButton(panel, "Take Picture", takePicture);
-    const deleteButton       = GuiTools.createButton(panel, "Delete", clearPicture);
     const closeButton        = GuiTools.createButton(panel, "Close", exitAction);
     
 
@@ -29,17 +30,9 @@ function CameraBlocker(body, activateGame, deactivateGame, server) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    function takePicture() {
+    async function takePicture() {
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataString        = canvas.toDataURL('image/jpeg');
-        //const dataString     = dataUrl.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
-        server.requestWriteResource(blockPos, Block.Camera, "", dataString); 
-    }
-
-
-    function clearPicture() {
-        canvas.clear();
-        server.requestWriteResource(blockPos, Block.Camera, "", ""); 
+        server.requestWriteResource(blockPos, Block.Camera, "", canvas.toDataURL('image/jpeg'));        
     }
 
 
@@ -57,10 +50,9 @@ function CameraBlocker(body, activateGame, deactivateGame, server) {
 
 
     function exitAction(event) {
+        if(videoStream) videoStream.getVideoTracks().forEach(track => track.stop());
         if(event) event.stopPropagation();
         document.removeEventListener("keydown", keydownHandler);
-
-        if(video.srcObject) video.srcObject.getVideoTracks().forEach(track => track.stop());
         body.removeChild(baseDiv);
         activateGame();
         return false;
@@ -78,11 +70,11 @@ function CameraBlocker(body, activateGame, deactivateGame, server) {
             body.appendChild(baseDiv);
         }
         document.addEventListener("keydown", keydownHandler);        
-        deactivateGame();  
-        
+        deactivateGame();          
+        server.requestReadResource(blockPos, Block.Camera, "");
+
         navigator.mediaDevices.getUserMedia( {video: true} )
-        .then( (stream) => { video.srcObject = stream; });
-        server.requestReadResource(blockPos, Block.Camera, "");             
+        .then( (stream) => video.srcObject = videoStream = stream );
     }
 
 
