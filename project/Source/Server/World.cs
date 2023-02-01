@@ -121,17 +121,6 @@ static public class World {
     // resource services
     ///////////////////////////////////////////////////////////////////////////////////////////
 
-    public static string ReadText(WorldPoint blockPosition, int requestedType, string password=null) {
-        return resourcePersister.ReadText(blockPosition, requestedType, password);
-    }
-
-
-    public static void WriteText(WorldPoint blockPosition, int type, string text, string password="", string newPassword="") {
-        resourcePersister.WriteText(blockPosition, type, text, password, newPassword);
-    }
-
-
-
 
     public static ResourceResponse CreateResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
         return resourceControl.CreateResource(actor, pos, blockType, password, data);

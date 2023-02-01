@@ -71,79 +71,6 @@ public class ResourcePersister {
 
 
 
-    public string ReadText(WorldPoint blockPosition, int requestedType, string password=null) {
-        string  fileName = GetTextFileNameFromPosition(blockPosition); 
-        if(!File.Exists(fileName)) return null;
-
-        string text = null;
-        using(FileStream regionStream = File.OpenRead(fileName)) {
-            DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Decompress);
-            BinaryReader  reader        = new BinaryReader(regionStream);
-
-            int type               = reader.ReadInt32();  
-            int owner              = reader.ReadInt32();
-            string storedPassword  = reader.ReadString();
-            text                   = reader.ReadString();
-            int endTag             = reader.ReadInt32(); Assert(endTag == ResourcePersister.endTag);
-            reader.Close();
-        
-            if( type != requestedType )              return null;
-            if(storedPassword.IsUndefined())         return text;
-            else if(String.IsNullOrEmpty(password))  return "PASSWORD REQUIRED";
-            else if(password != storedPassword)      return "WRONG PASSWORD";
-            else                                     return text;
-        }
-    }
-
-    public void WriteText(WorldPoint blockPosition, int type, string text, string password="", string newPassword="") {
-        //check permission
-        string  fileName = GetTextFileNameFromPosition(blockPosition);
-        if(File.Exists(fileName)) {
-            using(FileStream regionStream = File.OpenRead(fileName)) {
-                DeflateStream deflateStream = new DeflateStream(regionStream, CompressionMode.Decompress);
-                BinaryReader  reader        = new BinaryReader(regionStream);
-
-                reader.ReadInt32();  
-                reader.ReadInt32();
-                string storedPassword  = reader.ReadString();
-                reader.Close();
-
-                if(storedPassword != "" && storedPassword != password) return;
-            }
-        }
-
-        if(String.IsNullOrWhiteSpace(text) ) {
-            DeleteText(blockPosition);
-            return;
-        }
-        
-        fileName = GetTextFileNameFromPosition(blockPosition); 
-        Directory.CreateDirectory(resourceDirectory);
-        using(FileStream resourceStream = File.OpenWrite(fileName)) {
-            DeflateStream deflateStream = new DeflateStream(resourceStream, CompressionMode.Compress);
-            BinaryWriter  writer = new BinaryWriter(resourceStream);
-
-            writer.Write((int)type);       
-            writer.Write((int)0);         // owner
-            writer.Write((string)newPassword);            
-            writer.Write((string)text);                
-            writer.Write((int)endTag);            
-            writer.Close();
-        }
-    }
-
-
-    public void DeleteText(WorldPoint blockPosition) {
-        try {
-            string fileName = GetTextFileNameFromPosition(blockPosition); 
-            File.Delete(fileName);
-        }
-        catch(Exception) {
-            // nothing to delete, no problem
-        }
-    }
-
-
     ///////////////////////////////////////////////////////////////////////////////////////////
     // support methods
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -151,11 +78,6 @@ public class ResourcePersister {
 
     public string GetFileNameFromPosition(WorldPoint position) {
         return resourceDirectory + position.X + "_" + position.Y + "_" + position.Z + FileType;            
-    }
-
-
-    public string GetTextFileNameFromPosition(WorldPoint position) {
-        return resourceDirectory + position.X + "_" + position.Y + "_" + position.Z + ".rtx";            
     }
 
 
