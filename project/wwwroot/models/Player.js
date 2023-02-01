@@ -3,7 +3,8 @@
 function Player(viewport, chunkStore, playerPassword) {
 
     const PlayerType         = { Unknown: 0, Visitor: 1, Citizen: 2, Administrator:4};
-    const MoveType           = { Walk: 0, Run: 1, Fly: 2, Ghost: 3}
+    const MoveType           = { Walk: 0, Run: 1, Fly: 2, Ghost: 3, Train: 4}
+    const self               = this;
 
     // player data
     var id                   = 0;
@@ -42,6 +43,7 @@ function Player(viewport, chunkStore, playerPassword) {
     // detecting changes
     var lastPosition         = Vector.create(0, 0, 0);
     var lastReportedPosition = Vector.create(0, 0, 0);
+    let lastRailPosition     = undefined;
     
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,12 +139,20 @@ function Player(viewport, chunkStore, playerPassword) {
         }
         else if(type == PlayerType.Administrator) {
             moveMode++;
-            if(moveMode > MoveType.Ghost) moveMode = MoveType.Walk;
+            if(moveMode > MoveType.Ghost) {
+                if(moveMode > MoveType.Train) moveMode = MoveType.Walk;
+                else if(isOnRail()) moveMode = MoveType.Train;
+                     else moveMode = MoveType.Walk;
+            }
         }        
 
         if(moveMode == MoveType.Walk) {
             camera.speed           = 0.1;
             camera.checkCollisions = true;
+            camera.keysUp            = [38]; // ^
+            camera.keysDown          = [40]; // v
+
+            document.removeEventListener("keydown", movePlayerExampleRemoveAfterTesting);
         }        
         if(moveMode == MoveType.Run) {
             camera.speed           = 0.25;
@@ -156,14 +166,54 @@ function Player(viewport, chunkStore, playerPassword) {
             camera.speed           = 2;
             camera.checkCollisions = false;
         }
+
+        else if(moveMode == MoveType.Train) {
+            lastRailPosition         = undefined;
+            camera.speed           = 0.5;
+            camera.checkCollisions = true;
+            camera.keysUp          = []; 
+            camera.keysDown        = [];
+            
+
+            document.addEventListener("keydown", movePlayerExampleRemoveAfterTesting);
+        }
     }
 
+    function movePlayerExampleRemoveAfterTesting(event) {
+        //check if the right key is pressed
+        const keyCode = KeyCode.getFromEvent(event);
+        if(keyCode === KeyCode.ArrUp) {
+            const blockPosFeet       = Vector.down(Vector.roundToFloor(camera.position));
+            const blockDataFeet      = chunkStore.getBlockData(blockPosFeet);
+            let   blockPosRailJet    = blockPosFeet;
+            let   blockDataRailJet   = chunkStore.getBlockData(blockPosRailJet);
+
+            //checks wich is the rail block (the block in wich you stand(RailsUp) or one below)
+            if(!BlockData.isRail(blockDataRailJet)) {
+                blockPosRailJet = Vector.down(blockPosRailJet);
+                console.log("blockPosRailJet: " + blockPosRailJet.x + "   " + blockPosRailJet.y + "   " + blockPosRailJet.z);
+            }
+
+            //get next block
+            let nextBlock = getNextRailBlock(chunkStore, blockPosRailJet, lastRailPosition);
+            
+            //check if there is a next block
+            if(nextBlock === null) return;
+
+            //set lastRailPosition
+            lastRailPosition = getCameraToRightPositionForARailBlock(blockPosRailJet, chunkStore); 
+
+            //set new Position
+            self.setPosition(nextBlock.x, nextBlock.y, nextBlock.z);
+        }
+    }
 
     this.getMoveModeDescription = function() {
         if(moveMode == MoveType.Walk)       return "walk";
         else if(moveMode == MoveType.Run)   return "run";
         else if(moveMode == MoveType.Fly)   return "fly";
         else if(moveMode == MoveType.Ghost) return "ghost";
+        else if(moveMode == MoveType.Train) return "train";
         else                                return "unknown move mode " + moveMode;
         
     }
@@ -228,6 +278,10 @@ function Player(viewport, chunkStore, playerPassword) {
 
 
     this.update = function() {
+        if(moveMode === MoveType.Train && !isOnRail()) {
+            self.toogleMoveMode();
+        }
+
         if( isOnLadder() ) {
             camera.ellipsoid = ladderEllipsoid;
         }
@@ -236,7 +290,7 @@ function Player(viewport, chunkStore, playerPassword) {
         }
 
         // update graviti
-        if( moveMode == MoveType.Fly || moveMode == MoveType.Ghost ) {
+        if( moveMode == MoveType.Fly || moveMode == MoveType.Ghost || moveMode == MoveType.Train) {
             if( camera.applyGravity )                 camera.applyGravity = false;
             if( camera.ellipsoid != walkEllipsoid )   camera.ellipsoid    = walkEllipsoid;
         }
@@ -287,8 +341,9 @@ function Player(viewport, chunkStore, playerPassword) {
     function canJump() {
         if(moveMode == MoveType.Fly)                                return false;
         if(moveMode == MoveType.Ghost)                              return false;
+        if(moveMode == MoveType.Train)                              return false;
         if( isJumping() )                                           return false;         // is allready jumping
-        if( moveMode != MoveType.Walk && moveMode != MoveType.Run ) return false;
+        if( moveMode != MoveType.Walk && moveMode != MoveType.Run && moveMode) return false;
         return true;
 
         // var pos = Vector.roundToFloor(camera.position);
@@ -320,6 +375,19 @@ function Player(viewport, chunkStore, playerPassword) {
         const blockPosFeet  = Vector.down(blockPosHead);
         const blockDataFeet = chunkStore.getBlockData(blockPosFeet); 
         return BlockData.isLadder(blockDataHead) || BlockData.isLadder(blockDataFeet);
+    }
+
+    function isOnRail() {
+        const blockPosHead       = Vector.roundToFloor(camera.position);
+        const blockPosFeet       = Vector.down(blockPosHead);
+        const blockPosUnderFeet  = Vector.down(blockPosFeet);
+        const blockDataFeet      = chunkStore.getBlockData(blockPosFeet);
+        const blockDataUnderFeet = chunkStore.getBlockData(blockPosUnderFeet);  
+        
+
+        if(BlockData.isRail(blockDataUnderFeet) === true) return true;
+        else if(BlockData.isRail(blockDataFeet) === true) return true;
+        return false;
     }
 
 
@@ -363,6 +431,5 @@ function Player(viewport, chunkStore, playerPassword) {
     this.getDirection = function() {
         return camera.getDirection( directionVector );
     }
-
 
 }

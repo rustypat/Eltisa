@@ -11,6 +11,8 @@ const KeyCode = new function() {
     this.PAGEDOWN  = 34;
     this.END       = 35;        
     this.DELET     = 46;
+    this.ArrUp     = 38;
+    this.ArrDown   = 40;
 
     this.ALT       = 18;
     this.F1        = 112;

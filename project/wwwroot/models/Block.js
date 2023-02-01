@@ -638,6 +638,15 @@ const BlockData = new function() {
         return this.getDefinition(blockData) == Block.Tresor;
     }
 
+    this.isRail = function(blockData) {
+        const definitionWithoutState = this.getDefinitionWithoutState(blockData);
+        if(definitionWithoutState === Block.RailsLeftRight) return true;
+        if(definitionWithoutState === Block.RailSwitch)     return true;
+        if(definitionWithoutState === Block.RailsUp)        return true;
+
+        return false;
+    }
+
     
     this.isDoubleBlock = function(blockData) {
         const definition = this.getDefinition(blockData);
