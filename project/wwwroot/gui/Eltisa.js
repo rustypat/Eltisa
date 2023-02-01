@@ -20,7 +20,8 @@ const eltisa = new function() {
     const introBlocker           = new IntroBlocker(body, activateGame, deactivateGame, serverOut);
     const errorBlocker           = new ErrorBlocker(body, activateGame, deactivateGame);
     const bossBlocker            = new BossBlocker(body, activateGame, deactivateGame);
-    const scriptureBlocker       = new ScriptureBlocker(body, activateGame, deactivateGame, serverOut);
+    const scriptureEditor        = new ScriptureEditor(body, activateGame, deactivateGame, serverOut);
+    const scriptureViewer        = new ScriptureViewer(body, activateGame, deactivateGame, serverOut);
     const tresorBlocker          = new TresorBlocker(body, activateGame, deactivateGame, serverOut);
     const portalBlocker          = new PortalBlocker(body, activateGame, deactivateGame, serverOut, player);
     const videoChatBlocker       = new VideoChatBlocker(body, activateGame, deactivateGame, serverOut);
@@ -248,6 +249,7 @@ const eltisa = new function() {
 
             var            handled = portalBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = oracleBlocker.show(chunkStore, blockPos);
+            if( !handled ) handled = scriptureEditor.show(chunkStore, blockPos);
             if( !handled ) handled = cameraEditor.show(chunkStore, blockPos);
             if( !handled ) handled = Behavior.changeState(serverOut, chunkStore, blockPos);
             if( handled ) return false;
@@ -298,7 +300,7 @@ const eltisa = new function() {
             const blockPos       = Vector.roundToFloor(inTargetPos);
            
             var            handled = Behavior.switchState(serverOut, chunkStore, blockPos);
-            if( !handled ) handled = scriptureBlocker.show(chunkStore, blockPos);
+            if( !handled ) handled = scriptureViewer.show(chunkStore, blockPos);
             if( !handled ) handled = bookBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = tetrisBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = tresorBlocker.show(chunkStore, blockPos);
@@ -367,7 +369,8 @@ const eltisa = new function() {
         if( bossBlocker.isVisible() ) return true;
         if( introBlocker.isVisible() ) return true;
         if( errorBlocker.isVisible() ) return true;
-        if( scriptureBlocker.isVisible() ) return true;
+        if( scriptureEditor.isVisible() ) return true;
+        if( scriptureViewer.isVisible() ) return true;
         if( tresorBlocker.isVisible() ) return true;    
         if( bookBlocker.isVisible() ) return true;    
         if( cameraEditor.isVisible() ) return true;    
@@ -454,7 +457,8 @@ const eltisa = new function() {
     serverIn.receiveResourceHandler = function(messageType, blockType, resourceResponse, text) {
         if( blockType == Block.Scripture) {
             if( resourceResponse == SR_Ok) {
-                scriptureBlocker.updateText(text);
+                scriptureEditor.updateText(text);
+                scriptureViewer.updateText(text);
             }
         }
         else if( blockType == Block.Tresor ) {
