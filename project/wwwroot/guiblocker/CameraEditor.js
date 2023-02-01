@@ -3,6 +3,7 @@
 function CameraEditor(body, activateGame, deactivateGame, server) {
     const self               = this;
     var   blockPos;
+    let   videoStream        = null;
 
     const baseDiv            = GuiTools.createBaseDiv();    
     const panel              = GuiTools.createTabletDiv(baseDiv);
@@ -29,11 +30,9 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    function takePicture() {
+    async function takePicture() {
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataString        = canvas.toDataURL('image/jpeg');
-        //const dataString     = dataUrl.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
-        server.requestWriteResource(blockPos, Block.Camera, "", dataString); 
+        server.requestWriteResource(blockPos, Block.Camera, "", canvas.toDataURL('image/jpeg'));        
     }
 
 
@@ -51,10 +50,9 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
 
 
     function exitAction(event) {
+        if(videoStream) videoStream.getVideoTracks().forEach(track => track.stop());
         if(event) event.stopPropagation();
         document.removeEventListener("keydown", keydownHandler);
-
-        if(video.srcObject) video.srcObject.getVideoTracks().forEach(track => track.stop());
         body.removeChild(baseDiv);
         activateGame();
         return false;
@@ -72,11 +70,11 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
             body.appendChild(baseDiv);
         }
         document.addEventListener("keydown", keydownHandler);        
-        deactivateGame();  
-        
+        deactivateGame();          
+        server.requestReadResource(blockPos, Block.Camera, "");
+
         navigator.mediaDevices.getUserMedia( {video: true} )
-        .then( (stream) => { video.srcObject = stream; });
-        server.requestReadResource(blockPos, Block.Camera, "");             
+        .then( (stream) => video.srcObject = videoStream = stream );
     }
 
 
