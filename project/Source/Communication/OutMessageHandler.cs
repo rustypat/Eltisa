@@ -34,7 +34,7 @@ public static class OutMessageHandler {
 
 
 
-    public static void SendCreateResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResponse result) {
+    public static void SendCreateResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResponse result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -43,8 +43,8 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
-        builder.WriteInt(blockType);
-        builder.WriteInt((int)result);
+        builder.WriteUShort(blockType);
+        builder.WriteUShort((ushort)result);
         builder.WriteInt(EndTag);
 
         byte[] message = builder.ToArray();
@@ -53,7 +53,7 @@ public static class OutMessageHandler {
 
 
 
-    public static void SendReadResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResult result) {
+    public static void SendReadResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResult result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -62,9 +62,10 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
-        builder.WriteInt(blockType);
-        builder.WriteInt((int)result.Response);
-        builder.WriteInt(result.Resource != null ? result.Resource.BlockType : -1);
+        builder.WriteUShort(blockType);
+        builder.WriteUShort((ushort)result.Response);
+        builder.WriteUShort(result.Resource != null ? (ushort)result.Resource.AccessRights : (ushort)0);
+        builder.WriteUShort(result.Resource != null ? result.Resource.BlockType : (ushort)0);
         builder.WriteBytes(result.Resource?.Data);
         builder.WriteInt(EndTag);
         byte[] message = builder.ToArray();
@@ -73,7 +74,7 @@ public static class OutMessageHandler {
 
 
 
-    public static void SendWriteResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResponse result) {
+    public static void SendWriteResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResponse result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -82,8 +83,8 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
-        builder.WriteInt(blockType);
-        builder.WriteInt((int)result);
+        builder.WriteUShort(blockType);
+        builder.WriteUShort((ushort)result);
         builder.WriteInt(EndTag);
 
         byte[] message = builder.ToArray();
@@ -91,7 +92,7 @@ public static class OutMessageHandler {
     }
 
 
-    public static void SendUpdateResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResponse result) {
+    public static void SendUpdateResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResponse result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -100,8 +101,8 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
-        builder.WriteInt(blockType);
-        builder.WriteInt((int)result);
+        builder.WriteUShort(blockType);
+        builder.WriteUShort((ushort)result);
         builder.WriteInt(EndTag);
 
         byte[] message = builder.ToArray();
@@ -109,7 +110,7 @@ public static class OutMessageHandler {
     }
 
 
-    public static void SendDeleteResourceResponse(HomeSocket socket, WorldPoint position, int blockType, ResourceResponse result) {
+    public static void SendDeleteResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResponse result) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -118,8 +119,8 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
-        builder.WriteInt(blockType);
-        builder.WriteInt((int)result);
+        builder.WriteUShort(blockType);
+        builder.WriteUShort((ushort)result);
         builder.WriteInt(EndTag);
 
         byte[] message = builder.ToArray();

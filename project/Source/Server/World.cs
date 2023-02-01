@@ -133,23 +133,23 @@ static public class World {
 
 
 
-    public static ResourceResponse CreateResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+    public static ResourceResponse CreateResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
         return resourceControl.CreateResource(actor, pos, blockType, password, data);
     }
 
-    public static ResourceResult ReadResource(Actor actor, WorldPoint pos, int blockType, string password) {
+    public static ResourceResult ReadResource(Actor actor, WorldPoint pos, ushort blockType, string password) {
         return resourceControl.ReadResource(actor, pos, blockType, password);
     }
 
-    public static ResourceResponse WriteResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+    public static ResourceResponse WriteResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
         return resourceControl.WriteResource(actor, pos, blockType, password, data);
     }
 
-    public static ResourceResponse UpdateResource(Actor actor, WorldPoint pos, int blockType, string password, string newPassword, byte[] newData) {
+    public static ResourceResponse UpdateResource(Actor actor, WorldPoint pos, ushort blockType, string password, string newPassword, byte[] newData) {
         return resourceControl.UpdateResource(actor, pos, blockType, password, newPassword, newData);
     }
 
-    public static ResourceResponse DeleteResource(Actor actor, WorldPoint pos, int blockType, string password) {
+    public static ResourceResponse DeleteResource(Actor actor, WorldPoint pos, ushort blockType, string password) {
         return resourceControl.DeleteResource(actor, pos, blockType, password);
     }
 

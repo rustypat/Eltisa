@@ -22,10 +22,6 @@ function CameraBlocker(body, activateGame, deactivateGame, server) {
     const pictureButton      = GuiTools.createButton(panel, "Take Picture", takePicture);
     const deleteButton       = GuiTools.createButton(panel, "Delete", clearPicture);
     const closeButton        = GuiTools.createButton(panel, "Close", exitAction);
-    const leftButton         = GuiTools.createButton(panel, "<", null, '30px');
-    const rightButton        = GuiTools.createButton(panel, ">", null, '30px');
-    leftButton.style.marginRight = '0px';
-    rightButton.style.marginLeft = '5px';
     
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -269,7 +269,7 @@ public static class InMessageHandler {
         int x           = reader.ReadInt();
         int y           = reader.ReadInt();
         int z           = reader.ReadInt();
-        int blockType   = reader.ReadInt();
+        ushort blockType= reader.ReadUShort();
         string password = reader.ReadString();
         byte[] data     = reader.ReadBytes();
         int endTag      = reader.ReadInt();
@@ -288,7 +288,7 @@ public static class InMessageHandler {
         int x           = reader.ReadInt();
         int y           = reader.ReadInt();
         int z           = reader.ReadInt();
-        int blockType   = reader.ReadInt();
+        ushort blockType= reader.ReadUShort();
         string password = reader.ReadString();
         int endTag      = reader.ReadInt();
         Assert(endTag == EndTag);            
@@ -306,7 +306,7 @@ public static class InMessageHandler {
         int x           = reader.ReadInt();
         int y           = reader.ReadInt();
         int z           = reader.ReadInt();
-        int blockType   = reader.ReadInt();
+        ushort blockType= reader.ReadUShort();
         string password = reader.ReadString();
         byte[] data     = reader.ReadBytes();
         int endTag      = reader.ReadInt();
@@ -325,7 +325,7 @@ public static class InMessageHandler {
         int x           = reader.ReadInt();
         int y           = reader.ReadInt();
         int z           = reader.ReadInt();
-        int blockType   = reader.ReadInt();
+        ushort blockType= reader.ReadUShort();
         string password = reader.ReadString();
         string newPassword = reader.ReadString();
         byte[] newData  = reader.ReadBytes();
@@ -345,7 +345,7 @@ public static class InMessageHandler {
         int x           = reader.ReadInt();
         int y           = reader.ReadInt();
         int z           = reader.ReadInt();
-        int blockType   = reader.ReadInt();
+        ushort blockType= reader.ReadUShort();
         string password = reader.ReadString();
         int endTag      = reader.ReadInt();
         Assert(endTag == EndTag);      

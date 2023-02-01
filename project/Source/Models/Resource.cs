@@ -19,14 +19,17 @@ public enum ResourceResponse {
 [Flags]
 public enum AccessRights : short {
     NoChange  =  -1,
-    Everybody =  0b_0000_111_111_111_111
+    None      =   0,
+    Read      =   1,
+    Write     =   2,
+    Everybody = 0b_0000_111_111_111_111
 }
 
 
 public class Resource {
     
     public AccessRights           AccessRights   {  get;  private set; }
-    public int                    BlockType      {  get;  private set; }
+    public ushort                 BlockType      {  get;  private set; }
     public int                    OwnerId        {  get;  private set; }
     public string                 Password       {  get;  private set; }
     public byte[]                 Data           {  get;  private set; }
@@ -34,7 +37,7 @@ public class Resource {
     public DateTime               LastUsed       {  get;  private set; }
 
 
-    public Resource(int blockType, int ownerId, string password, byte[] data) {
+    public Resource(ushort blockType, int ownerId, string password, byte[] data) {
         AccessRights    = AccessRights.Everybody;
         BlockType       = blockType;
         OwnerId         = ownerId;

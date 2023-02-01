@@ -14,7 +14,7 @@ public class ResourceControl {
     }
 
 
-    public ResourceResponse CreateResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+    public ResourceResponse CreateResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
         if(!Policy.CanEdit(actor, pos)) return NotAllowed;
         var resource = resourceCache.ReadResource(pos);
         if(resource != null && resource.BlockType == blockType) return ResourceAlreadyExists;
@@ -24,7 +24,7 @@ public class ResourceControl {
     }
 
 
-    public ResourceResult ReadResource(Actor actor, WorldPoint pos, int blockType, string password) {
+    public ResourceResult ReadResource(Actor actor, WorldPoint pos, ushort blockType, string password) {
         var resource = resourceCache.ReadResource(pos);
         if(resource == null)                return new ResourceResult(ResourceDoesNotExist, null);
         if(resource.BlockType != blockType) return new ResourceResult(ResourceDoesNotExist, null);
@@ -33,7 +33,7 @@ public class ResourceControl {
     }
 
 
-    public ResourceResponse WriteResource(Actor actor, WorldPoint pos, int blockType, string password, byte[] data) {
+    public ResourceResponse WriteResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
         if(!Policy.CanEdit(actor, pos)) return NotAllowed;
         var resource = resourceCache.ReadResource(pos);
         if(resource == null)  {

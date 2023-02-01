@@ -183,7 +183,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(blockPos.x);
         writer.writeInteger(blockPos.y);
         writer.writeInteger(blockPos.z);
-        writer.writeInteger(type);
+        writer.writeShort(type);
         writer.writeString(password);
         writer.writeString(stringData);
         writer.writeInteger(SMT_EndTag);
@@ -200,7 +200,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(blockPos.x);
         writer.writeInteger(blockPos.y);
         writer.writeInteger(blockPos.z);
-        writer.writeInteger(type);
+        writer.writeShort(type);
         writer.writeString(password);
         writer.writeInteger(SMT_EndTag);
         
@@ -216,7 +216,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(blockPos.x);
         writer.writeInteger(blockPos.y);
         writer.writeInteger(blockPos.z);
-        writer.writeInteger(type);
+        writer.writeShort(type);
         writer.writeString(password);
         writer.writeString(stringData);
         writer.writeInteger(SMT_EndTag);
@@ -233,7 +233,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(blockPos.x);
         writer.writeInteger(blockPos.y);
         writer.writeInteger(blockPos.z);
-        writer.writeInteger(type);
+        writer.writeShort(type);
         writer.writeString(password);
         writer.writeString(newPassword);
         writer.writeString(newStringData);
@@ -251,7 +251,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(blockPos.x);
         writer.writeInteger(blockPos.y);
         writer.writeInteger(blockPos.z);
-        writer.writeInteger(type);
+        writer.writeShort(type);
         writer.writeString(password);
         writer.writeInteger(SMT_EndTag);
         

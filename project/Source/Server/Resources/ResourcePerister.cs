@@ -32,7 +32,7 @@ public class ResourcePersister {
 
         writer.Write((ushort)storeFormatVersion);       
         writer.Write((short)resource.AccessRights);
-        writer.Write((int)resource.BlockType);       
+        writer.Write((ushort)resource.BlockType);       
         writer.Write((int)resource.OwnerId); 
         writer.Write((string)resource.Password);   
         writer.Write((int)resource.Data.Length);         
@@ -51,7 +51,7 @@ public class ResourcePersister {
         ushort formatVersion   = reader.ReadUInt16();
         Assert(formatVersion == storeFormatVersion);
         short accessRights     = reader.ReadInt16();
-        int blockType          = reader.ReadInt32();
+        ushort blockType       = reader.ReadUInt16();
         int ownerId            = reader.ReadInt32();
         string password        = reader.ReadString();
         int dataSize           = reader.ReadInt32();

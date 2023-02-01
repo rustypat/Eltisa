@@ -464,7 +464,7 @@ const eltisa = new function() {
             }
         }
         else if( blockType == Block.Camera ) {
-            if( resourceResponse == SR_Ok) {
+            if( resourceResponse == SR_Ok && messageType == SM_ReadResourceResponse) {
                 cameraBlocker.updatePicture(text);
             }
         }
