@@ -4,7 +4,7 @@ function IntroBlocker(body, activateGame, deactivateGame, server) {
 
     var player;
     
-    const baseDiv            = GuiTools.createBaseDiv();
+    const baseDiv            = GuiTools.createOverlay();
     baseDiv.style.paddingTop = '20px';       
     baseDiv.style.overflow   = 'auto';
     baseDiv.style.whiteSpace = 'nowrap'

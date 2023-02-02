@@ -3,7 +3,7 @@
 
 function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
 
-    const div                = GuiTools.createBaseDiv();
+    const div                = GuiTools.createOverlay();
     if(Config.blackAndWhite) div.style.filter = "grayscale(1)";
 
     const panel              = GuiTools.createTabletDiv(div);

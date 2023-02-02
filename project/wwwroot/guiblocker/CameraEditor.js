@@ -5,7 +5,7 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
     var   blockPos;
     let   videoStream        = null;
 
-    const baseDiv            = GuiTools.createBaseDiv();    
+    const baseDiv            = GuiTools.createOverlayTransparent();    
     const panel              = GuiTools.createTabletDiv(baseDiv);
     panel.style.width        = '600px';
     panel.style.height       = '500px';

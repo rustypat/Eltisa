@@ -3,7 +3,7 @@
 
 function OracleBlocker(body, activateGame, deacitvateGame, server) {
 
-    const div                = GuiTools.createBaseDiv();
+    const div                = GuiTools.createOverlay();
     const panel              = GuiTools.createTabletDiv(div);
     panel.style.backgroundColor = "rgba(175, 165, 155, 0.8)";
     const closeDiv           = GuiTools.createCloseButtonDiv(panel);    

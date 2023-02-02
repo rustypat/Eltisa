@@ -3,7 +3,7 @@
 
 function TetrisBlocker(body, activateGame, deacitvateGame) {
 
-    const baseDiv            = GuiTools.createBaseDiv();
+    const baseDiv            = GuiTools.createOverlay();
     const panel              = GuiTools.createTabletDiv(baseDiv);
 
     const headerDiv           = GuiTools.createDiv(panel);

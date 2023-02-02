@@ -3,7 +3,7 @@
 function BookmarkBlocker(body, activateGame, deactivateGame) {
     var player;
     
-    const baseDiv            = GuiTools.createBaseDiv();
+    const baseDiv            = GuiTools.createOverlay();
     
     const panel              = GuiTools.createTabletDiv(baseDiv);
     panel.style.width        = '90%';

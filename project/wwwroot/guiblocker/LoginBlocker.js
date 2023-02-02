@@ -4,7 +4,7 @@ function LoginBlocker(body, activateGame, deactivateGame, serverSocket, serverOu
 
     var player;
     
-    const baseDiv            = GuiTools.createBaseDiv(null, true, "loginDiv");
+    const baseDiv            = GuiTools.createOverlayOpaque(null, "loginDiv");
     baseDiv.style.paddingTop = '20px';       
     baseDiv.style.overflow   = 'auto';
     baseDiv.style.whiteSpace = 'nowrap'

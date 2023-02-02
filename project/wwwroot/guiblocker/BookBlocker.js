@@ -3,7 +3,7 @@
 
 function BookBlocker(body, activateGame, deactivateGame, server, player) {
 
-    const baseDiv            = GuiTools.createBaseDiv();
+    const baseDiv            = GuiTools.createOverlay();
     baseDiv.style.backgroundColor      = 'rgba(255,255,255,0.8)'
     const editor             = GuiTools.createEditorDiv(baseDiv);
 

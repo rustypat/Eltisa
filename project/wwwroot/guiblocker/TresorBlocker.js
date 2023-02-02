@@ -3,7 +3,7 @@
 
 function TresorBlocker(body, activateGame, deacitvateGame, server) {
 
-    const baseDiv            = GuiTools.createBaseDivLight();
+    const baseDiv            = GuiTools.createOverlayTransparent();
     const textAreaPass       = GuiTools.createTextInput(baseDiv, null, "50%", "5%", "left", "Passwort");
     GuiTools.createLineBreak(baseDiv);
     const textArea           = GuiTools.createTextArrea(baseDiv, "50%", "65%");

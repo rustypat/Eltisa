@@ -3,7 +3,7 @@
 
 function ScriptureEditor(body, activateGame, deacitvateGame, server) {
 
-    const baseDiv            = GuiTools.createBaseDiv();
+    const baseDiv            = GuiTools.createOverlay();
     const textArea           = GuiTools.createTextArrea(baseDiv, "80%", "80%");
     GuiTools.createLineBreak(baseDiv);    
     const buttonDiv          = GuiTools.createDiv(baseDiv);        

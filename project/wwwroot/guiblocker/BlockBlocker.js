@@ -3,7 +3,7 @@
 function BlockBlocker(body, activateGame, deactivateGame, carousel) {
 
     
-    const baseDiv            = GuiTools.createBaseDiv();
+    const baseDiv            = GuiTools.createOverlay();
     baseDiv.style.paddingTop = '15px';             
     baseDiv.style.textAlign  = 'left';
     baseDiv.style.overflow   = 'auto';

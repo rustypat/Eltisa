@@ -6,7 +6,7 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
     const localSmallVideoDiv = createLocalSmallVideoDiv()
     const remoteSmallVideoDiv= createRemoteSmallVideoDiv()
     
-    const div                = GuiTools.createBaseDiv();
+    const div                = GuiTools.createOverlay();
     const panel              = GuiTools.createTabletDiv(div);
     panel.style.width        = '90%';
     panel.style.textAlign    = 'left';

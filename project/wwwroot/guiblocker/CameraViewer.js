@@ -4,20 +4,9 @@ function CameraViewer(body, activateGame, deactivateGame, server) {
     const self               = this;
     var   blockPos;
 
-    const baseDiv            = GuiTools.createBaseDivLight();    
-    const panel              = GuiTools.createTabletDiv(baseDiv);
-    panel.style.width        = '500px';
-    panel.style.height       = '380px'
-    
-    const closeDiv           = GuiTools.createCloseButtonDiv(panel);    
-    GuiTools.createCloseButton(closeDiv, exitAction);
-
-    GuiTools.createLineBreak(closeDiv, 1);
-
-    GuiTools.createLineBreak(closeDiv, 2);
-    const canvas             = GuiTools.createCanvas(closeDiv, 320, 240, null, 'LightGrey');
-    canvas.style.borderStyle = 'double';
-    GuiTools.createLineBreak(closeDiv, 2);
+    const baseDiv            = GuiTools.createOverlayTransparent();    
+    const panel              = GuiTools.createCenteredPanel(baseDiv, '400px', '320px');
+    const canvas             = GuiTools.createCenteredCanvas(panel, 320, 240);
     
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,24 +16,31 @@ function CameraViewer(body, activateGame, deactivateGame, server) {
 
     function keydownHandler(event) {
         const keyCode = KeyCode.getFromEvent(event);
-    
-        if( keyCode == KeyCode.SPACE ) {
-            event.preventDefault();
-            event.stopPropagation();
-            return exitAction();
-        }
+        if( keyCode != KeyCode.SPACE ) return true;
 
-        return true;
+        event.preventDefault();
+        event.stopPropagation();
+        exitAction();
+        return false;
+    }
+
+
+    function mouseLeftClickHandler(event) {
+        if( event.button != 0 ) return true;
+        event.preventDefault();
+        event.stopPropagation();
+        exitAction();
+        return false;
     }
 
 
     function exitAction(event) {
         if(event) event.stopPropagation();
         document.removeEventListener("keydown", keydownHandler);
+        document.removeEventListener("click",   mouseLeftClickHandler); 
 
         body.removeChild(baseDiv);
         activateGame();
-        return false;
     }
 
 
@@ -54,12 +50,14 @@ function CameraViewer(body, activateGame, deactivateGame, server) {
         const blockData  = chunkStore.getBlockData(blockPos);
         if( !BlockData.isCamera(blockData) ) return false;
 
+        deactivateGame();  
+
         canvas.clear();
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);
         }
         document.addEventListener("keydown", keydownHandler);        
-        deactivateGame();  
+        document.addEventListener("click",   mouseLeftClickHandler); 
         
         server.requestReadResource(blockPos, Block.Camera, "");             
     }
@@ -73,9 +71,7 @@ function CameraViewer(body, activateGame, deactivateGame, server) {
     this.updatePicture = function(text) {
         if( self.isVisible() ) {
             var image = new Image();
-            image.onload = function() {
-                canvas.getContext('2d').drawImage(image, 0, 0);
-            };
+            image.onload = () => canvas.drawImage(image);
             image.src = text; 
         }
     }

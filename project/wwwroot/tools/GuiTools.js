@@ -1,43 +1,76 @@
 'use strict';
 
 const GuiTools = new function() {
-    
+
     /** 
      * @param parent {HTMLElement}
-     * @param opaque {bool}
      * @param id     {string}
      * @returns      {HTMLDivElement} 
      * */
-    this.createBaseDiv = function(parent, opaque, id) {
-        /** @type {HTMLDivElement} */
+    this.createOverlayOpaque = function(parent, id) {
         const div                      = document.createElement("div");
         div.style.position             = 'absolute';
         div.style.width                = '100%';
         div.style.height               = '100%';
         div.style.textAlign            = 'center';
+        div.style.backgroundColor      = 'rgba(255,255,255,1)';
         if(id) div.id                  = id;
-
-        if(opaque)      div.style.backgroundColor      = 'rgba(255,255,255,1)';
-        else            div.style.backgroundColor      = 'rgba(255,255,255,0.6)';
         if(parent) parent.appendChild(div);
         return div;        
     }
 
 
-    this.createBaseDivLight = function(parent, opaque, id) {
-        /** @type {HTMLDivElement} */
+    /** 
+     * @param parent {HTMLElement}
+     * @param id     {string}
+     * @returns      {HTMLDivElement} 
+     * */
+    this.createOverlay = function(parent, id) {
         const div                      = document.createElement("div");
         div.style.position             = 'absolute';
         div.style.width                = '100%';
         div.style.height               = '100%';
         div.style.textAlign            = 'center';
+        div.style.backgroundColor      = 'rgba(255,255,255,0.6)';
         if(id) div.id                  = id;
-
-        if(opaque)      div.style.backgroundColor      = 'rgba(255,255,255,1)';
-        else            div.style.backgroundColor      = 'rgba(255,255,255,0.2)';
         if(parent) parent.appendChild(div);
         return div;        
     }
+
+
+    /** 
+     * @param parent {HTMLElement}
+     * @param id     {string}
+     * @returns      {HTMLDivElement} 
+     * */
+    this.createOverlayTransparent = function(parent, id) {
+        const div                      = document.createElement("div");
+        div.style.position             = 'absolute';
+        div.style.width                = '100%';
+        div.style.height               = '100%';
+        div.style.textAlign            = 'center';
+        div.style.backgroundColor      = 'rgba(255,255,255,0.2)';
+        if(id) div.id                  = id;
+        if(parent) parent.appendChild(div);
+        return div;        
+    }
+
+
+    this.createCenteredPanel = function(parent, width, height) {
+        const div                      = document.createElement("div");
+        div.style.width                = width;
+        div.style.height               = height;
+        div.style.position             = 'absolute';
+        div.style.top                  = '50%';
+        div.style.left                 = '50%';
+        div.style.transform            = 'translate(-50%,-50%)';
+        div.style.borderRadius         = "20px";
+        div.style.padding              = "10px";
+        div.style.backgroundColor      = 'rgba(220,220,220, 0.8)';
+        if(parent) parent.appendChild(div);
+        return div;        
+    }
+
 
 
     this.createDiv = function(parent) {
@@ -539,6 +572,39 @@ const GuiTools = new function() {
     }    
 
 
-    
+     /** 
+     * @param parent {HTMLElement}
+     * @param width  {number}
+     * @param height {number}
+     * @returns      {HTMLDivElement} 
+     * */
+     this.createCenteredCanvas = function(parent, width, height) {
+        const canvas                   = document.createElement("canvas");
+        canvas.width                   = width;
+        canvas.height                  = height;
+        canvas.style.position          = 'absolute';
+        canvas.style.top               = '50%';
+        canvas.style.left              = '50%';
+        canvas.style.transform         = 'translate(-50%,-50%)';
+        canvas.style.backgroundColor   = 'rgba(240,240,240, 1)';
+        canvas.style.borderStyle       = 'double';
+        if(parent) parent.appendChild(canvas);
+
+        canvas.clear = function() {
+            const context              = canvas.getContext("2d");
+            context.fillStyle          = 'rgba(240,240,240, 1)';
+            context.fillRect(0, 0, width, height);
+        }
+
+        /** 
+         * @param image {HTMLImageElement}
+         * */
+        canvas.drawImage = function(image) {
+            canvas.getContext('2d').drawImage(image, 0, 0);
+        }
+
+        return canvas;
+    }    
+
 
 }

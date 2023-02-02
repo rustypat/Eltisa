@@ -5,7 +5,7 @@ function VoiceRecorder(body, activateGame, deactivateGame, server) {
     var   blockPos;
     let   videoStream        = null;
 
-    const baseDiv            = GuiTools.createBaseDiv();    
+    const baseDiv            = GuiTools.createOverlay();    
     const panel              = GuiTools.createTabletDiv(baseDiv);
     panel.style.width        = '600px';
     panel.style.height       = '500px';

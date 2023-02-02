@@ -3,7 +3,7 @@
 
 function ScriptureViewer(body, activateGame, deacitvateGame, server) {
 
-    const baseDiv            = GuiTools.createBaseDivLight();
+    const baseDiv            = GuiTools.createOverlayTransparent();
     GuiTools.createLineBreak(baseDiv);    
     const textArea           = GuiTools.createTextArrea(baseDiv, "70%", "70%");
 
