@@ -46,6 +46,12 @@ function InternetViewer(body, activateGame, deacitvateGame, server) {
     }
 
 
+    function clearContent() {
+        iframe.setUrl("");
+        iframe.setSize("100px", "100px");
+    }
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // show blocker
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +62,7 @@ function InternetViewer(body, activateGame, deacitvateGame, server) {
         if( !BlockData.isInternet(blockData) ) return false;
         
         deacitvateGame();
+        clearContent();
 
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);

@@ -66,6 +66,15 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
     }
 
 
+    function clearContent() {
+        url.setText("");
+        width.setText("90%");
+        height.setText("90%");
+        iframe.setUrl("");
+        iframe.setSize("95%", "90%");
+    }
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // show blocker
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,12 +84,13 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
         var blockData        = chunkStore.getBlockData(blockPos);
         if( !BlockData.isInternet(blockData) ) return false;
         
+        deacitvateGame();
+        clearContent();
 
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);
         }
         document.addEventListener("keydown", keypressHandler);
-        deacitvateGame();
         server.requestReadResource(blockPos, Block.Internet, ""); 
 
         return true;
