@@ -20,7 +20,8 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
     // tab events
     ///////////////////////////////////////////////////////////////////////////////////////////////////    
 
-    function saveAction()  {
+    function saveAction(event)  {
+        if(event) event.stopPropagation();
         const text = url.getText().trim();
         server.requestWriteResource(blockPos, Block.Internet, "", text); 
         body.removeChild(baseDiv);      
@@ -29,7 +30,8 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
     }
 
 
-    function cancelAction()  {
+    function cancelAction(event)  {
+        if(event) event.stopPropagation();
         body.removeChild(baseDiv);       
         document.removeEventListener("keydown", keypressHandler);
         activateGame();     
@@ -49,7 +51,7 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
         if( keyCode == KeyCode.F3 ) {
             event.preventDefault();
             event.stopPropagation();
-            cancelAction();
+            cancelAction(event);
             return false;
         }
 
@@ -66,12 +68,12 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
         var blockData        = chunkStore.getBlockData(blockPos);
         if( !BlockData.isInternet(blockData) ) return false;
         
-        deacitvateGame();
 
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);
         }
         document.addEventListener("keydown", keypressHandler);
+        deacitvateGame();
         server.requestReadResource(blockPos, Block.Internet, ""); 
 
         return true;
