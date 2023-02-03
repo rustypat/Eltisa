@@ -4,8 +4,7 @@
 function ScriptureViewer(body, activateGame, deacitvateGame, server) {
 
     const baseDiv            = GuiTools.createOverlayTransparent();
-    GuiTools.createLineBreak(baseDiv);    
-    const textArea           = GuiTools.createTextArrea(baseDiv, "70%", "70%");
+    const textArea           = GuiTools.createCenteredTextArrea(baseDiv, "50%", "50%", true);
 
     var blockPos;
     var blockData;
@@ -19,6 +18,7 @@ function ScriptureViewer(body, activateGame, deacitvateGame, server) {
     function closeAction()  {
         body.removeChild(baseDiv);       
         document.removeEventListener("keydown", keydownHandler);
+        document.removeEventListener("click",   mouseLeftClickHandler); 
         activateGame();     
     }
 
@@ -26,15 +26,21 @@ function ScriptureViewer(body, activateGame, deacitvateGame, server) {
     function keydownHandler(event) {
         const keyCode = KeyCode.getFromEvent(event);
     
-        if( keyCode == KeyCode.SPACE ) {
-            event.preventDefault();
-            event.stopPropagation();
-            closeAction();
-            return false;
-        }
-
-        return true;
+        if( keyCode != KeyCode.SPACE ) return true;
+        event.preventDefault();
+        event.stopPropagation();
+        closeAction();
+        return false;
     }
+
+    function mouseLeftClickHandler(event) {
+        if( event.button != 0 ) return true;
+        event.preventDefault();
+        event.stopPropagation();
+        closeAction();
+        return false;
+    }
+
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,17 +52,18 @@ function ScriptureViewer(body, activateGame, deacitvateGame, server) {
         blockData            = chunkStore.getBlockData(blockPos);
         if( !BlockData.isScripture(blockData) ) return false;
         
+        deacitvateGame();
 
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);
         }
+
         textArea.value       = "";
         textArea.disabled    = true;
         document.addEventListener("keydown", keydownHandler);
+        document.addEventListener("click",   mouseLeftClickHandler); 
         
         server.requestReadResource(blockPos, Block.Scripture, ""); 
-        deacitvateGame();
-
         return true;
     }
 

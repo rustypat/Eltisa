@@ -607,4 +607,27 @@ const GuiTools = new function() {
     }    
 
 
+    this.createCenteredTextArrea = function(parent, width, height, readonly) {
+        const textArea                 = document.createElement("textarea");
+        textArea.style.display         = 'inline-block';
+        textArea.style.position        = 'absolute';
+        textArea.style.resize          = 'none';
+        textArea.style.margin          = '10px';
+        textArea.style.width           = width;
+        textArea.style.height          = height;
+        textArea.style.borderRadius    = "10px";
+        textArea.style.padding         = "10px";
+        textArea.style.fontSize        = "18px";
+        textArea.style.fontWeight      = "bold";
+        textArea.style.fontFamily      = "cursive";
+        textArea.style.backgroundColor = 'rgba(255,255,200, 1)';
+        textArea.style.top             = '50%';
+        textArea.style.left            = '50%';
+        textArea.style.transform       = 'translate(-50%,-50%)';
+        textArea.maxLength             = 10 * 1024;     
+        textArea.readOnly              = readonly;   
+        if(parent) parent.appendChild(textArea);
+        return textArea;
+    }
+
 }

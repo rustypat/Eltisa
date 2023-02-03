@@ -6,9 +6,7 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
     let   videoStream        = null;
 
     const baseDiv            = GuiTools.createOverlayTransparent();    
-    const panel              = GuiTools.createTabletDiv(baseDiv);
-    panel.style.width        = '600px';
-    panel.style.height       = '500px';
+    const panel              = GuiTools.createCenteredPanel(baseDiv, '600px', '500px');
     
     const closeDiv           = GuiTools.createCloseButtonDiv(panel);    
     GuiTools.createCloseButton(closeDiv, exitAction);
