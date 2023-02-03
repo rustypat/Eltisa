@@ -32,6 +32,8 @@ const eltisa = new function() {
     const bookBlocker            = new BookBlocker(body, activateGame, deactivateGame, serverOut, player);
     const cameraEditor           = new CameraEditor(body, activateGame, deactivateGame, serverOut);
     const cameraViewer           = new CameraViewer(body, activateGame, deactivateGame, serverOut);
+    const internetEditor         = new InternetEditor(body, activateGame, deactivateGame, serverOut);
+    const internetViewer         = new InternetViewer(body, activateGame, deactivateGame, serverOut);
 
     const oracleShower           = new OracleShower(chunkStore, statusbar, serverOut);
     const portalShower           = new PortalShower(chunkStore, statusbar, serverOut);
@@ -251,6 +253,7 @@ const eltisa = new function() {
             if( !handled ) handled = oracleBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = scriptureEditor.show(chunkStore, blockPos);
             if( !handled ) handled = cameraEditor.show(chunkStore, blockPos);
+            if( !handled ) handled = internetEditor.show(chunkStore, blockPos);
             if( !handled ) handled = Behavior.changeState(serverOut, chunkStore, blockPos);
             if( handled ) return false;
         }
@@ -305,6 +308,7 @@ const eltisa = new function() {
             if( !handled ) handled = tetrisBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = tresorBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = cameraViewer.show(chunkStore, blockPos);
+            if( !handled ) handled = internetViewer.show(chunkStore, blockPos);
             if( !handled ) handled = portalBlocker.requestTeleportation(chunkStore, blockPos);
             if( !handled ) handled = chat.addText(" ");
             if( handled ) return false;
@@ -381,6 +385,8 @@ const eltisa = new function() {
         if( blockBlocker.isVisible() ) return true;    
         if( bookmarkBlocker.isVisible() ) return true;    
         if( oracleBlocker.isVisible() ) return true;    
+        if( internetEditor.isVisible() ) return true;    
+        if( internetViewer.isVisible() ) return true;    
         return false;
     }
 
@@ -474,6 +480,12 @@ const eltisa = new function() {
             if( resourceResponse == SR_Ok && messageType == SM_ReadResourceResponse) {
                 cameraEditor.updatePicture(text);
                 cameraViewer.updatePicture(text);
+            }
+        }
+        else if( blockType == Block.Internet ) {
+            if( resourceResponse == SR_Ok && messageType == SM_ReadResourceResponse) {
+                internetEditor.updateUrl(text);
+                internetViewer.updateUrl(text);
             }
         }
         else if( blockType == Block.Book ) {

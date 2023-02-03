@@ -195,6 +195,8 @@ const Block = {
     Caldron_On:         712+1,
 
     Tresor:             720,
+    Camera:             722,
+    Internet:           724,
 
     WindowBlock:        728,
     WindowBlock_1:      728+1,
@@ -465,7 +467,6 @@ const Block = {
     Horse:              5128,         // front, left, left-back, back, back-right, right, right-front, front, front-left
     GlassBlock:         5136,
     SecretEntry:        5144,
-    Camera:             5152
 };
 
 
@@ -636,6 +637,10 @@ const BlockData = new function() {
 
     this.isTresor = function(blockData) {
         return this.getDefinition(blockData) == Block.Tresor;
+    }
+
+    this.isInternet = function(blockData) {
+        return this.getDefinition(blockData) == Block.Internet;
     }
 
     this.isRail = function(blockData) {

@@ -197,6 +197,8 @@ public static class BlockDescription {
     public const ushort Caldron_On           = 712+1;
 
     public const ushort Tresor               = 720;
+    public const ushort Camera               = 722;
+    public const ushort Internet             = 724;
 
     public const ushort WindowBlock          = 728;
     public const ushort WindowBlock_1        = 728+1;

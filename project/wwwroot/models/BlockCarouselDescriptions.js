@@ -37,11 +37,11 @@ function initializeBlockCarouselDescriptions() {
     lineInfo( Things, "Equipment",  b.Ladder, b.Painting, b.Fur, b.Cake, b.AlchemyLab, b.FlowerPot, b.Banner1, b.Banner2, b.Banner5);
     lineInfo( Things, "Varia",  b.Sponge, b.Hayblock, b.Disco, b.Cage, b.Pyramid, b.Ironblock, b.Goldblock, b.Fire, b.SpyderWeb, b.Path, b.Pole, b.PoleLong);
     lineInfo( Things, "Boxes",  b.Box, b.Box_1, b.Box_2, b.Box_3, b.Box_4, b.Box_5, b.Tresor, b.Music);
-    lineInfo( Things, "Gems",  b.Gem, b.Gem_1, b.Gem_2, b.Gem_3, b.Gem_4, b.Gem_5);
+    lineInfo( Things, "Gems",  b.Gem, b.Gem_1, b.Gem_2, b.Gem_3, b.Gem_4);
     lineInfo( Things, "Directions",  b.ArrowVertical,b.ArrowLateral, b.ArrowLongitudinal);
     lineInfo( Things, "Children",  b.Ghost, b.Stove, b.Horse);
 
-    lineInfo( Special, "Special",  b.Scripture, b.Radio, b.Portal, b.Oracle, b.Tetris, b.Sign, b.SignWall, b.Book, b.SecretEntry, b.Camera);
+    lineInfo( Special, "Special",  b.Scripture, b.Radio, b.Portal, b.Oracle, b.Tetris, b.Sign, b.SignWall, b.Book, b.SecretEntry, b.Camera, b.Internet);
     lineInfo( Special, "Colored Felt",  b.Felt_Orange, b.Felt_White, b.Felt_Magenta, b.Felt_LightBlue, b.Felt_Yellow, b.Felt_Lime, b.Felt_Pink, b.Felt_Gray, b.Felt_Cyan, b.Felt_Purple, b.Felt_Blue, b.Felt_Brown, b.Felt_Green, b.Felt_Red, b.Felt_LightGray, b.Felt_Black);
     lineInfo( Special, "Colored Glass",  b.Glass_Orange, b.Glass_White, b.Glass_Magenta,b.Glass_LightBlue, b.Glass_Yellow, b.Glass_Lime, b.Glass_Pink, b.Glass_Gray, b.Glass_Cyan, b.Glass_Purple, b.Glass_Blue, b.Glass_Brown, b.Glass_Green, b.Glass_Red, b.Glass_LightGray, b.Glass_Black);
     lineInfo( Special, "Colored Clay",  b.Clay_Orange, b.Clay_White, b.Clay_Magenta, b.Clay_LightBlue, b.Clay_Yellow, b.Clay_Lime, b.Clay_Pink, b.Clay_Gray, b.Clay_Cyan, b.Clay_Purple, b.Clay_Blue, b.Clay_Brown, b.Clay_Green, b.Clay_Red, b.Clay_LightGray, b.Clay_Black);
@@ -385,6 +385,7 @@ function initializeBlockCarouselDescriptions() {
     blockInfo( b.Book,             "book",           "book.png", "write a formated text with pictures!");      
     blockInfo( b.SecretEntry,      "Secret Entry",   "secret_entry.png", "this blocks look like normal blocks, \n but they are permeable. \nUse F3 to change.");
     blockInfo( b.Camera,           "Camera",         "camera.png");
+    blockInfo( b.Internet,         "Internet",       "gem_5.png");
 
     blockInfo( b.Cake,             "cake",           "cake.png");
     blockInfo( b.AlchemyLab,       "alchemy lab",    "alchemylab.png");

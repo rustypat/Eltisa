@@ -351,11 +351,30 @@ const GuiTools = new function() {
     }
 
 
-    this.createIframe = function(parent, url) {
+    this.createIframe = function(parent, url, width, height) {
         const iframe                   = document.createElement("iframe");
-        iframe.width                   = "100%";
-        iframe.height                  = "100%";
+        iframe.width                   = width;
+        iframe.height                  = height;
         iframe.src                     = url;
+        iframe.style.backgroundColor   = 'rgba(255,255,255,1)';
+        iframe.setUrl  =  (url) => iframe.src = (url ? url : ""); 
+        if(parent) parent.appendChild(iframe);
+        return iframe;
+    }
+
+
+    this.createCenteredIframe = function(parent, url, width, height) {
+        const iframe                   = document.createElement("iframe");
+        iframe.width                   = width;
+        iframe.height                  = height;
+        iframe.src                     = url;
+        iframe.style.backgroundColor   = 'rgba(255,255,255,1)';
+        iframe.style.display           = 'inline-block';
+        iframe.style.position          = 'absolute';
+        iframe.style.top               = '50%';
+        iframe.style.left              = '50%';
+        iframe.style.transform         = 'translate(-50%,-50%)';
+        iframe.setUrl  =  (url) => iframe.src = (url ? url : ""); 
         if(parent) parent.appendChild(iframe);
         return iframe;
     }
@@ -407,7 +426,7 @@ const GuiTools = new function() {
         input.style.borderStyle        = "solid";
         input.style.paddingLeft        = '5px';
         input.style.paddingRight       = '5px';
-        input.setText = function(text) { input.value = text ? text : ""; }
+        input.setText = function(text) { input.value = (text ? text : ""); }
         input.getText = function()     { return input.value; }
         input.type                     = 'text';
        return input;        
@@ -611,6 +630,9 @@ const GuiTools = new function() {
         const textArea                 = document.createElement("textarea");
         textArea.style.display         = 'inline-block';
         textArea.style.position        = 'absolute';
+        textArea.style.top             = '50%';
+        textArea.style.left            = '50%';
+        textArea.style.transform       = 'translate(-50%,-50%)';
         textArea.style.resize          = 'none';
         textArea.style.margin          = '10px';
         textArea.style.width           = width;
@@ -621,9 +643,6 @@ const GuiTools = new function() {
         textArea.style.fontWeight      = "bold";
         textArea.style.fontFamily      = "cursive";
         textArea.style.backgroundColor = 'rgba(255,255,200, 1)';
-        textArea.style.top             = '50%';
-        textArea.style.left            = '50%';
-        textArea.style.transform       = 'translate(-50%,-50%)';
         textArea.maxLength             = 10 * 1024;     
         textArea.readOnly              = readonly;   
         if(parent) parent.appendChild(textArea);

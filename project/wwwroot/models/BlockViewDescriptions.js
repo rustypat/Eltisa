@@ -151,7 +151,7 @@ function initializeBlockViewDescriptions() {
     ViewInfo.addBasicBlock(Block.LavaPink,      158);
     ViewInfo.addBasicBlock(Block.LavaBrown,     159);
     ViewInfo.addBasicBlock(Block.Camera,        202);
-
+    ViewInfo.addBasicBlock(Block.Internet,      200);
 
     ViewInfo.addVerticalBlock(Block.Pumpkin,        52, 53);
     ViewInfo.addVerticalBlock(Block.JackOLantern,   54, 53);

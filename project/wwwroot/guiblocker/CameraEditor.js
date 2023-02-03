@@ -40,7 +40,8 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
         if( keyCode == KeyCode.F3 ) {
             event.preventDefault();
             event.stopPropagation();
-            return exitAction();
+            exitAction();
+            return false;
         }
 
         return true;
@@ -53,7 +54,6 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
         document.removeEventListener("keydown", keydownHandler);
         body.removeChild(baseDiv);
         activateGame();
-        return false;
     }
 
 
