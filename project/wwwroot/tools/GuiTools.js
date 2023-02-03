@@ -358,6 +358,10 @@ const GuiTools = new function() {
         iframe.src                     = url;
         iframe.style.backgroundColor   = 'rgba(255,255,255,1)';
         iframe.setUrl  =  (url) => iframe.src = (url ? url : ""); 
+        iframe.setSize = function(width, height) { 
+            if(width) iframe.width = width;
+            if(height) iframe.height = height;
+        }
         if(parent) parent.appendChild(iframe);
         return iframe;
     }
@@ -375,6 +379,10 @@ const GuiTools = new function() {
         iframe.style.left              = '50%';
         iframe.style.transform         = 'translate(-50%,-50%)';
         iframe.setUrl  =  (url) => iframe.src = (url ? url : ""); 
+        iframe.setSize = function(width, height) { 
+            if(width) iframe.width = width;
+            if(height) iframe.height = height;
+        }
         if(parent) parent.appendChild(iframe);
         return iframe;
     }
