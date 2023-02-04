@@ -4,7 +4,8 @@
 function ScriptureEditor(body, activateGame, deacitvateGame, server) {
 
     const baseDiv            = GuiTools.createOverlay();
-    const textArea           = GuiTools.createTextArrea(baseDiv, "80%", "80%");
+    GuiTools.createLineBreak(baseDiv, 3);    
+    const textArea           = GuiTools.createTextArrea(baseDiv, "75%", "75%");
     GuiTools.createLineBreak(baseDiv);    
     const buttonDiv          = GuiTools.createDiv(baseDiv);        
     const saveButton         = GuiTools.createButton(buttonDiv, "save",   saveAction);
@@ -29,22 +30,28 @@ function ScriptureEditor(body, activateGame, deacitvateGame, server) {
         }
         server.requestWriteResource(blockPos, Block.Scripture, "", text); 
         body.removeChild(baseDiv);      
-        document.removeEventListener("keydown", keypressHandler);
+        document.removeEventListener("keydown", keydownHandler);
         activateGame();     
     }
 
 
     function cancelAction()  {
         body.removeChild(baseDiv);       
-        document.removeEventListener("keydown", keypressHandler);
+        document.removeEventListener("keydown", keydownHandler);
         activateGame();     
     }
 
 
-    function keypressHandler(event) {
-        if( document.activeElement != textArea && noKeyPressed && event.key == " " ) {
-            cancelAction();         
+    function keydownHandler(event) {
+        const keyCode = KeyCode.getFromEvent(event);
+    
+        if( keyCode == KeyCode.F3 ) {
+            event.preventDefault();
+            event.stopPropagation();
+            cancelAction();
+            return false;
         }
+
         else if( document.activeElement == textArea) {
             saveButton.disabled = false;
             noKeyPressed = false;
@@ -64,17 +71,17 @@ function ScriptureEditor(body, activateGame, deacitvateGame, server) {
         blockData            = chunkStore.getBlockData(blockPos);
         if( !BlockData.isScripture(blockData) ) return false;
         
+        deacitvateGame();
 
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);
         }
         textArea.value       = "";
-        document.addEventListener("keydown", keypressHandler);
         noKeyPressed         = true;
         saveButton.disabled  = true;
         
+        document.addEventListener("keydown", keydownHandler);
         server.requestReadResource(blockPos, Block.Scripture, ""); 
-        deacitvateGame();
 
         return true;
     }

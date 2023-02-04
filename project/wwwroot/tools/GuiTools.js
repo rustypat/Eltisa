@@ -357,6 +357,23 @@ const GuiTools = new function() {
         iframe.height                  = height;
         iframe.src                     = url;
         iframe.style.backgroundColor   = 'rgba(255,255,255,1)';
+        iframe.style.borderRadius      = "10px";
+        iframe.setUrl  =  (url) => iframe.src = (url ? url : ""); 
+        iframe.setSize = function(width, height) { 
+            if(width) iframe.width = width;
+            if(height) iframe.height = height;
+        }
+        if(parent) parent.appendChild(iframe);
+        return iframe;
+    }
+
+
+    this.createFullSizedIframe = function(parent, url) {
+        const iframe                   = document.createElement("iframe");
+        iframe.width                   = "100%";
+        iframe.height                  = "100%";
+        iframe.src                     = url;
+        iframe.style.backgroundColor   = 'rgba(255,255,255,1)';
         iframe.setUrl  =  (url) => iframe.src = (url ? url : ""); 
         iframe.setSize = function(width, height) { 
             if(width) iframe.width = width;
@@ -378,6 +395,7 @@ const GuiTools = new function() {
         iframe.style.top               = '50%';
         iframe.style.left              = '50%';
         iframe.style.transform         = 'translate(-50%,-50%)';
+        iframe.style.borderRadius      = "10px";
         iframe.setUrl  =  (url) => iframe.src = (url ? url : ""); 
         iframe.setSize = function(width, height) { 
             if(width) iframe.width = width;
@@ -584,6 +602,7 @@ const GuiTools = new function() {
 
     this.createCanvas = function(parent, width, height, id, backgroundColor) {
         const canvas                   = document.createElement("canvas");
+        canvas.style.borderRadius      = "10px";
 
         if(width)  canvas.width        = width;
         if(height) canvas.height       = height;
@@ -591,8 +610,8 @@ const GuiTools = new function() {
         if(parent) parent.appendChild(canvas);
 
         canvas.clear = function() {
-            const context                  = canvas.getContext("2d");
-            context.fillStyle              = backgroundColor;
+            const context              = canvas.getContext("2d");
+            context.fillStyle          = 'rgba(240,240,240, 1)';
             context.fillRect(0, 0, width, height);
         }
         return canvas;
@@ -615,6 +634,7 @@ const GuiTools = new function() {
         canvas.style.transform         = 'translate(-50%,-50%)';
         canvas.style.backgroundColor   = 'rgba(240,240,240, 1)';
         canvas.style.borderStyle       = 'double';
+        canvas.style.borderRadius      = "10px";
         if(parent) parent.appendChild(canvas);
 
         canvas.clear = function() {

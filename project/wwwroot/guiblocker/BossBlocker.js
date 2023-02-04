@@ -7,7 +7,7 @@ function BossBlocker(body) {
     this.show = function() {
         if(!baseDiv) {
             baseDiv                  = GuiTools.createOverlayOpaque(null);
-            const iframe             = GuiTools.createIframe(baseDiv, "https://informatrix.ch/", "100%", "100%");
+            const iframe             = GuiTools.createFullSizedIframe(baseDiv, "https://informatrix.ch/");
             baseDiv.style.zIndex     = "998";
             iframe.style.zIndex      = "999";
         }

@@ -4,7 +4,7 @@
 function ScriptureViewer(body, activateGame, deacitvateGame, server) {
 
     const baseDiv            = GuiTools.createOverlayTransparent();
-    const textArea           = GuiTools.createCenteredTextArrea(baseDiv, "50%", "50%", true);
+    const textArea           = GuiTools.createCenteredTextArrea(baseDiv, "400px", "400px", true);
 
     var blockPos;
     var blockData;
