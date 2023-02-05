@@ -19,7 +19,6 @@ const eltisa = new function() {
     const loginBlocker           = new LoginBlocker(body, activateGame, deactivateGame, serverSocket, serverOut);
     const introBlocker           = new IntroBlocker(body, activateGame, deactivateGame, serverOut);
     const errorBlocker           = new ErrorBlocker(body, activateGame, deactivateGame);
-    const bossBlocker            = new BossBlocker(body, activateGame, deactivateGame);
     const scriptureEditor        = new ScriptureEditor(body, activateGame, deactivateGame, serverOut);
     const scriptureViewer        = new ScriptureViewer(body, activateGame, deactivateGame, serverOut);
     const tresorBlocker          = new TresorBlocker(body, activateGame, deactivateGame, serverOut);
@@ -68,31 +67,6 @@ const eltisa = new function() {
             }
         }
     });
-
-
-    document.addEventListener( 'keydown', function(event) {
-        const keyCode = KeyCode.getFromEvent(event);
-
-        if( keyCode == KeyCode.END ) {
-            event.preventDefault();
-            if( bossBlocker.isVisible() ) {
-                bossBlocker.hide();
-                if( !hasVisibleBlocker() ) {
-                    worldport.lockPointer();
-                }            
-            }
-            else {
-                bossBlocker.show();
-                document.exitPointerLock();        
-            }
-            return false;        
-        }
-        else {
-            return true;
-        }
-
-    });   
-
 
 
     function mouseMoveHandler(event) {
@@ -370,7 +344,6 @@ const eltisa = new function() {
 
     function hasVisibleBlocker() {
         if( loginBlocker.isVisible() ) return true;    
-        if( bossBlocker.isVisible() ) return true;
         if( introBlocker.isVisible() ) return true;
         if( errorBlocker.isVisible() ) return true;
         if( scriptureEditor.isVisible() ) return true;
