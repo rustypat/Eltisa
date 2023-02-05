@@ -10,7 +10,6 @@ function LoginBlocker(body, activateGame, deactivateGame, serverSocket, serverOu
     baseDiv.style.whiteSpace = 'nowrap'
     baseDiv.style.backgroundColor = 'rgb(148,207,232)';
     baseDiv.style.backgroundImage = 'linear-gradient(rgb(148,207,232) 10%, rgb(148,207,232), rgb(255, 255, 255))';
-    if(Config.blackAndWhite) baseDiv.style.filter = "grayscale(1)";
 
     const nameField     = GuiTools.createTextInput(baseDiv, 20, "200px", "35px", "center");
                           GuiTools.createLineBreak(baseDiv);
