@@ -4,7 +4,6 @@
 function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
 
     const div                = GuiTools.createOverlay();
-    if(Config.blackAndWhite) div.style.filter = "grayscale(1)";
 
     const panel              = GuiTools.createTabletDiv(div);
     panel.style.backgroundColor = "rgba(0, 160, 190, 0.8)";

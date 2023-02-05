@@ -87,6 +87,16 @@ const GuiTools = new function() {
     }
 
 
+    this.createBaseDiv = function(parent) {
+        const div                      = document.createElement("div");
+        div.style.width                = "100%";
+        div.style.height               = "100%";
+        div.style.backgroundColor      = 'rgba(100,250,100, 1)';
+        if(parent) parent.appendChild(div);
+        return div;        
+    }
+
+
     this.createTabletDiv = function(parent) {
         const div                      = document.createElement("div");
         div.style.display              = 'inline-block';

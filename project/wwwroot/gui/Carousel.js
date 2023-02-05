@@ -12,7 +12,6 @@ function Carousel(body) {
 
     function initialize() {
         carouselDiv.id = "carousel";
-        if(Config.blackAndWhite) carouselDiv.style.filter = "grayscale(1)";
         body.appendChild(carouselDiv);
 
         var index     = 0;

@@ -11,5 +11,7 @@ const EV_Keyboard_Space           = 5;
 const EV_Mouse_Left               = 10;
 const EV_Mouse_Right              = 11;
 
+const EV_Resize                   = 20;
+
 const EV_Max                      = 100;
 

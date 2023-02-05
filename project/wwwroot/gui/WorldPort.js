@@ -6,7 +6,6 @@ function WorldPort(body) {
     const crosshair          = GuiTools.createImage(body, "/resources/crosshair.png", null, null, "crosshair");
     
     // scene
-    if(Config.blackAndWhite) canvas.style.filter = "grayscale(1)";
     const engine             = new BABYLON.Engine(canvas, true);    
     const scene              = new BABYLON.Scene(engine);
 	const camera             = new BABYLON.UniversalCamera("freeCamera", new BABYLON.Vector3(0,0,0), scene);

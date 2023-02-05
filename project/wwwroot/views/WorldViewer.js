@@ -8,6 +8,11 @@ function WorldViewer() {
 
 
     this.getEventHandler = function(eventId) {
+        return handlers[eventId];
+    }
+
+
+    this.getHtmlElement = function() {
 
     }
 
