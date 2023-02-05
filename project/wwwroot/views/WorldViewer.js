@@ -4,10 +4,15 @@
 function WorldViewer() {
 
     const handlers    = new Array(EV_Max);
-    handlers[SM_GetChunksResponse]          = receiveChunksMessage;
+    handlers[EV_Keyboard_F1]          = toggleRunMode;
 
 
     this.getEventHandler = function(eventId) {
+
+    }
+
+
+    function toggleRunMode() {
 
     }
 
