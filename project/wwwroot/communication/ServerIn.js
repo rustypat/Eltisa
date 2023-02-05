@@ -3,6 +3,19 @@
 function ServerIn(serversocket) {
     
     const self        = this;
+    const handlers    = new Array(100).fill(receiveUnknownMessage);
+    handlers[SM_GetChunksResponse]          = receiveChunksMessage;
+    handlers[SM_ActorChanged]               = receiveActorChangedMessage;
+    handlers[SM_BlocksChangedNotification]  = receiveBlocksChangedMessage;
+    handlers[SM_ListActorsResponse]         = receiveActorListMessage;
+    handlers[SM_ChatMessageResponse]        = receiveChatMessage;
+    handlers[SM_LoginResponse]              = receiveLoginMessage;
+    handlers[SM_VideoChatMessageResponse]   = receiveVideoChatMessage;
+    handlers[SM_CreateResourceResponse]     = receiveCreateResourceResponseMessage;
+    handlers[SM_ReadResourceResponse]       = receiveReadResourceResponseMessage;
+    handlers[SM_WriteResourceResponse]      = receiveWriteResourceResponseMessage;
+    handlers[SM_UpdateResourceResponse]     = receiveUpdateResourceResponseMessage;
+    handlers[SM_DeleteResourceResponse]     = receiveDeleteResourceResponseMessage;
     
     serversocket.setMessageHandler( handleInputMessage);
         
@@ -12,25 +25,17 @@ function ServerIn(serversocket) {
         const messageType    = reader.readInteger();
         const messageCounter = reader.readInteger();
         Log.trace("received message " + messageType + "  (" + event.data.byteLength + " bytes)");
-
-        if(receiveChunksMessage(reader, messageType)) return;
-        if(receiveActorChangedMessage(reader, messageType)) return;
-        if(receiveBlocksChangedMessage(reader, messageType)) return;
-        if(receiveActorListMessage(reader, messageType)) return;
-        if(receiveChatMessage(reader, messageType)) return;
-        if(receiveLoginMessage(reader, messageType)) return;
-        if(receiveVideoChatMessage(reader, messageType)) return;
-        if(receiveCreateResourceResponseMessage(reader, messageType)) return;
-        if(receiveReadResourceResponseMessage(reader, messageType)) return;
-        if(receiveWriteResourceResponseMessage(reader, messageType)) return;
-        if(receiveUpdateResourceResponseMessage(reader, messageType)) return;
-        if(receiveDeleteResourceResponseMessage(reader, messageType)) return;
-        Log.trace("received unknown message " + messageType + "  (" + event.data.byteLength + " bytes)");
+        if(messageType < 0 || messageType >= SM_Max ) {
+            Log.Error("received message with invalid message type " + messageType);
+        }
+        else {
+            handlers[messageType](reader, messageType);
+        }
     }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // handler 
+    // client event handler 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     this.receiveLoginHandler           = function(message) {};
@@ -48,6 +53,9 @@ function ServerIn(serversocket) {
     // receive message handler
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    function receiveUnknownMessage(reader, messageType) {
+        Log.Error("received unknown message of type " + messageType);
+    }
     
     function receiveLoginMessage(reader, messageType) {
         if(messageType != SM_LoginResponse) return false;

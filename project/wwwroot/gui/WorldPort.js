@@ -1,6 +1,6 @@
 'use strict';
 
-function Viewport(body) {
+function WorldPort(body) {
 
     const canvas             = GuiTools.createCanvas(body, null, null, "renderCanvas");
     const crosshair          = GuiTools.createImage(body, "/resources/crosshair.png", null, null, "crosshair");
@@ -247,7 +247,7 @@ function Viewport(body) {
         
         for(var i=0; i < chunk.blocks.getLength(); i++) {
             const blockData = chunk.blocks.get(i);
-            const viewInfo  = ViewInfo.getViewInfo(blockData);   
+            const viewInfo  = WorldInfo.getViewInfo(blockData);   
             if( viewInfo.isPermeable ) {
                 addBlockToVertexData(permeableVertexData, blockData, viewInfo);
             }   

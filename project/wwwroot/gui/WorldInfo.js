@@ -11,7 +11,7 @@ Object.freeze(Orientation);
 
 
 
-const ViewInfo = new function() {
+const WorldInfo = new function() {
 
     const atlasWidth         =  700;
     const atlasHeight        = 1750;

@@ -3,9 +3,9 @@
 
 const ActorChangeType = { Login: 1, Moved: 2, Logout: 3 };
 
-function ActorStore(_viewport) {
+function ActorStore(_worldport) {
 
-    const viewport    = _viewport;
+    const worldport    = _worldport;
     const actors      = new Map();
     
 
@@ -17,11 +17,11 @@ function ActorStore(_viewport) {
         const key   = actorMessage.id;
         var actor    = actors.get(key);        
         if(actor) {
-            viewport.updateActorMesh(actor, actorMessage);
+            worldport.updateActorMesh(actor, actorMessage);
         }
         else {
             actor = actorMessage;
-            viewport.createActorMesh(actor);
+            worldport.createActorMesh(actor);
             actors.set(key, actor);
         }
     }
@@ -56,7 +56,7 @@ function ActorStore(_viewport) {
 
         for(const [actorKey, actor] of actorIterator) {
             if(Vector.calculateEuclidDistance(actor, playerPosition) > Config.getEnvironmentBlockRadius() ) {
-                viewport.removeActorMesh(actor);
+                worldport.removeActorMesh(actor);
                 actors.delete(actorKey);
             }
 

@@ -1,7 +1,6 @@
 'use strict';
 
 function BlockBlocker(body, activateGame, deactivateGame, carousel) {
-
     
     const baseDiv            = GuiTools.createOverlay();
     baseDiv.style.paddingTop = '15px';             

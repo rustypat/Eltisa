@@ -20,7 +20,7 @@ function Statusbar(body) {
     }
 
 
-    this.update = function(player, viewport) {
+    this.update = function() {
         if (messageText) {
             if(performance.now() - messageStartTime > messageShowTime) {
                 this.clearMessage();
@@ -65,13 +65,13 @@ function Statusbar(body) {
     }
 
 
-    this.setStatus = function(player, viewport) {
+    this.setStatus = function(player, worldport) {
         const playerInfo = player.getName();
         const playerPos  = player.getPosition();
         const positionInfo = Math.floor(playerPos.x) + "|" + Math.floor(playerPos.y) + "|" + Math.floor(playerPos.z);
 
         const targetInfo = player.getTargetInfo();
-        const fpsInfo    = viewport.getFramesPerSecond() + " fps";
+        const fpsInfo    = worldport.getFramesPerSecond() + " fps";
         const moveInfo   = player.getMoveModeDescription();
     
         const distance = "&nbsp;&nbsp;&nbsp;&nbsp;";
