@@ -68,7 +68,6 @@ function ServerIn(serversocket) {
         assert(SMT_EndTag == reader.readInteger());
         
         self.receiveLoginHandler(message);
-        return true;
     }
 
 
@@ -85,7 +84,6 @@ function ServerIn(serversocket) {
         assert(SMT_EndTag == reader.readInteger());
         
         self.receiveActorChangedHandler(message);
-        return true;
     }
 
 
@@ -99,7 +97,6 @@ function ServerIn(serversocket) {
         assert(SMT_EndTag       == reader.readInteger());
         
         self.receiveActorListHandler(message);
-        return true;
     }
 
 
@@ -110,7 +107,6 @@ function ServerIn(serversocket) {
         assert(SMT_EndTag       == reader.readInteger());
         
         self.receiveChatHandler(message);
-        return true;        
     }
     
 
@@ -131,8 +127,6 @@ function ServerIn(serversocket) {
         for(const chunk of changedChunks.values()) {
             self.updateChunk(chunk);
         }
-        
-        return true;        
     } 
 
 
@@ -146,7 +140,6 @@ function ServerIn(serversocket) {
         assert(SMT_EndTag       == reader.readInteger());
         
         self.receiveVideoChatHandler(message);
-        return true;        
     }
         
 
@@ -174,7 +167,6 @@ function ServerIn(serversocket) {
 
         assert(SMT_EndTag == reader.readInteger());
         self.receiveChunksHandler(message);
-        return true;        
     }
 
 
@@ -186,7 +178,6 @@ function ServerIn(serversocket) {
         const response     = reader.readUShort();
         assert(SMT_EndTag == reader.readInteger());
         self.receiveResourceHandler(SM_CreateResourceResponse, blockType, response, null);
-        return true;        
     }
 
 
@@ -201,7 +192,6 @@ function ServerIn(serversocket) {
         const resourceText = reader.readString();    
         assert(SMT_EndTag == reader.readInteger());
         self.receiveResourceHandler(SM_ReadResourceResponse, blockType, response, resourceText);
-        return true;        
     }
 
 
@@ -213,7 +203,6 @@ function ServerIn(serversocket) {
         const response     = reader.readUShort();
         assert(SMT_EndTag == reader.readInteger());
         self.receiveResourceHandler(SM_WriteResourceResponse, blockType, response, null);
-        return true;        
     }
 
 
@@ -225,7 +214,6 @@ function ServerIn(serversocket) {
         const response     = reader.readUShort();
         assert(SMT_EndTag == reader.readInteger());
         self.receiveResourceHandler(SM_UpdateResourceResponse, blockType, response, null);
-        return true;        
     }
 
 
@@ -237,9 +225,7 @@ function ServerIn(serversocket) {
         const response     = reader.readUShort();
         assert(SMT_EndTag == reader.readInteger());
         self.receiveResourceHandler(SM_DeleteResourceResponse, blockType, response, null);
-        return true;        
     }
-
 
 }
 
