@@ -7,6 +7,11 @@ function ArrayReader(messageArrayBuffer) {
 
     var   pos      = 0;    
 
+    
+    this.reset = function() {
+        pos = 0;
+    }
+
 
     this.readByte = function() {        
         const result = dataView.getUint8(pos);

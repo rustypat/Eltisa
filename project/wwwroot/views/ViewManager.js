@@ -1,6 +1,6 @@
 'use strict';
 
 
-const ViewManager = new function() {
+function ViewManager() {
 
 }

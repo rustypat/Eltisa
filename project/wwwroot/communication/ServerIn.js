@@ -3,7 +3,7 @@
 function ServerIn(serversocket) {
     
     const self        = this;
-    const handlers    = new Array(100).fill(receiveUnknownMessage);
+    const handlers    = new Array(SM_Max).fill(receiveUnknownMessage);
     handlers[SM_GetChunksResponse]          = receiveChunksMessage;
     handlers[SM_ActorChanged]               = receiveActorChangedMessage;
     handlers[SM_BlocksChangedNotification]  = receiveBlocksChangedMessage;
@@ -29,7 +29,7 @@ function ServerIn(serversocket) {
             Log.Error("received message with invalid message type " + messageType);
         }
         else {
-            handlers[messageType](reader, messageType);
+            handlers[messageType](reader);
         }
     }
 
@@ -53,13 +53,13 @@ function ServerIn(serversocket) {
     // receive message handler
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    function receiveUnknownMessage(reader, messageType) {
+    function receiveUnknownMessage(reader) {
+        reader.reset();
+        const messageType    = reader.readInteger();
         Log.Error("received unknown message of type " + messageType);
     }
     
-    function receiveLoginMessage(reader, messageType) {
-        if(messageType != SM_LoginResponse) return false;
-
+    function receiveLoginMessage(reader) {
         const message        = {};
         message.actorId      = reader.readInteger();
         message.actorType    = reader.readInteger();
@@ -72,9 +72,7 @@ function ServerIn(serversocket) {
     }
 
 
-    function receiveActorChangedMessage(reader, messageType) {
-        if(messageType != SM_ActorChanged) return false;
-
+    function receiveActorChangedMessage(reader) {
         const message        = {};
         message.change       = reader.readInteger();       // change type
         message.id           = reader.readInteger();       // actor id
@@ -91,9 +89,7 @@ function ServerIn(serversocket) {
     }
 
 
-    function receiveActorListMessage(reader, messageType) {
-        if(messageType != SM_ListActorsResponse) return false;
-
+    function receiveActorListMessage(reader) {
         const message        = {};
         message.actorCount   = reader.readInteger();
         message.names        = new Array(message.actorCount);
@@ -107,9 +103,7 @@ function ServerIn(serversocket) {
     }
 
 
-    function receiveChatMessage(reader, messageType) {
-        if(messageType != SM_ChatMessageResponse) return false;
-
+    function receiveChatMessage(reader) {
         const message        = {};
         message.message      = reader.readString();
         message.sender       = reader.readString();
@@ -120,9 +114,7 @@ function ServerIn(serversocket) {
     }
     
 
-    function receiveBlocksChangedMessage(reader, messageType) {
-        if(messageType != SM_BlocksChangedNotification) return false;
-
+    function receiveBlocksChangedMessage(reader) {
         const changedChunks = new Set();
         const blockCount     = reader.readInteger();
         for(var i=0; i < blockCount; i++) {
@@ -144,9 +136,7 @@ function ServerIn(serversocket) {
     } 
 
 
-    function receiveVideoChatMessage(reader, messageType) {
-        if(messageType != SM_VideoChatMessageResponse) return false;
-
+    function receiveVideoChatMessage(reader) {
         const message        = {};
         message.sender       = reader.readString();
         message.receiver     = reader.readString();
@@ -160,9 +150,7 @@ function ServerIn(serversocket) {
     }
         
 
-    function receiveChunksMessage(reader, messageType) {
-        if(messageType != SM_GetChunksResponse) return false;
-
+    function receiveChunksMessage(reader) {
         const message        = {};
         message.requestId    = reader.readInteger();
         message.chunkCount   = reader.readInteger();
@@ -190,9 +178,7 @@ function ServerIn(serversocket) {
     }
 
 
-    function receiveCreateResourceResponseMessage(reader, messageType) {
-        if(messageType != SM_CreateResourceResponse) return false;
-
+    function receiveCreateResourceResponseMessage(reader) {
         const x            = reader.readInteger();
         const y            = reader.readInteger();
         const z            = reader.readInteger();
@@ -204,9 +190,7 @@ function ServerIn(serversocket) {
     }
 
 
-    function receiveReadResourceResponseMessage(reader, messageType) {
-        if(messageType != SM_ReadResourceResponse) return false;
-
+    function receiveReadResourceResponseMessage(reader) {
         const x            = reader.readInteger();
         const y            = reader.readInteger();
         const z            = reader.readInteger();
@@ -221,9 +205,7 @@ function ServerIn(serversocket) {
     }
 
 
-    function receiveWriteResourceResponseMessage(reader, messageType) {
-        if(messageType != SM_WriteResourceResponse) return false;
-
+    function receiveWriteResourceResponseMessage(reader) {
         const x            = reader.readInteger();
         const y            = reader.readInteger();
         const z            = reader.readInteger();
@@ -235,9 +217,7 @@ function ServerIn(serversocket) {
     }
 
 
-    function receiveUpdateResourceResponseMessage(reader, messageType) {
-        if(messageType != SM_UpdateResourceResponse) return false;
-
+    function receiveUpdateResourceResponseMessage(reader) {
         const x            = reader.readInteger();
         const y            = reader.readInteger();
         const z            = reader.readInteger();
@@ -249,9 +229,7 @@ function ServerIn(serversocket) {
     }
 
 
-    function receiveDeleteResourceResponseMessage(reader, messageType) {
-        if(messageType != SM_DeleteResourceResponse) return false;
-
+    function receiveDeleteResourceResponseMessage(reader) {
         const x            = reader.readInteger();
         const y            = reader.readInteger();
         const z            = reader.readInteger();
