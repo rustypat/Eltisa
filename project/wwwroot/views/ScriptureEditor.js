@@ -1,13 +1,19 @@
 'use strict';
 
 
-function ScriptureViewer(body, activateGame, deacitvateGame, server) {
+function ScriptureEditor(body, activateGame, deacitvateGame, server) {
 
-    const baseDiv            = GuiTools.createOverlayTransparent();
-    const textArea           = GuiTools.createCenteredTextArrea(baseDiv, "50%", "50%", true);
+    const baseDiv            = GuiTools.createOverlay();
+    GuiTools.createLineBreak(baseDiv, 3);    
+    const textArea           = GuiTools.createTextArrea(baseDiv, "75%", "75%");
+    GuiTools.createLineBreak(baseDiv);    
+    const buttonDiv          = GuiTools.createDiv(baseDiv);        
+    const saveButton         = GuiTools.createButton(buttonDiv, "save",   saveAction);
+    const cancelButton       = GuiTools.createButton(buttonDiv, "cancel", cancelAction);
 
     var blockPos;
     var blockData;
+    var noKeyPressed;    
     const self               = this;
 
 
@@ -15,10 +21,23 @@ function ScriptureViewer(body, activateGame, deacitvateGame, server) {
     // tab events
     ///////////////////////////////////////////////////////////////////////////////////////////////////    
 
-    function closeAction()  {
+    function saveAction()  {
+        const text = textArea.value.trim();
+
+        const changedScriptureDefinition = getChangedScriptureBlockDefinition(text);
+        if( changedScriptureDefinition != null ) {
+            server.requestSwitchBlock(blockPos.x, blockPos.y, blockPos.z);
+        }
+        server.requestWriteResource(blockPos, Block.Scripture, "", text); 
+        body.removeChild(baseDiv);      
+        document.removeEventListener("keydown", keydownHandler);
+        activateGame();     
+    }
+
+
+    function cancelAction()  {
         body.removeChild(baseDiv);       
         document.removeEventListener("keydown", keydownHandler);
-        document.removeEventListener("click",   mouseLeftClickHandler); 
         activateGame();     
     }
 
@@ -26,21 +45,21 @@ function ScriptureViewer(body, activateGame, deacitvateGame, server) {
     function keydownHandler(event) {
         const keyCode = KeyCode.getFromEvent(event);
     
-        if( keyCode != KeyCode.SPACE ) return true;
-        event.preventDefault();
-        event.stopPropagation();
-        closeAction();
-        return false;
-    }
+        if( keyCode == KeyCode.F3 ) {
+            event.preventDefault();
+            event.stopPropagation();
+            cancelAction();
+            return false;
+        }
 
-    function mouseLeftClickHandler(event) {
-        if( event.button != 0 ) return true;
-        event.preventDefault();
-        event.stopPropagation();
-        closeAction();
-        return false;
+        else if( document.activeElement == textArea) {
+            saveButton.disabled = false;
+            noKeyPressed = false;
+        }
+        else {
+            textArea.focus();
+        }
     }
-
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,13 +76,13 @@ function ScriptureViewer(body, activateGame, deacitvateGame, server) {
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);
         }
-
         textArea.value       = "";
-        textArea.disabled    = true;
-        document.addEventListener("keydown", keydownHandler);
-        document.addEventListener("click",   mouseLeftClickHandler); 
+        noKeyPressed         = true;
+        saveButton.disabled  = true;
         
+        document.addEventListener("keydown", keydownHandler);
         server.requestReadResource(blockPos, Block.Scripture, ""); 
+
         return true;
     }
 
@@ -74,7 +93,9 @@ function ScriptureViewer(body, activateGame, deacitvateGame, server) {
 
 
     this.updateText = function(text) {
-        textArea.value = text;
+        if( self.isVisible() ) {
+            textArea.value = text;
+        }
     }
 
 

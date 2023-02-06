@@ -6,9 +6,11 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
     const baseDiv            = GuiTools.createOverlayTransparent();    
     const panel              = GuiTools.createCenteredPanel(baseDiv, '70%', '70%');
 
-    const url                = GuiTools.createTextInput(panel, 256, "60%");  
-    const saveButton         = GuiTools.createButton(panel, "save",   saveAction);
-    const cancelButton       = GuiTools.createButton(panel, "cancel", cancelAction);
+    const url                = GuiTools.createTextInput(panel, 256, "50%");  
+    const width              = GuiTools.createTextInput(panel, 256, "7%");  
+    const height             = GuiTools.createTextInput(panel, 256, "7%");  
+    const saveButton         = GuiTools.createButton(panel, "save",   saveAction, "7%");
+    const cancelButton       = GuiTools.createButton(panel, "cancel", cancelAction, "7%");
     GuiTools.createLineBreak(panel);    
     const iframe             = GuiTools.createIframe(panel, "", "95%", "90%");
 
@@ -22,8 +24,12 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
 
     function saveAction(event)  {
         if(event) event.stopPropagation();
-        const text = url.getText().trim();
-        server.requestWriteResource(blockPos, Block.Internet, "", text); 
+        let jsonObject = {};        
+        jsonObject.text = url.getText().trim();
+        jsonObject.width = width.getText().trim();
+        jsonObject.height = height.getText().trim();
+        const jsonText = JSON.stringify(jsonObject);
+        server.requestWriteResource(blockPos, Block.Internet, "", jsonText); 
         body.removeChild(baseDiv);      
         document.removeEventListener("keydown", keypressHandler);
         activateGame();     
@@ -45,6 +51,7 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
             event.preventDefault();
             event.stopPropagation();
             iframe.setUrl(url.getText());
+            iframe.setSize(width.getText(), height.getText());
             return false;
         }
 
@@ -59,6 +66,15 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
     }
 
 
+    function clearContent() {
+        url.setText("");
+        width.setText("90%");
+        height.setText("90%");
+        iframe.setUrl("");
+        iframe.setSize("95%", "90%");
+    }
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // show blocker
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,12 +84,13 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
         var blockData        = chunkStore.getBlockData(blockPos);
         if( !BlockData.isInternet(blockData) ) return false;
         
+        deacitvateGame();
+        clearContent();
 
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);
         }
         document.addEventListener("keydown", keypressHandler);
-        deacitvateGame();
         server.requestReadResource(blockPos, Block.Internet, ""); 
 
         return true;
@@ -85,10 +102,14 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
     }
 
 
-    this.updateUrl = function(text) {
+    this.updateUrl = function(jsonText) {
         if( self.isVisible() ) {
-            url.setText(text);
-            iframe.setUrl(text);
+            let jsonObject =  JSON.parse(jsonText);
+            url.setText(jsonObject.text);
+            width.setText(jsonObject.width);
+            height.setText(jsonObject.height);
+            iframe.setUrl(jsonObject.text);
+            iframe.setSize(jsonObject.width, jsonObject.height);
         }
     }
 

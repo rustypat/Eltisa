@@ -4,14 +4,14 @@ const eltisa = new function() {
 
     const body                   = document.getElementsByTagName("body")[0];
 
-    const viewport               = new Viewport(body);
+    const worldport              = new WorldPort(body);
     const carousel               = new Carousel(body);
     const statusbar              = new Statusbar(body);
     const chat                   = new Chat(body);
 
-    const actorStore             = new ActorStore(viewport);
-    const chunkStore             = new ChunkStore(viewport);
-    const player                 = new Player(viewport, chunkStore);
+    const actorStore             = new ActorStore(worldport);
+    const chunkStore             = new ChunkStore(worldport);
+    const player                 = new Player(worldport, chunkStore);
     const serverSocket           = new ServerSocket(document.location, "/ws");
     const serverIn               = new ServerIn(serverSocket);
     const serverOut              = new ServerOut(serverSocket);
@@ -19,7 +19,6 @@ const eltisa = new function() {
     const loginBlocker           = new LoginBlocker(body, activateGame, deactivateGame, serverSocket, serverOut);
     const introBlocker           = new IntroBlocker(body, activateGame, deactivateGame, serverOut);
     const errorBlocker           = new ErrorBlocker(body, activateGame, deactivateGame);
-    const bossBlocker            = new BossBlocker(body, activateGame, deactivateGame);
     const scriptureEditor        = new ScriptureEditor(body, activateGame, deactivateGame, serverOut);
     const scriptureViewer        = new ScriptureViewer(body, activateGame, deactivateGame, serverOut);
     const tresorBlocker          = new TresorBlocker(body, activateGame, deactivateGame, serverOut);
@@ -51,48 +50,23 @@ const eltisa = new function() {
 
     window.addEventListener("beforeunload", function (event) {
         chunkStore.dispose();
-        viewport.dispose();
+        worldport.dispose();
     });
 
 
     window.addEventListener("resize", function () {
-        viewport.resize();
+        worldport.resize();
     });
 
 
     document.addEventListener( 'pointerlockchange', function ( event ) {
-        if( !viewport.hasPointerLock() ) {
+        if( !worldport.hasPointerLock() ) {
             if( !hasVisibleBlocker() ) {
                 deactivateGame();
                 introBlocker.show(player);
             }
         }
     });
-
-
-    document.addEventListener( 'keydown', function(event) {
-        const keyCode = KeyCode.getFromEvent(event);
-
-        if( keyCode == KeyCode.END ) {
-            event.preventDefault();
-            if( bossBlocker.isVisible() ) {
-                bossBlocker.hide();
-                if( !hasVisibleBlocker() ) {
-                    viewport.lockPointer();
-                }            
-            }
-            else {
-                bossBlocker.show();
-                document.exitPointerLock();        
-            }
-            return false;        
-        }
-        else {
-            return true;
-        }
-
-    });   
-
 
 
     function mouseMoveHandler(event) {
@@ -344,9 +318,9 @@ const eltisa = new function() {
         document.addEventListener("auxclick",    wheelClickHandler); 
         document.addEventListener("wheel",       wheelTurnHandler);
 
-        viewport.startRenderLoop(renderFunction);    
+        worldport.startRenderLoop(renderFunction);    
         player.activateControls();
-        viewport.lockPointer();
+        worldport.lockPointer();
     }
 
 
@@ -370,7 +344,6 @@ const eltisa = new function() {
 
     function hasVisibleBlocker() {
         if( loginBlocker.isVisible() ) return true;    
-        if( bossBlocker.isVisible() ) return true;
         if( introBlocker.isVisible() ) return true;
         if( errorBlocker.isVisible() ) return true;
         if( scriptureEditor.isVisible() ) return true;
@@ -554,12 +527,12 @@ const eltisa = new function() {
             player.sendMove(serverOut);
         }    
         else if( updateCounter % 16 == 2 ) {
-            statusbar.setStatus(player, viewport);
+            statusbar.setStatus(player, worldport);
             statusbar.update();
         }
         
-        viewport.updatePositionAndDirection(player.getPosition(), player.getRotation());
-        viewport.updateScene();
+        worldport.updatePositionAndDirection(player.getPosition(), player.getRotation());
+        worldport.updateScene();
         
         breakTime = performance.now() + (1000/60);
     }

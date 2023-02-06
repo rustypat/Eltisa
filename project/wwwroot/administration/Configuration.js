@@ -7,7 +7,6 @@ const Config = new function() {
     
     this.version                     = "0.25";    
     this.debug                       = true;
-    this.blackAndWhite               = false;
 
     this.chunkSize                   = 16;
     this.regionSize                  = 16;

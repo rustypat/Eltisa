@@ -5,8 +5,7 @@ function CameraViewer(body, activateGame, deactivateGame, server) {
     var   blockPos;
 
     const baseDiv            = GuiTools.createOverlayTransparent();    
-    const panel              = GuiTools.createCenteredPanel(baseDiv, '400px', '320px');
-    const canvas             = GuiTools.createCenteredCanvas(panel, 320, 240);
+    const canvas             = GuiTools.createCenteredCanvas(baseDiv, 320, 240);
     
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////

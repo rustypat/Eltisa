@@ -1,12 +1,11 @@
 'use strict';
 
-function Viewport(body) {
+function WorldPort(body) {
 
     const canvas             = GuiTools.createCanvas(body, null, null, "renderCanvas");
     const crosshair          = GuiTools.createImage(body, "/resources/crosshair.png", null, null, "crosshair");
     
     // scene
-    if(Config.blackAndWhite) canvas.style.filter = "grayscale(1)";
     const engine             = new BABYLON.Engine(canvas, true);    
     const scene              = new BABYLON.Scene(engine);
 	const camera             = new BABYLON.UniversalCamera("freeCamera", new BABYLON.Vector3(0,0,0), scene);
@@ -247,7 +246,7 @@ function Viewport(body) {
         
         for(var i=0; i < chunk.blocks.getLength(); i++) {
             const blockData = chunk.blocks.get(i);
-            const viewInfo  = ViewInfo.getViewInfo(blockData);   
+            const viewInfo  = WorldInfo.getViewInfo(blockData);   
             if( viewInfo.isPermeable ) {
                 addBlockToVertexData(permeableVertexData, blockData, viewInfo);
             }   

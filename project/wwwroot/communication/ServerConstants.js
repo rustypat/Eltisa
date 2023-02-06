@@ -48,6 +48,8 @@ const SM_GetBlockResourceRequest       = 60;
 const SM_GetBlockResourceResponse      = 61;
 const SM_SaveBlockResource             = 62;
 
+const SM_Max                           = 100;
+
 
 // Server Message Tag
 const SMT_EndTag                       = 666999;

@@ -2,7 +2,7 @@
 
 function CameraEditor(body, activateGame, deactivateGame, server) {
     const self               = this;
-    var   blockPos;
+    let   blockPos;
     let   videoStream        = null;
 
     const baseDiv            = GuiTools.createOverlayTransparent();    
@@ -16,7 +16,7 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
 
     GuiTools.createLineBreak(panel, 2);
     const video              = GuiTools.createVideo(null, true);
-    const canvas             = GuiTools.createCanvas(panel, 320, 240, null, 'LightGrey');
+    const canvas             = GuiTools.createCanvas(panel, 320, 240,);
     canvas.style.borderStyle = 'double';
     GuiTools.createLineBreak(panel, 3);
     const pictureButton      = GuiTools.createButton(panel, "Take Picture", takePicture);
@@ -63,12 +63,13 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
         const blockData  = chunkStore.getBlockData(blockPos);
         if( !BlockData.isCamera(blockData) ) return false;
 
+        deactivateGame();          
+
         canvas.clear();
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);
         }
         document.addEventListener("keydown", keydownHandler);        
-        deactivateGame();          
         server.requestReadResource(blockPos, Block.Camera, "");
 
         navigator.mediaDevices.getUserMedia( {video: true} )

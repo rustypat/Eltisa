@@ -1,8 +1,8 @@
 'use strict';
 
-function ChunkStore(_viewport) {
+function ChunkStore(_worldport) {
 
-    const viewport                = _viewport;
+    const worldport               = _worldport;
     const chunks                  = new Map();
     const newChunks               = [];
     const self                    = this;
@@ -57,20 +57,20 @@ function ChunkStore(_viewport) {
         const key       = ChunkPos.create(chunkDescription.x, chunkDescription.y, chunkDescription.z);
         var   chunk     = chunks.get(key);
         
-        viewport.removeChunkMesh(chunk);
+        worldport.removeChunkMesh(chunk);
 
         chunk = chunkDescription;
         chunks.set(key, chunk);
 
-        viewport.addChunkMesh(chunk);
+        worldport.addChunkMesh(chunk);
 
         chunk.isValid = true;        
         return;
     }
 
     this.updateChunk = function(chunk) {
-        viewport.removeChunkMesh(chunk);
-        viewport.addChunkMesh(chunk);
+        worldport.removeChunkMesh(chunk);
+        worldport.addChunkMesh(chunk);
         chunk.isValid = true;        
 
     }
@@ -96,7 +96,7 @@ function ChunkStore(_viewport) {
 
     function clearChunks() {
         chunks.forEach(function(chunk, key) {
-            viewport.removeChunkMesh(chunk);
+            worldport.removeChunkMesh(chunk);
         });
 
         chunks.clear();
@@ -154,14 +154,14 @@ function ChunkStore(_viewport) {
             }
             else {
                 if(chunkDist > radius ) {
-                    viewport.removeChunkMesh(chunk);
+                    worldport.removeChunkMesh(chunk);
                     chunks.delete(chunkPos);                
                 }
                 else if(chunkDist > 2) {
-                    viewport.updateChunkMesh(chunk, false);
+                    worldport.updateChunkMesh(chunk, false);
                 }
                 else if(chunkDist <= 2) {
-                    viewport.updateChunkMesh(chunk, true);
+                    worldport.updateChunkMesh(chunk, true);
                 }
             }
 

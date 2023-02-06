@@ -4,8 +4,7 @@
 function InternetViewer(body, activateGame, deacitvateGame, server) {
 
     const baseDiv            = GuiTools.createOverlayTransparent();    
-    const panel              = GuiTools.createCenteredPanel(baseDiv, '70%', '70%');
-    const iframe             = GuiTools.createCenteredIframe(panel, "", "95%", "92%");
+    const iframe             = GuiTools.createCenteredIframe(baseDiv, "", "100px", "100px");
 
     var blockPos;
     const self               = this;
@@ -15,19 +14,41 @@ function InternetViewer(body, activateGame, deacitvateGame, server) {
     // tab events
     ///////////////////////////////////////////////////////////////////////////////////////////////////    
 
-    function keypressHandler(event) {
+    function keydownHandler(event) {
         const keyCode = KeyCode.getFromEvent(event);
     
         if( keyCode == KeyCode.SPACE ) {
             event.preventDefault();
             event.stopPropagation();
-            body.removeChild(baseDiv);       
-            document.removeEventListener("keydown", keypressHandler);
-            activateGame();     
+            exitAction();
             return false;
         }
 
         return true;
+    }
+
+
+    function mouseLeftClickHandler(event) {
+        if( event.button != 0 ) return true;
+        event.preventDefault();
+        event.stopPropagation();
+        exitAction();
+        return false;
+    }
+
+
+    function exitAction() {
+        document.removeEventListener("keydown", keydownHandler);
+        document.removeEventListener("click",   mouseLeftClickHandler); 
+
+        body.removeChild(baseDiv);
+        activateGame();
+    }
+
+
+    function clearContent() {
+        iframe.setUrl("");
+        iframe.setSize("100px", "100px");
     }
 
 
@@ -41,11 +62,13 @@ function InternetViewer(body, activateGame, deacitvateGame, server) {
         if( !BlockData.isInternet(blockData) ) return false;
         
         deacitvateGame();
+        clearContent();
 
         if(!body.contains(baseDiv)) {
             body.appendChild(baseDiv);
         }
-        document.addEventListener("keydown", keypressHandler);
+        document.addEventListener("keydown", keydownHandler);
+        document.addEventListener("click",   mouseLeftClickHandler); 
        
         server.requestReadResource(blockPos, Block.Internet, ""); 
 
@@ -58,9 +81,11 @@ function InternetViewer(body, activateGame, deacitvateGame, server) {
     }
 
 
-    this.updateUrl = function(text) {
+    this.updateUrl = function(jsonText) {
         if( self.isVisible() ) {
-            iframe.setUrl(text);
+            let jsonObject =  JSON.parse(jsonText);
+            iframe.setUrl(jsonObject.text);
+            iframe.setSize(jsonObject.width, jsonObject.height);
         }
     }
 

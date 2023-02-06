@@ -1,15 +1,12 @@
 'use strict';
 
 function BlockBlocker(body, activateGame, deactivateGame, carousel) {
-
     
     const baseDiv            = GuiTools.createOverlay();
     baseDiv.style.paddingTop = '15px';             
     baseDiv.style.textAlign  = 'left';
     baseDiv.style.overflow   = 'auto';
     baseDiv.style.whiteSpace = 'nowrap'
-    if(Config.blackAndWhite) baseDiv.style.filter = "grayscale(1)";
-    
 
     const buttonDiv          = GuiTools.createDiv(baseDiv);    
     buttonDiv.style.marginTop= '0px';
