@@ -1,5 +1,243 @@
 'use strict';
 
+function RailMoveMode(chunkStore, camera) {
+    let lastRailPosition = undefined;
+    let speed            = 0;
+    let nextTarget       = undefined;
+    let self             = this;
+
+    ////////////////////////////////////////////////////////////////////////////
+    //Remove after found issue
+    ///////////////////////////////////////////////////////////////////////////
+
+    this.move = function() {
+        //Check if check nextTarget must load
+        if(speed <= 0) return null;
+        if(nextTarget === undefined) nextTarget = getNextTarget();
+        let disNextTargetAbs = Vector.calculateDistanceAbsolute(camera.position, nextTarget);
+        if(disNextTargetAbs.x < 0.15 && disNextTargetAbs.y < 0.15 && disNextTargetAbs.z < 0.15) nextTarget = getNextTarget();
+
+
+        //move
+        let newX          = camera.position.x;
+        let newY          = camera.position.y;
+        let newZ          = camera.position.z;
+        let disNextTarget = Vector.calculateDistanceAbsolute(camera.position, nextTarget);
+        let reachTargetIn = undefined;
+        let speedY        = speed;
+
+        if(disNextTarget.y > 0.15) {
+            if(disNextTarget.x > 0.15) reachTargetIn = disNextTarget.x/speed;
+            if(disNextTarget.z > 0.15) reachTargetIn = disNextTarget.z/speed;
+            if(reachTargetIn != undefined) speedY    = disNextTarget.y/reachTargetIn;
+        }
+
+        if(disNextTarget.x > 0.15 && nextTarget.x > camera.position.x)  newX+=speed;
+        if(disNextTarget.x > 0.15 && nextTarget.x < camera.position.x)  newX-=speed;
+
+        if(disNextTarget.y > 0.15 && nextTarget.y > camera.position.y)  newY+=speedY;
+        if(disNextTarget.y > 0.15 && nextTarget.y < camera.position.y)  newY-=speedY;
+
+        if(disNextTarget.z > 0.15 && nextTarget.z > camera.position.z)  newZ+=speed;
+        if(disNextTarget.z > 0.15 && nextTarget.z < camera.position.z)  newZ-=speed;
+
+        return {x: newX, y: newY, z: newZ};
+    }
+
+
+    this.activate = function() {
+        camera.keysUp          = []; 
+        camera.keysDown        = [];
+
+        document.addEventListener('keydown', self.speedUp);
+        document.addEventListener('keydown', self.slowDown);
+    }
+
+    this.deactivate = function() {
+        lastRailPosition = undefined;
+        speed = 0;
+        nextTarget = undefined;
+
+        camera.keysUp            = [38]; // ^
+        camera.keysDown          = [40]; // v
+
+        document.removeEventListener('keydown', self.speedUp);
+        document.removeEventListener('keydown', self.slowDown);
+    }
+
+
+
+    this.speedUp = function(event) {
+        const keyCode = KeyCode.getFromEvent(event);
+        if(keyCode === KeyCode.ArrUp && speed < 0.15) speed+=0.001;
+    }
+
+    this.slowDown = function(event) {
+        const keyCode = KeyCode.getFromEvent(event);
+        if(keyCode === KeyCode.ArrDown) speed-=0.01;
+        if(speed < 0) speed = 0;
+    }
+
+    function getNextTarget() {
+        const blockPosFeet       = Vector.down(Vector.roundToFloor(camera.position));
+        const blockDataFeet      = chunkStore.getBlockData(blockPosFeet);
+        let   blockPosRailJet    = blockPosFeet;
+        let   blockDataRailJet   = chunkStore.getBlockData(blockPosRailJet);
+
+        //checks wich is the rail block (the block in wich you stand(RailsUp) or one below)
+        if(!BlockData.isRail(blockDataRailJet)) blockPosRailJet = Vector.down(blockPosRailJet);
+
+        //get next block
+        let nextBlock = getNextRailBlock(chunkStore, blockPosRailJet, lastRailPosition);
+        
+        //check if there is a next block
+        if(nextBlock === null) return;
+
+        //set lastRailPosition
+        lastRailPosition = getCameraToRightPositionForARailBlock(blockPosRailJet, chunkStore); 
+
+        //set new Position
+        return nextBlock;
+    }
+
+    
+    function getNextRailBlock(chunkStore, blockPosRailJet, lastRailPosition){
+        let blockDataRailJet = chunkStore.getBlockData(blockPosRailJet);
+        let blockType    = BlockData.getDefinitionWithoutState(blockDataRailJet);
+        let blockStage   = BlockData.getState(blockDataRailJet);
+        let option1 = Vector.clone(blockPosRailJet);
+        let option2 = Vector.clone(blockPosRailJet);
+    
+    
+        //define the two options for the next block
+        if(blockType === Block.RailsLeftRight) {
+            if(blockStage === 2) {
+                option1 = Vector.back(option1);
+                option2 = Vector.right(option2);
+            }
+    
+            if(blockStage === 3) {
+                option1 = Vector.forward(option1);
+                option2 = Vector.right(option2);
+            }
+    
+            if(blockStage === 4) {
+                option1 = Vector.left(option1);
+                option2 = Vector.forward(option2);
+            }
+    
+            if(blockStage === 5) {
+                option1 = Vector.back(option1);
+                option2 = Vector.left(option2);
+            }
+        }
+    
+        if(blockType === Block.RailSwitch) {
+            if(blockStage === 4) {
+                option1 = Vector.back(option1);
+                option2 = Vector.right(option2);
+            }
+    
+            if(blockStage === 5) {
+                option1 = Vector.forward(option1);
+                option2 = Vector.right(option2);
+            }
+    
+            if(blockStage === 6) {
+                option1 = Vector.left(option1);
+                option2 = Vector.forward(option2);
+            }
+    
+            if(blockStage === 7) {
+                option1 = Vector.back(option1);
+                option2 = Vector.left(option2);
+            }
+        }
+    
+    
+        if(blockType === Block.RailSwitch     && blockStage < 4 ||
+           blockType === Block.RailsLeftRight && blockStage < 2 ||
+           blockType === Block.RailsUp) {
+                if(blockStage === 0 || blockStage === 2 || blockStage === 4 || blockStage === 6) {
+                    option1 = Vector.left(option1);
+                    option2 = Vector.right(option2);
+                }
+    
+                if(blockStage === 1 || blockStage === 3 || blockStage === 5 || blockStage === 7) {
+                    option1 = Vector.back(option1);
+                    option2 = Vector.forward(option2);
+                }
+    
+                //All Railsup block is on one side the next block one block deeper
+                if(blockType === Block.RailsUp && blockStage < 4){
+                    if(blockStage === 0 || blockStage === 1) option2 = Vector.down(option2);
+                    if(blockStage === 2 || blockStage === 3) option1 = Vector.down(option1);
+                }
+        }
+    
+        //Check if the rail line changes on the y axes (with RailUp)
+        let blockDataOption1 = chunkStore.getBlockData(option1);
+        let blockDataOption2 = chunkStore.getBlockData(option2);
+
+    
+        if(BlockData.isRail(blockDataOption1) === false) option1 = Vector.up(option1);
+        if(BlockData.isRail(blockDataOption2) === false) option2 = Vector.up(option2);
+    
+    
+        //check if there is a rail block
+        blockDataOption1 = chunkStore.getBlockData(option1);
+        blockDataOption2 = chunkStore.getBlockData(option2);
+    
+        if(BlockData.isRail(blockDataOption1) === false) return null;
+        if(BlockData.isRail(blockDataOption2) === false) return null;
+    
+        //set Camera Up
+        option1 = getCameraToRightPositionForARailBlock(option1, chunkStore);
+        option2 = getCameraToRightPositionForARailBlock(option2, chunkStore);
+    
+        //check witch is the next block and witch is the block before if last position is defined
+        if(lastRailPosition !== undefined) {
+    
+            if(Vector.equals(lastRailPosition, option1)) return option2; 
+            if(Vector.equals(lastRailPosition, option2)) return option1; 
+        }
+    
+        return option1;
+    }
+    
+    function getCameraToRightPositionForARailBlock(blockPos, chunkStore) {
+        let blockData    = chunkStore.getBlockData(blockPos);
+        let blockType    = BlockData.getDefinitionWithoutState(blockData);
+        let blockStage   = BlockData.getState(blockData);
+    
+        if(blockType === Block.RailSwitch || blockType === Block.RailsLeftRight) {
+            blockPos   = Vector.up(blockPos);
+            blockPos   = Vector.up(blockPos);
+            blockPos.x = blockPos.x + 0.5;
+            blockPos.z = blockPos.z + 0.5;
+            blockPos.y = blockPos.y + 0.3;
+         }
+    
+         if(blockType === Block.RailsUp) {
+            if(blockStage < 4){
+                blockPos   = Vector.up(blockPos);
+                blockPos.x = blockPos.x + 0.5;
+                blockPos.z = blockPos.z + 0.5;
+                blockPos.y = blockPos.y + 0.55; //0.3 + 0.25
+            }
+    
+            if(blockStage >= 4){
+                blockPos   = Vector.up(blockPos);
+                blockPos.x = blockPos.x + 0.5;
+                blockPos.z = blockPos.z + 0.5;
+                blockPos.y = blockPos.y + 1.05; //0.3 + 0.75
+            }
+         }
+    
+        return blockPos;
+    }
+}
+
 function Player(viewport, chunkStore, playerPassword) {
 
     const PlayerType         = { Unknown: 0, Visitor: 1, Citizen: 2, Administrator:4};
@@ -43,7 +281,9 @@ function Player(viewport, chunkStore, playerPassword) {
     // detecting changes
     var lastPosition         = Vector.create(0, 0, 0);
     var lastReportedPosition = Vector.create(0, 0, 0);
-    let lastRailPosition     = undefined;
+
+
+    let railMoveMode         = new RailMoveMode(chunkStore, camera);
     
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,10 +389,9 @@ function Player(viewport, chunkStore, playerPassword) {
         if(moveMode == MoveType.Walk) {
             camera.speed           = 0.1;
             camera.checkCollisions = true;
-            camera.keysUp            = [38]; // ^
-            camera.keysDown          = [40]; // v
 
-            document.removeEventListener("keydown", movePlayerExampleRemoveAfterTesting);
+            railMoveMode.deactivate();
+
         }        
         if(moveMode == MoveType.Run) {
             camera.speed           = 0.25;
@@ -168,45 +407,13 @@ function Player(viewport, chunkStore, playerPassword) {
         }
 
         else if(moveMode == MoveType.Train) {
-            lastRailPosition         = undefined;
             camera.speed           = 0.5;
             camera.checkCollisions = true;
-            camera.keysUp          = []; 
-            camera.keysDown        = [];
             
-
-            document.addEventListener("keydown", movePlayerExampleRemoveAfterTesting);
+            railMoveMode.activate();
         }
     }
 
-    function movePlayerExampleRemoveAfterTesting(event) {
-        //check if the right key is pressed
-        const keyCode = KeyCode.getFromEvent(event);
-        if(keyCode === KeyCode.ArrUp) {
-            const blockPosFeet       = Vector.down(Vector.roundToFloor(camera.position));
-            const blockDataFeet      = chunkStore.getBlockData(blockPosFeet);
-            let   blockPosRailJet    = blockPosFeet;
-            let   blockDataRailJet   = chunkStore.getBlockData(blockPosRailJet);
-
-            //checks wich is the rail block (the block in wich you stand(RailsUp) or one below)
-            if(!BlockData.isRail(blockDataRailJet)) {
-                blockPosRailJet = Vector.down(blockPosRailJet);
-                console.log("blockPosRailJet: " + blockPosRailJet.x + "   " + blockPosRailJet.y + "   " + blockPosRailJet.z);
-            }
-
-            //get next block
-            let nextBlock = getNextRailBlock(chunkStore, blockPosRailJet, lastRailPosition);
-            
-            //check if there is a next block
-            if(nextBlock === null) return;
-
-            //set lastRailPosition
-            lastRailPosition = getCameraToRightPositionForARailBlock(blockPosRailJet, chunkStore); 
-
-            //set new Position
-            self.setPosition(nextBlock.x, nextBlock.y, nextBlock.z);
-        }
-    }
 
     this.getMoveModeDescription = function() {
         if(moveMode == MoveType.Walk)       return "walk";
@@ -280,6 +487,11 @@ function Player(viewport, chunkStore, playerPassword) {
     this.update = function() {
         if(moveMode === MoveType.Train && !isOnRail()) {
             self.toogleMoveMode();
+        }
+
+        if(moveMode === MoveType.Train) {
+            let nextBlock = railMoveMode.move();
+            if(nextBlock !== null) self.setPosition(nextBlock.x, nextBlock.y, nextBlock.z);
         }
 
         if( isOnLadder() ) {

@@ -49,6 +49,20 @@ const Vector = new function() {
         return Math.max( dx, dy, dz);
     }
 
+    this.calculateDistance = function(vector1, vector2) {
+        const dx = vector1.x - vector2.x;
+        const dy = vector1.y - vector2.y;
+        const dz = vector1.z - vector2.z;
+        return {x:dx, y:dy, z:dz};
+    }
+
+    this.calculateDistanceAbsolute = function(vector1, vector2) {
+        const dx = Math.abs(vector1.x - vector2.x);
+        const dy = Math.abs(vector1.y - vector2.y);
+        const dz = Math.abs(vector1.z - vector2.z);
+        return {x:dx, y:dy, z:dz};
+    }
+
 
     this.equals = function(vector1, vector2) {
         if (!vector1 || !vector2  ) return false;
@@ -575,142 +589,3 @@ function sleep(milliseconds) {
     return new Promise(r => setTimeout(r, milliseconds));
 }
 
-function getNextRailBlock(chunkStore, blockPosRailJet, lastRailPosition){
-    let blockDataRailJet = chunkStore.getBlockData(blockPosRailJet);
-    let blockType    = BlockData.getDefinitionWithoutState(blockDataRailJet);
-    let blockStage   = BlockData.getState(blockDataRailJet);
-    let option1 = Vector.clone(blockPosRailJet);
-    let option2 = Vector.clone(blockPosRailJet);
-
-
-    //define the two options for the next block
-    if(blockType === Block.RailsLeftRight) {
-        if(blockStage === 2) {
-            option1 = Vector.back(option1);
-            option2 = Vector.right(option2);
-        }
-
-        if(blockStage === 3) {
-            option1 = Vector.forward(option1);
-            option2 = Vector.right(option2);
-        }
-
-        if(blockStage === 4) {
-            option1 = Vector.left(option1);
-            option2 = Vector.forward(option2);
-        }
-
-        if(blockStage === 5) {
-            option1 = Vector.back(option1);
-            option2 = Vector.left(option2);
-        }
-    }
-
-    if(blockType === Block.RailSwitch) {
-        if(blockStage === 4) {
-            option1 = Vector.back(option1);
-            option2 = Vector.right(option2);
-        }
-
-        if(blockStage === 5) {
-            option1 = Vector.forward(option1);
-            option2 = Vector.right(option2);
-        }
-
-        if(blockStage === 6) {
-            option1 = Vector.left(option1);
-            option2 = Vector.forward(option2);
-        }
-
-        if(blockStage === 7) {
-            option1 = Vector.back(option1);
-            option2 = Vector.left(option2);
-        }
-    }
-
-
-    if(blockType === Block.RailSwitch     && blockStage < 4 ||
-       blockType === Block.RailsLeftRight && blockStage < 2 ||
-       blockType === Block.RailsUp) {
-            console.log("gerade");
-            if(blockStage === 0 || blockStage === 2 || blockStage === 4 || blockStage === 6) {
-                option1 = Vector.left(option1);
-                option2 = Vector.right(option2);
-            }
-
-            if(blockStage === 1 || blockStage === 3 || blockStage === 5 || blockStage === 7) {
-                option1 = Vector.back(option1);
-                option2 = Vector.forward(option2);
-            }
-
-            //All Railsup block is on one side the next block one block deeper
-            if(blockType === Block.RailsUp && blockStage < 4){
-                if(blockStage === 0 || blockStage === 1) option2 = Vector.down(option2);
-                if(blockStage === 2 || blockStage === 3) option1 = Vector.down(option1);
-            }
-    }
-
-    //Check if the rail line changes on the y axes (with RailUp)
-    let blockDataOption1 = chunkStore.getBlockData(option1);
-    let blockDataOption2 = chunkStore.getBlockData(option2);
-
-    console.log("Option1: (1)" + option1.x + "   " + option1.y + "   " + option1.z);
-
-    if(BlockData.isRail(blockDataOption1) === false) {console.log("up"); option1 = Vector.up(option1);}
-    if(BlockData.isRail(blockDataOption2) === false) {console.log("up"); option2 = Vector.up(option2);}
-
-    console.log("Option1: " + option1.x + "   " + option1.y + "   " + option1.z);
-    console.log("Blocktype: " + blockType);
-
-    //check if there is a rail block
-    blockDataOption1 = chunkStore.getBlockData(option1);
-    blockDataOption2 = chunkStore.getBlockData(option2);
-
-    if(BlockData.isRail(blockDataOption1) === false) return null;
-    if(BlockData.isRail(blockDataOption2) === false) return null;
-
-    //set Camera Up
-    option1 = getCameraToRightPositionForARailBlock(option1, chunkStore);
-    option2 = getCameraToRightPositionForARailBlock(option2, chunkStore);
-
-    //check witch is the next block and witch is the block before if last position is defined
-    if(lastRailPosition !== undefined) {
-
-        if(Vector.equals(lastRailPosition, option1)) return option2; 
-        if(Vector.equals(lastRailPosition, option2)) return option1; 
-    }
-
-    return option1;
-}
-
-function getCameraToRightPositionForARailBlock(blockPos, chunkStore) {
-    let blockData    = chunkStore.getBlockData(blockPos);
-    let blockType    = BlockData.getDefinitionWithoutState(blockData);
-    let blockStage   = BlockData.getState(blockData);
-
-    if(blockType === Block.RailSwitch || blockType === Block.RailsLeftRight) {
-        blockPos   = Vector.up(blockPos);
-        blockPos   = Vector.up(blockPos);
-        blockPos.x = blockPos.x + 0.5;
-        blockPos.z = blockPos.z + 0.5;
-        blockPos.y = blockPos.y + 0.3;
-     }
-
-     if(blockType === Block.RailsUp) {
-        if(blockStage < 4){
-            blockPos   = Vector.up(blockPos);
-            blockPos.x = blockPos.x + 0.5;
-            blockPos.z = blockPos.z + 0.5;
-            blockPos.y = blockPos.y + 0.55; //0.3 + 0.25
-        }
-
-        if(blockStage >= 4){
-            blockPos   = Vector.up(blockPos);
-            blockPos.x = blockPos.x + 0.5;
-            blockPos.z = blockPos.z + 0.5;
-            blockPos.y = blockPos.y + 1.05; //0.3 + 0.75
-        }
-     }
-
-    return blockPos;
-}
