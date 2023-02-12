@@ -48,7 +48,7 @@ function HelpViewer(viewManager, serverOut, exitAction) {
     GuiTools.createTableRow(helpTable, "F3", "change direction of doors, windows, ...");
     GuiTools.createTableRow(helpTable, "F4", "start video chat");
     GuiTools.createTableRow(helpTable, "F5", "toggle visibility range");
-    GuiTools.createTableRow(helpTable, "F6", "bookmark the current position, or send an email");
+    GuiTools.createTableRow(helpTable, "F6", "bookmark the current position, or send it as an email");
     GuiTools.createTableRow(helpTable, "F11", "toggle full screen mode ");
     GuiTools.createTableRow(helpTable, "LEFT MOUSE BUTTON", "add block");
     GuiTools.createTableRow(helpTable, "RIGHT MOUSE BUTTON", "remove block");
