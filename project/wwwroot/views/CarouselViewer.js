@@ -1,6 +1,6 @@
 'use strict';
 
-function Carousel(body) {
+function CarouselViewer() {
     const carouselDiv             = document.createElement("div")
     const gondolasHeight          = 100;
     var   distanceToTarget        = 0;
@@ -8,11 +8,23 @@ function Carousel(body) {
     const gondolaLines            = [];
     var   selectedGondolaLine     = null;
     
+    const eventHandlers    = new Array(EV_Max);
+    eventHandlers[EV_Keyboard_PageUp]         = moveUp;
+    eventHandlers[EV_Keyboard_PageDown]       = moveDown;
+    eventHandlers[EV_Keyboard_Shift_PageUp]   = moveRight;
+    eventHandlers[EV_Keyboard_Shift_PageDown] = moveLeft;
+    eventHandlers[EV_Wheel_Up]                = moveUp;
+    eventHandlers[EV_Wheel_Down]              = moveDown;
+    eventHandlers[EV_Wheel_Shift_Up]          = moveRight;
+    eventHandlers[EV_Wheel_Shift_Down]        = moveLeft;
+
+    this.getEventHandler = (eventType) => eventHandlers[eventType];
+    this.getHtmlElement = () => carouselDiv;
+
     initialize();
 
     function initialize() {
         carouselDiv.id = "carousel";
-        body.appendChild(carouselDiv);
 
         var index     = 0;
         var lineInfo  = CarouselInfo.getLineInfo(index++);
@@ -40,23 +52,23 @@ function Carousel(body) {
     }
 
     
-    this.moveUp = function () {
+    function moveUp() {
         if(distanceToTarget < gondolasHeight) distanceToTarget += gondolasHeight;
     }
 
 
-    this.moveDown = function () {
+    function moveDown() {
         if(distanceToTarget > -gondolasHeight) distanceToTarget -= gondolasHeight;
     }
 
 
-    this.moveLeft = function () {
+    function moveLeft() {
         if(distanceToTarget != 0) return;
         selectedGondolaLine.selectPreviousGondola();
     }
 
 
-    this.moveRight = function ()  {
+    function moveRight()  {
         if(distanceToTarget != 0) return;
         selectedGondolaLine.selectNextGondola();
     }

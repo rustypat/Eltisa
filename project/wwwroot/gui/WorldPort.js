@@ -1,9 +1,15 @@
 'use strict';
 
-function WorldPort(body) {
+function CrosshairViewer(body) {
+    const crosshair      = GuiTools.createImage(body, "/resources/crosshair.png", null, null, "crosshair");
+    this.getEventHandler = (eventType) => null;
+    this.getHtmlElement  = () => crosshair;
+}
 
+
+function WorldPort(body) {
+    
     const canvas             = GuiTools.createCanvas(body, null, null, "renderCanvas");
-    const crosshair          = GuiTools.createImage(body, "/resources/crosshair.png", null, null, "crosshair");
     
     // scene
     const engine             = new BABYLON.Engine(canvas, true);    
@@ -57,6 +63,8 @@ function WorldPort(body) {
     // varia
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    this.getCanvas = () => canvas;
+
     this.lockPointer = function() {
         canvas.requestPointerLock();
         canvas.focus();
@@ -108,6 +116,12 @@ function WorldPort(body) {
         if(isRendering) return;
         engine.runRenderLoop( renderFunction);
         isRendering = true;
+    }
+
+    this.stopRenderLoop = function() {
+        if(!isRendering) return;
+        engine.stopRenderLoop();
+        isRendering = false;
     }
 
 

@@ -1,8 +1,15 @@
 'use strict';
 
 
-function InternetEditor(body, activateGame, deacitvateGame, server) {
+function InternetEditor(viewManager, serverIn, serverOut, player) {
 
+    // event handler
+    const eventHandlers    = new Array(EV_Max);
+    eventHandlers[EV_Keyboard_F3]   = cancelAction;
+    this.getEventHandler = (eventType) => eventHandlers[eventType];
+    this.getHtmlElement  = () => baseDiv;
+
+    // gui elements
     const baseDiv            = GuiTools.createOverlayTransparent();    
     const panel              = GuiTools.createCenteredPanel(baseDiv, '70%', '70%');
 
@@ -22,49 +29,37 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
     // tab events
     ///////////////////////////////////////////////////////////////////////////////////////////////////    
 
-    function saveAction(event)  {
-        if(event) event.stopPropagation();
+
+    function saveAction()  {
         let jsonObject = {};        
         jsonObject.text = url.getText().trim();
         jsonObject.width = width.getText().trim();
         jsonObject.height = height.getText().trim();
         const jsonText = JSON.stringify(jsonObject);
-        server.requestWriteResource(blockPos, Block.Internet, "", jsonText); 
-        body.removeChild(baseDiv);      
-        document.removeEventListener("keydown", keypressHandler);
-        activateGame();     
+        serverOut.requestWriteResource(blockPos, Block.Internet, "", jsonText); 
+        viewManager.unshow(self);
     }
 
 
-    function cancelAction(event)  {
-        if(event) event.stopPropagation();
-        body.removeChild(baseDiv);       
-        document.removeEventListener("keydown", keypressHandler);
-        activateGame();     
+    function cancelAction()  {
+        viewManager.unshow(self);
     }
 
 
-    function keypressHandler(event) {
-        const keyCode = KeyCode.getFromEvent(event);
+    this.enable = function() {
+        blockPos      = player.getTargetPos();
+        if( blockPos == null ) return;
+
+        clearContent();
+        serverIn.receiveResourceHandler = updateUrl;
+        serverOut.requestReadResource(blockPos, Block.Internet, "");             
+    }
     
-        if( keyCode == KeyCode.RETURN ) {
-            event.preventDefault();
-            event.stopPropagation();
-            iframe.setUrl(url.getText());
-            iframe.setSize(width.getText(), height.getText());
-            return false;
-        }
-
-        if( keyCode == KeyCode.F3 ) {
-            event.preventDefault();
-            event.stopPropagation();
-            cancelAction(event);
-            return false;
-        }
-
-        return true;
+    
+    this.disable = function() {
+        serverIn.receiveResourceHandler = null;
     }
-
+    
 
     function clearContent() {
         url.setText("");
@@ -75,35 +70,8 @@ function InternetEditor(body, activateGame, deacitvateGame, server) {
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // show blocker
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-        
-    this.show = function(chunkStore, _blockPos) {
-        blockPos             = _blockPos;
-        var blockData        = chunkStore.getBlockData(blockPos);
-        if( !BlockData.isInternet(blockData) ) return false;
-        
-        deacitvateGame();
-        clearContent();
-
-        if(!body.contains(baseDiv)) {
-            body.appendChild(baseDiv);
-        }
-        document.addEventListener("keydown", keypressHandler);
-        server.requestReadResource(blockPos, Block.Internet, ""); 
-
-        return true;
-    }
-
-
-    this.isVisible = function() {
-        return body.contains(baseDiv);
-    }
-
-
-    this.updateUrl = function(jsonText) {
-        if( self.isVisible() ) {
+    function updateUrl(messageType, blockType, resourceResponse, jsonText) {
+        if( resourceResponse == SR_Ok && blockType==Block.Internet && messageType == SM_ReadResourceResponse) {
             let jsonObject =  JSON.parse(jsonText);
             url.setText(jsonObject.text);
             width.setText(jsonObject.width);

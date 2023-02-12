@@ -10,7 +10,7 @@ const KeyCode = new function() {
     this.PAGEUP    = 33;
     this.PAGEDOWN  = 34;
     this.END       = 35;        
-    this.DELET     = 46;
+    this.DELETE    = 46;
     this.ArrUp     = 38;
     this.ArrDown   = 40;
 

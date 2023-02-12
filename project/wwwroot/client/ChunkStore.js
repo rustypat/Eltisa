@@ -260,7 +260,7 @@ function ChunkStore(_worldport) {
 
 
 
-    this.sendRequest = function(server) {
+    this.sendRequest = function(serverOut) {
         if( missingChunkList.getLength() == 0 ) return;    // no data
         if( requestTimeStamp != 0 )             return;    // pending request
 
@@ -270,7 +270,7 @@ function ChunkStore(_worldport) {
 
         if( requestChunkList.getLength() > 0 ) {
             requestTimeStamp  = Math.floor(performance.now());
-            server.requestChunks(requestTimeStamp, requestChunkList);
+            serverOut.requestChunks(requestTimeStamp, requestChunkList);
         }    
     }
 
@@ -296,6 +296,7 @@ function ChunkStore(_worldport) {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     this.getBlockData = function(worldPos) {
+        if(!worldPos)  return Block.InvalidBlock;
         const key       = ChunkPos.createFromWorldPos(worldPos.x, worldPos.y, worldPos.z);
         var   chunk     = chunks.get(key);
         if(!chunk) return Block.NoBlock;

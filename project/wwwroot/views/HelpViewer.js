@@ -1,19 +1,22 @@
 'use strict';
 
-function IntroBlocker(body, activateGame, deactivateGame, server) {
+function HelpViewer(viewManager, serverOut, exitAction) {
+    const self = this;
 
-    var player;
-    
+    // events
+
+    const eventHandlers    = new Array(EV_Max);
+    //eventHandlers[EV_Keyboard_Escape]  = playAction;
+    this.getEventHandler = (eventType) => eventHandlers[eventType];
+    this.getHtmlElement = () => baseDiv;
+
+    // gui elements
+
     const baseDiv            = GuiTools.createOverlay();
     baseDiv.style.paddingTop = '20px';       
     baseDiv.style.overflow   = 'auto';
     baseDiv.style.whiteSpace = 'nowrap'
     
-    if( !Config.debug ) {
-        GuiTools.createLineBreak(baseDiv);
-        const title              = GuiTools.createTitle(baseDiv, "Welcome to Eltisa");
-        GuiTools.createLineBreak(baseDiv, 2);
-    }
     const buttonDiv          = GuiTools.createDiv(baseDiv);        
     const playButton         = GuiTools.createButton(buttonDiv, "play", playAction);
     const helpButton         = GuiTools.createButton(buttonDiv, "help", helpAction);
@@ -23,13 +26,10 @@ function IntroBlocker(body, activateGame, deactivateGame, server) {
     const infoDiv            = GuiTools.createDiv(baseDiv);
     infoDiv.style.width      = '90%';
     infoDiv.style.textAlign  = 'left';
-    const startLabel         = GuiTools.createLabel(infoDiv, "go to:");
-    startLabel.style.width   = '100px';
-    const startSelection     = GuiTools.createDropDown(infoDiv);
-    startSelection.style.width= '200px';
-    GuiTools.createLineBreak(infoDiv, 2);
+    GuiTools.createLineBreak(infoDiv, 1);
     const nameLabel          = GuiTools.createLabel(infoDiv, "now online:");
     nameLabel.style.marginBottom = '0px';
+
     const nameList           = GuiTools.createList(infoDiv, '5');
 
     const helpDiv            = GuiTools.createDiv(baseDiv);
@@ -129,52 +129,13 @@ function IntroBlocker(body, activateGame, deactivateGame, server) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
         
 
-    function playAction(event) {
-        if(event) event.stopPropagation();
-        body.removeChild(baseDiv);
-        activateGame();
-
-        const startingPoint = startSelection.getSelectedOption();
-
-        if(startingPoint != StartingPoints.currentPosition ) {
-            const startPos      = Vector.randomize(startingPoint, Config.randomStartRange);
-            player.setPosition(startPos.x, startPos.y, startPos.z);                                    
-        }
-    
-        return false;
+    function playAction() {
+        viewManager.unshow(self);
     }
 
 
-    function exitAction() {
-        sessionStorage.clear();
-        window.location.href='/Eltisa.htm';   
-        return false;     
-    }
-
-
-    this.show = function(_player) {
-        player = _player;
-        server.requestListActors();        
-        if(!body.contains(baseDiv)) {
-            body.appendChild(baseDiv);
-        }
-        deactivateGame();      
-        
-        startSelection.clearOptions();
-        if( player.isVisitor() ) {
-            if( player.hasPosition() ) startSelection.addOptions(StartingPoints.currentPosition);
-            startSelection.addOptionsFromArray(StartingPoints.visitors);
-        }
-        else {
-            if( player.hasPosition() ) startSelection.addOptions(StartingPoints.currentPosition);
-            startSelection.addOptionsFromArray(StartingPoints.citizen);
-        }
-        startSelection.selectedIndex = 0;
-    }
-
-
-    this.isVisible = function() {
-        return body.contains(baseDiv);
+    this.enable = function() {
+        serverOut.requestListActors();                
     }
 
 

@@ -1,15 +1,22 @@
 'use strict';
 
-function CameraEditor(body, activateGame, deactivateGame, server) {
+function CameraEditor(viewManager, serverIn, serverOut, player) {
     const self               = this;
-    let   blockPos;
     let   videoStream        = null;
+    let   blockPos           = null;
 
-    const baseDiv            = GuiTools.createOverlayTransparent();    
+    // event handler
+    const eventHandlers    = new Array(EV_Max);
+    eventHandlers[EV_Keyboard_F3]   = close;
+    this.getEventHandler = (eventType) => eventHandlers[eventType];
+    this.getHtmlElement  = () => baseDiv;
+
+    // gui elements
+    const baseDiv            = GuiTools.createOverlayTransparent(null);    
     const panel              = GuiTools.createCenteredPanel(baseDiv, '600px', '500px');
     
     const closeDiv           = GuiTools.createCloseButtonDiv(panel);    
-    GuiTools.createCloseButton(closeDiv, exitAction);
+    GuiTools.createCloseButton(closeDiv, close);
 
     GuiTools.createLineBreak(panel, 4);
     GuiTools.createText(panel, "Take a snapshot");
@@ -20,77 +27,47 @@ function CameraEditor(body, activateGame, deactivateGame, server) {
     canvas.style.borderStyle = 'double';
     GuiTools.createLineBreak(panel, 3);
     const pictureButton      = GuiTools.createButton(panel, "Take Picture", takePicture);
-    const closeButton        = GuiTools.createButton(panel, "Close", exitAction);
+    const closeButton        = GuiTools.createButton(panel, "Close", close);
     
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // show and hide blocker
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    async function takePicture() {
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        server.requestWriteResource(blockPos, Block.Camera, "", canvas.toDataURL('image/jpeg'));        
-    }
-
-
-    function keydownHandler(event) {
-        const keyCode = KeyCode.getFromEvent(event);
-    
-        if( keyCode == KeyCode.F3 ) {
-            event.preventDefault();
-            event.stopPropagation();
-            exitAction();
-            return false;
-        }
-
-        return true;
-    }
-
-
-    function exitAction(event) {
-        if(videoStream) videoStream.getVideoTracks().forEach(track => track.stop());
-        if(event) event.stopPropagation();
-        document.removeEventListener("keydown", keydownHandler);
-        body.removeChild(baseDiv);
-        activateGame();
-    }
-
-
-
-    this.show = function(chunkStore, _blockPos) {
-        blockPos             = _blockPos;
-        const blockData  = chunkStore.getBlockData(blockPos);
-        if( !BlockData.isCamera(blockData) ) return false;
-
-        deactivateGame();          
+    this.enable = function() {
+        blockPos = player.getTargetPos();
+        if( blockPos == null ) return;
 
         canvas.clear();
-        if(!body.contains(baseDiv)) {
-            body.appendChild(baseDiv);
-        }
-        document.addEventListener("keydown", keydownHandler);        
-        server.requestReadResource(blockPos, Block.Camera, "");
 
         navigator.mediaDevices.getUserMedia( {video: true} )
         .then( (stream) => video.srcObject = videoStream = stream );
+
+        serverIn.receiveResourceHandler = updatePicture;
+        serverOut.requestReadResource(blockPos, Block.Camera, "");             
     }
-
-
-    this.isVisible = function() {
-        return body.contains(baseDiv);
-    }
-
     
-    this.updatePicture = function(text) {
-        if( self.isVisible() ) {
+    
+    this.disable = function() {
+        serverIn.receiveResourceHandler = null;
+    }
+    
+
+    function updatePicture(messageType, blockType, resourceResponse, text) {
+        if( resourceResponse == SR_Ok && blockType==Block.Camera && messageType == SM_ReadResourceResponse) {
             var image = new Image();
-            image.onload = function() {
-                canvas.getContext('2d').drawImage(image, 0, 0);
-            };
+            image.onload = () => canvas.drawImage(image);
             image.src = text; 
         }
     }
 
+
+    function close() {
+        if(videoStream) videoStream.getVideoTracks().forEach(track => track.stop());
+        viewManager.unshow(self);
+    }
+
+
+    async function takePicture() {
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        serverOut.requestWriteResource(blockPos, Block.Camera, "", canvas.toDataURL('image/jpeg'));      
+    }
 
 }

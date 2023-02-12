@@ -1,15 +1,22 @@
 'use strict';
 
 
-function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
+function PortalEditor(viewManager, serverIn, serverOut, player) {
+    const self               = this;
+    var blockPos;
 
-    const div                = GuiTools.createOverlay();
+    // event handler
+    const eventHandlers    = new Array(EV_Max);
+    eventHandlers[EV_Keyboard_F3]   = closeAction;
+    this.getEventHandler = (eventType) => eventHandlers[eventType];
+    this.getHtmlElement  = () => baseDiv;
 
-    const panel              = GuiTools.createTabletDiv(div);
+    // gui elements
+    const baseDiv            = GuiTools.createOverlayTransparent();
+    const panel              = GuiTools.createCenteredPanel(baseDiv, "550px", "300px");
     panel.style.backgroundColor = "rgba(0, 160, 190, 0.8)";
     const closeDiv           = GuiTools.createCloseButtonDiv(panel);    
     const closeButton        = GuiTools.createCloseButton(closeDiv, closeAction);
-
 
     GuiTools.createLineBreak(panel, 2);
     GuiTools.createTitle(panel, "Warning");
@@ -32,9 +39,6 @@ function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
     const cancelButton       = GuiTools.createButton(panel, "cancel",   closeAction);
 
 
-    const self               = this;
-    var blockPos;
-
     
     function getTargetPos() {
         const targetPos                = {};
@@ -52,9 +56,7 @@ function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
     }
 
 
-    function teleportAction(event)  {
-        if(event) event.stopPropagation();
-
+    function teleportAction()  {
         const targetPos = getTargetPos();
         if( !targetPos ) return;
         player.setPosition(targetPos.x, targetPos.y, targetPos.z);
@@ -66,24 +68,17 @@ function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
     // tab events
     ///////////////////////////////////////////////////////////////////////////////////////////////////    
 
-    function closeAction(event)  {
-        if(event) event.stopPropagation();
-        document.removeEventListener("keydown", keydownHandler);
-        activateGame();     
-        body.removeChild(div);       
-        return false;
+    function closeAction()  {
+        viewManager.unshow(self);
     }
 
 
-    function saveAction(event) {
-        if(event) event.stopPropagation();
-
+    function saveAction() {
         const targetPos = getTargetPos();
         if( !targetPos ) return;
         const text = JSON.stringify(targetPos);
-        server.requestWriteResource(blockPos, Block.Portal, "", text); 
-        closeAction();
-        return false;
+        serverOut.requestWriteResource(blockPos, Block.Portal, "", text); 
+        viewManager.unshow(self);
     }
     
 
@@ -92,41 +87,11 @@ function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
     }
 
 
-
-    function keydownHandler(event) {
-        const keyCode = KeyCode.getFromEvent(event);
-    
-        if( keyCode == KeyCode.F3 ) {
-            event.preventDefault();
-            event.stopPropagation();
-            closeAction();
-            return false;
-        }
-        else {
-            teleportButton.disabled = false;
-            saveButton.disabled = false;
-            return true; 
-        }
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // show blocker
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    this.enable = function() {
+        blockPos      = player.getTargetPos();
+        if( blockPos == null ) return;
         
-    this.show = function(chunkStore, _blockPos) {
-        blockPos   = _blockPos;
-        const blockData  = chunkStore.getBlockData(blockPos);
-        if( !BlockData.isPortal(blockData) ) return false;
-        
-        if(!body.contains(div)) {
-            body.appendChild(div);
-        }        
-        document.addEventListener("keydown", keydownHandler);        
         targetX.focus();
-        teleportButton.disabled = true;        
-        saveButton.disabled = true;        
-
         const playerPos = player.getPosition();
         targetX.value   = Math.floor(playerPos.x);
         targetY.value   = Math.floor(playerPos.y);
@@ -134,44 +99,24 @@ function PortalBlocker(body, activateGame, deacitvateGame, server, player) {
         description.setText("");
         targetX.select();
         
-        server.requestReadResource(blockPos, Block.Portal, ""); 
-        deacitvateGame();
-
-        return true;
+        serverIn.receiveResourceHandler = updateContent;
+        serverOut.requestReadResource(blockPos, Block.Portal, ""); 
     }
 
 
-    this.isVisible = function() {
-        return body.contains(div);
+    this.disable = function() {
+        serverIn.receiveResourceHandler = null;
     }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // asynchronous server resource events
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
     
-    var jumpRequestTime = 0;
 
-    this.requestTeleportation = function(chunkStore, blockPos) {
-        const blockData  = chunkStore.getBlockData(blockPos);
-        if( !BlockData.isPortal(blockData) ) return false;
-        jumpRequestTime = performance.now();
-        server.requestReadResource(blockPos, Block.Portal, ""); 
-    }
-
-    this.updateOrJump = function(resourceMessage, player) {
-        if( self.isVisible() ) {
-            const targetPos = JSON.parse(resourceMessage);
+    function updateContent(messageType, blockType, resourceResponse, jsonText) {
+        if( resourceResponse == SR_Ok && blockType==Block.Portal && messageType == SM_ReadResourceResponse) {
+            const targetPos = JSON.parse(jsonText);
             targetX.value              = targetPos.x;
             targetY.value              = targetPos.y;
             targetZ.value              = targetPos.z;            
             description.setText(targetPos.description);
             teleportButton.disabled    = false;        
-        }
-        else if (performance.now()-jumpRequestTime < 5000 ) {
-            const targetPos = JSON.parse(resourceMessage);
-            player.setPosition(targetPos.x, targetPos.y, targetPos.z);
-            jumpRequestTime = 0;
         }
     }
 

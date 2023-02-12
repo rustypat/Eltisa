@@ -1,21 +1,26 @@
 'use strict';
 
 
-function ScriptureEditor(body, activateGame, deacitvateGame, server) {
-
-    const baseDiv            = GuiTools.createOverlay();
-    GuiTools.createLineBreak(baseDiv, 3);    
-    const textArea           = GuiTools.createTextArrea(baseDiv, "75%", "75%");
-    GuiTools.createLineBreak(baseDiv);    
-    const buttonDiv          = GuiTools.createDiv(baseDiv);        
-    const saveButton         = GuiTools.createButton(buttonDiv, "save",   saveAction);
-    const cancelButton       = GuiTools.createButton(buttonDiv, "cancel", cancelAction);
-
+function ScriptureEditor(viewManager, serverIn, serverOut, player) {
     var blockPos;
     var blockData;
     var noKeyPressed;    
     const self               = this;
 
+    // event handler
+    const eventHandlers    = new Array(EV_Max);
+    eventHandlers[EV_Keyboard_F3]   = cancelAction;
+    this.getEventHandler = (eventType) => eventHandlers[eventType];
+    this.getHtmlElement  = () => baseDiv;
+
+    // gui elements
+    const baseDiv            = GuiTools.createOverlay();
+    GuiTools.createLineBreak(baseDiv, 3);    
+    const textArea           = GuiTools.createTextArrea(baseDiv, "75%", "75%", changeAction);
+    GuiTools.createLineBreak(baseDiv);    
+    const buttonDiv          = GuiTools.createDiv(baseDiv);        
+    const saveButton         = GuiTools.createButton(buttonDiv, "save",   saveAction);
+    const cancelButton       = GuiTools.createButton(buttonDiv, "cancel", cancelAction);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // tab events
@@ -26,76 +31,44 @@ function ScriptureEditor(body, activateGame, deacitvateGame, server) {
 
         const changedScriptureDefinition = getChangedScriptureBlockDefinition(text);
         if( changedScriptureDefinition != null ) {
-            server.requestSwitchBlock(blockPos.x, blockPos.y, blockPos.z);
+            serverOut.requestSwitchBlock(blockPos.x, blockPos.y, blockPos.z);
         }
-        server.requestWriteResource(blockPos, Block.Scripture, "", text); 
-        body.removeChild(baseDiv);      
-        document.removeEventListener("keydown", keydownHandler);
-        activateGame();     
+        serverOut.requestWriteResource(blockPos, Block.Scripture, "", text); 
+        viewManager.unshow(self);
     }
 
 
     function cancelAction()  {
-        body.removeChild(baseDiv);       
-        document.removeEventListener("keydown", keydownHandler);
-        activateGame();     
+        viewManager.unshow(self);
     }
 
 
-    function keydownHandler(event) {
-        const keyCode = KeyCode.getFromEvent(event);
-    
-        if( keyCode == KeyCode.F3 ) {
-            event.preventDefault();
-            event.stopPropagation();
-            cancelAction();
-            return false;
-        }
-
-        else if( document.activeElement == textArea) {
-            saveButton.disabled = false;
-            noKeyPressed = false;
-        }
-        else {
-            textArea.focus();
-        }
+    function changeAction() {
+        saveButton.disabled = false;
+        noKeyPressed = false;
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // show blocker
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-        
-    this.show = function(chunkStore, _blockPos) {
-        blockPos             = _blockPos;
-        blockData            = chunkStore.getBlockData(blockPos);
-        if( !BlockData.isScripture(blockData) ) return false;
-        
-        deacitvateGame();
+    this.enable = function() {
+        blockPos      = player.getTargetPos();
+        if( blockPos == null ) return;
 
-        if(!body.contains(baseDiv)) {
-            body.appendChild(baseDiv);
-        }
         textArea.value       = "";
         noKeyPressed         = true;
         saveButton.disabled  = true;
-        
-        document.addEventListener("keydown", keydownHandler);
-        server.requestReadResource(blockPos, Block.Scripture, ""); 
 
-        return true;
+        serverIn.receiveResourceHandler = updateText;
+        serverOut.requestReadResource(blockPos, Block.Scripture, "");             
     }
-
-
-    this.isVisible = function() {
-        return body.contains(baseDiv);
+    
+    
+    this.disable = function() {
+        serverIn.receiveResourceHandler = null;
     }
+    
 
-
-    this.updateText = function(text) {
-        if( self.isVisible() ) {
-            textArea.value = text;
-        }
+    function updateText(messageType, blockType, resourceResponse, text) {
+        textArea.value = text;
     }
 
 

@@ -60,14 +60,14 @@ function ServerIn(serversocket) {
     }
     
     function receiveLoginMessage(reader) {
-        const message        = {};
-        message.actorId      = reader.readInteger();
-        message.actorType    = reader.readInteger();
-        message.actorName    = reader.readString();
-        message.actorColor   = reader.readInteger();
+        const loginResponse = reader.readInteger();
+        const actorId       = reader.readInteger();
+        const actorType     = reader.readInteger();
+        const actorName     = reader.readString();
+        const actorColor    = reader.readInteger();
         assert(SMT_EndTag == reader.readInteger());
         
-        self.receiveLoginHandler(message);
+        self.receiveLoginHandler(loginResponse, actorId, actorType, actorName, actorColor);
     }
 
 

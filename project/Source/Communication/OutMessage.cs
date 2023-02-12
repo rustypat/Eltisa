@@ -54,6 +54,12 @@ public static class OutMessage {
     }
 
 
+public enum LoginResponse {
+    Ok,
+    LoginFailed,
+}
+
+
     public static byte[] createLoginMessage(Actor actor, string errorMessage) {
         messageCounter += 1;
 
@@ -61,12 +67,14 @@ public static class OutMessage {
         builder.WriteInt((byte)MessageId.LoginResponse);
         builder.WriteInt(messageCounter);
         if(actor != null) {
+            builder.WriteInt((int)LoginResponse.Ok);
             builder.WriteInt(actor.ID);
             builder.WriteInt((int)actor.ActorType);
             builder.WriteString(actor.Name);     
             builder.WriteInt(actor.Color);    
         }
         else {
+            builder.WriteInt((int)LoginResponse.LoginFailed);
             builder.WriteInt(-1);
             builder.WriteInt((int)Actor.Type.NoActor);
             builder.WriteString(errorMessage);     

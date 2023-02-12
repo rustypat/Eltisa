@@ -1,6 +1,13 @@
 'use strict';
 
-function BlockBlocker(body, activateGame, deactivateGame, carousel) {
+function BlockSelector(viewManager, carousel) {
+    const self = this;
+
+    // event definitions
+    const eventHandlers    = new Array(EV_Max);
+    eventHandlers[EV_Keyboard_F2]      = close;
+    this.getEventHandler = (eventType) => eventHandlers[eventType];
+    this.getHtmlElement  = () => baseDiv;
     
     const baseDiv            = GuiTools.createOverlay();
     baseDiv.style.paddingTop = '15px';             
@@ -15,7 +22,7 @@ function BlockBlocker(body, activateGame, deactivateGame, carousel) {
     const buildButton        = GuiTools.createButton(buttonDiv, "Build", buildAction);
     const thingsButton       = GuiTools.createButton(buttonDiv, "Things", thingsAction);
     const specialButton      = GuiTools.createButton(buttonDiv, "Special", specialAction);
-    const closeButton        = GuiTools.createCloseButton(buttonDiv, exitAction);
+    const closeButton        = GuiTools.createCloseButton(buttonDiv, close);
     closeButton.style.top    = '15px';
     closeButton.style.right  = '100px';
     GuiTools.createLineBreak(baseDiv, 2);
@@ -106,71 +113,18 @@ function BlockBlocker(body, activateGame, deactivateGame, carousel) {
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // show and hide blocker
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    function keydownHandler(event) {
-        const keyCode = KeyCode.getFromEvent(event);
-    
-        if( keyCode == KeyCode.F2 ) {
-            event.preventDefault();
-            event.stopPropagation();
-            return exitAction();
-        }
-
-        return true;
-    }
-
-
-    function mouseclickHandler(event) {
-        if( event.button == 1 ) {  // wheel button
-            event.preventDefault();
-            event.stopPropagation();
-            return exitAction();
-        }    
-        else {
-            return true;
-        }
-    }
-    
-
-    
     function selectBlock(event) {
-        if(event) event.stopPropagation();
         const blockDefinition = event.currentTarget.blockDefinition; 
         carousel.setSelectedBlock(blockDefinition);
-        exitAction();
+        close();
     }
 
 
-    function exitAction(event) {
-        if(event) event.stopPropagation();
-        document.removeEventListener("keydown", keydownHandler);
-        document.removeEventListener("click", mouseclickHandler); 
-        body.removeChild(baseDiv);
-        activateGame();
-        return false;
+    function close() {
+        viewManager.unshow(self);
     }
 
 
-
-    this.show = function() {
-        if(!body.contains(baseDiv)) {
-            body.appendChild(baseDiv);
-        }
-        document.addEventListener("keydown", keydownHandler);        
-        document.addEventListener("click", mouseclickHandler); 
-        deactivateGame();      
-    }
-
-
-    this.isVisible = function() {
-        return body.contains(baseDiv);
-    }
-
-    
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // blocks
     ///////////////////////////////////////////////////////////////////////////////////////////////////    

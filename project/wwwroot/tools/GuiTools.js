@@ -7,14 +7,13 @@ const GuiTools = new function() {
      * @param id     {string}
      * @returns      {HTMLDivElement} 
      * */
-    this.createOverlayOpaque = function(parent, id) {
+    this.createOverlayOpaque = function(parent) {
         const div                      = document.createElement("div");
         div.style.position             = 'absolute';
         div.style.width                = '100%';
         div.style.height               = '100%';
         div.style.textAlign            = 'center';
         div.style.backgroundColor      = 'rgba(255,255,255,1)';
-        if(id) div.id                  = id;
         if(parent) parent.appendChild(div);
         return div;        
     }
@@ -25,14 +24,13 @@ const GuiTools = new function() {
      * @param id     {string}
      * @returns      {HTMLDivElement} 
      * */
-    this.createOverlay = function(parent, id) {
+    this.createOverlay = function(parent) {
         const div                      = document.createElement("div");
         div.style.position             = 'absolute';
         div.style.width                = '100%';
         div.style.height               = '100%';
         div.style.textAlign            = 'center';
         div.style.backgroundColor      = 'rgba(255,255,255,0.6)';
-        if(id) div.id                  = id;
         if(parent) parent.appendChild(div);
         return div;        
     }
@@ -43,14 +41,14 @@ const GuiTools = new function() {
      * @param id     {string}
      * @returns      {HTMLDivElement} 
      * */
-    this.createOverlayTransparent = function(parent, id) {
+    this.createOverlayTransparent = function(parent, clickAction) {
         const div                      = document.createElement("div");
         div.style.position             = 'absolute';
         div.style.width                = '100%';
         div.style.height               = '100%';
-        div.style.textAlign            = 'center';
+        div.style.textAlign            = 'center';        
         div.style.backgroundColor      = 'rgba(255,255,255,0.2)';
-        if(id) div.id                  = id;
+        div.onclick                    = clickAction;
         if(parent) parent.appendChild(div);
         return div;        
     }
@@ -72,6 +70,35 @@ const GuiTools = new function() {
     }
 
 
+    this.createTransparentPanel = function(parent, width, height) {
+        const div                      = document.createElement("div");
+        div.style.width                = width;
+        div.style.height               = height;
+        div.style.position             = 'absolute';
+        div.style.top                  = '50%';
+        div.style.left                 = '50%';
+        div.style.transform            = 'translate(-50%,-50%)';
+        div.style.padding              = "10px";
+        div.style.textAlign            = "center";
+        if(parent) parent.appendChild(div);
+        return div;        
+    }
+
+
+    this.createBackgroundPanel = function(parent) {
+        const div                      = document.createElement("div");
+        div.style.width                = "100%";
+        div.style.height               = "100%";
+        div.style.padding              = '20px';       
+        div.style.overflow             = 'auto';
+        div.style.whiteSpace           = 'nowrap'
+        div.style.backgroundColor      = 'rgb(148,207,232)';
+        div.style.backgroundImage      = 'linear-gradient(rgb(148,207,232) 10%, rgb(148,207,232), rgb(255, 255, 255))';
+        if(parent) parent.appendChild(div);
+        return div;        
+    }
+
+
 
     this.createDiv = function(parent) {
         const display                  = 'inline-block';
@@ -83,16 +110,6 @@ const GuiTools = new function() {
 
         div.hide = function() { div.style.display = "none"; }
         div.show = function() { div.style.display = display; }
-        return div;        
-    }
-
-
-    this.createBaseDiv = function(parent) {
-        const div                      = document.createElement("div");
-        div.style.width                = "100%";
-        div.style.height               = "100%";
-        div.style.backgroundColor      = 'rgba(100,250,100, 1)';
-        if(parent) parent.appendChild(div);
         return div;        
     }
 
@@ -147,17 +164,16 @@ const GuiTools = new function() {
     }
 
 
-    this.createButton = function(parent, caption, action, width, height, tooltip) {
+    this.createButton = function(parent, caption, action, width, tooltip) {
         const button                   = document.createElement("button");
         button.innerText               = caption;
         button.onclick                 = action;
-        button.style.margin            = '10px';
+        button.style.margin            = '5px';
         button.style.fontSize          = "15px";
         button.style.fontWeight        = "bold";
         if(width) button.style.width   = width;
         else      button.style.width   = "150px";
-        if(height)button.style.height  = height;
-        else      button.style.height  = "30px";
+        button.style.height            = "40px";
         if (tooltip) button.title      = tooltip;
         button.style.borderRadius      = "10px";
         button.style.borderStyle       = "solid";  
@@ -416,7 +432,7 @@ const GuiTools = new function() {
     }
 
 
-    this.createTextArrea = function(parent, width, height) {
+    this.createTextArrea = function(parent, width, height, inputAction) {
         const textArea                 = document.createElement("textarea");
         textArea.style.resize          = 'none';
         textArea.style.margin          = '10px';
@@ -429,6 +445,7 @@ const GuiTools = new function() {
         textArea.style.fontFamily      = "cursive";
         textArea.style.backgroundColor = 'rgba(255,255,200, 1)';
         textArea.maxLength             = 10 * 1024;        
+        if(inputAction) textArea.addEventListener("input", inputAction);
         if(parent) parent.appendChild(textArea);
         return textArea;
     }
@@ -462,9 +479,58 @@ const GuiTools = new function() {
         input.style.borderStyle        = "solid";
         input.style.paddingLeft        = '5px';
         input.style.paddingRight       = '5px';
-        input.setText = function(text) { input.value = (text ? text : ""); }
-        input.getText = function()     { return input.value; }
         input.type                     = 'text';
+        input.setText =  (text) => input.value = (text ? text : "");
+        input.getText =  ()     => input.value; 
+        input.clear   =  ()     => input.value = "";
+       return input;        
+    }
+
+
+    this.createEditField = function(parent, maxLength, width, placeholder) {
+        const input                         = document.createElement("input");
+        input.style.margin                  = '10px';   
+        if(maxLength) input.maxLength       = maxLength;
+        if(width)  input.style.width        = width;
+        if(placeholder) input.placeholder   = placeholder;
+        input.style.height                  = "30px";
+        input.style.textAlign               = "center";
+        input.style.fontSize           = "15px";    
+        input.style.fontWeight         = "normal";
+        input.style.borderRadius       = "10px";
+        input.style.borderStyle        = "solid";
+        input.style.margin             = "5px";
+        input.style.padding            = '5px';
+        input.style.backgroundColor    = 'white';
+        input.type                     = 'text';
+        input.setText =  (text) => input.value = (text ? text : "");
+        input.getText =  ()     => input.value; 
+        input.clear   =  ()     => input.value = "";
+        if(parent) parent.appendChild(input);
+       return input;        
+    }
+
+
+    this.createPasswordField = function(parent, maxLength, width, placeholder) {
+        const input                         = document.createElement("input");
+        input.style.margin                  = '10px';   
+        if(maxLength) input.maxLength       = maxLength;
+        if(width)  input.style.width        = width;
+        if(placeholder) input.placeholder   = placeholder;
+        input.style.height                  = "30px";
+        input.style.textAlign               = "center";
+        input.style.fontSize           = "15px";        
+        input.style.fontWeight         = "normal";
+        input.style.borderRadius       = "10px";
+        input.style.borderStyle        = "solid";
+        input.style.margin             = "5px";
+        input.style.padding            = '5px';
+        input.style.backgroundColor    = 'white';
+        input.type                     = 'password';
+        input.setText =  (text) => input.value = (text ? text : "");
+        input.getText =  ()     => input.value; 
+        input.clear   =  ()     => input.value = "";
+        if(parent) parent.appendChild(input);
        return input;        
     }
 
@@ -541,22 +607,21 @@ const GuiTools = new function() {
     }
 
 
-    this.createDropDown = function(parent, optionsVarArg) {
-        const dropDown                 = document.createElement("select");
+    this.createDropDown = function(parent, width) {
+        const dropDown                    = document.createElement("select");
+        dropDown.style.width              = width;
+        dropDown.style.height             = "45px";
+        dropDown.style.textAlign          = "center";
+        dropDown.style.fontSize           = "15px";        
+        dropDown.style.fontWeight         = "normal";
+        dropDown.style.borderRadius       = "10px";
+        dropDown.style.borderStyle        = "solid";
+        dropDown.style.margin             = "5px";
+        dropDown.style.padding            = '5px';
         if(parent) parent.appendChild(dropDown);
 
-        for(var i = 1; i < arguments.length; i++) {
-            const option = document.createElement('option');
-            option.value = arguments[i];
-            option.innerText = option.value.toString();
-            dropDown.appendChild(option);
-        }
-
-        dropDown.clearOptions = function() {
+        dropDown.setOptions = function(optionsVarArg) {
             dropDown.innerHTML = ""; 
-        }
-
-        dropDown.addOptions = function(optionsVarArg) {
             for(var i = 0; i < arguments.length; i++) {
                 const option      = document.createElement('option');
                 option.valueObject= arguments[i];
@@ -567,22 +632,13 @@ const GuiTools = new function() {
             if(arguments.length > 0) dropDown.value = arguments[0];
         }
 
-        dropDown.addOptionsFromArray = function(optionsArray) {
-            for(var i = 0; i < optionsArray.length; i++) {
-                const option      = document.createElement('option');
-                option.valueObject= optionsArray[i];
-                option.value      = optionsArray[i].toString();
-                option.innerText  = optionsArray[i].toString();
-                dropDown.appendChild(option);
-            }    
-            if(optionsArray.length > 0) dropDown.value = optionsArray[0];
-        }
-
-        dropDown.getSelectedOption = function() {
+        dropDown.getSelection = function() {
             const i = dropDown.selectedIndex;
             if( i < 0 ) return null;
             return dropDown.childNodes[i].valueObject;
         }
+
+        dropDown.clear = () => dropDown.selectedIndex = -1;
 
         return dropDown;
     }    
@@ -610,7 +666,7 @@ const GuiTools = new function() {
     }
 
 
-    this.createCanvas = function(parent, width, height, id, backgroundColor) {
+    this.createCanvas = function(parent, width, height, id) {
         const canvas                   = document.createElement("canvas");
         canvas.style.borderRadius      = "10px";
 
@@ -624,6 +680,14 @@ const GuiTools = new function() {
             context.fillStyle          = 'rgba(240,240,240, 1)';
             context.fillRect(0, 0, width, height);
         }
+
+        /** 
+         * @param image {HTMLImageElement}
+         * */
+        canvas.drawImage = function(image) {
+            canvas.getContext('2d').drawImage(image, 0, 0);
+        }
+
         return canvas;
     }    
 

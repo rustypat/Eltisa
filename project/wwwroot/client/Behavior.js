@@ -151,7 +151,7 @@ const Behavior = new function() {
         if(blockData == Block.NoBlock) {
             blockPos = Vector.down(blockPos);
             blockData = chunkStore.getBlockData(blockPos);
-            if( !BlockData.isDoubleBlock(blockData) ) return;
+            if( !BlockData.isDoubleBlock(blockData) ) return false;
         }
                 
         switchCoordinates.clear();   
