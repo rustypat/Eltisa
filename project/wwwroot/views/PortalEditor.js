@@ -109,7 +109,7 @@ function PortalEditor(viewManager, serverIn, serverOut, player) {
     }
     
 
-    function updateContent(messageType, blockType, resourceResponse, jsonText) {
+    function updateContent(messageType, blockType, resourceResponse, jsonText, targetId) {
         if( resourceResponse == SR_Ok && blockType==Block.Portal && messageType == SM_ReadResourceResponse) {
             const targetPos = JSON.parse(jsonText);
             targetX.value              = targetPos.x;

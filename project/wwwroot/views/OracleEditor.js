@@ -64,7 +64,7 @@ function OracleEditor(viewManager, serverIn, serverOut, player) {
     }
     
 
-    function updateOracle(messageType, blockType, resourceResponse, newText) {
+    function updateOracle(messageType, blockType, resourceResponse, newText, targetId) {
         if( resourceResponse == SR_Ok && blockType==Block.Oracle && messageType == SM_ReadResourceResponse) {
             textField.value  = newText;
             text             = newText;

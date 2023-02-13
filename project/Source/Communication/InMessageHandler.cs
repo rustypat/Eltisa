@@ -288,6 +288,7 @@ public static class InMessageHandler {
         int x           = reader.ReadInt();
         int y           = reader.ReadInt();
         int z           = reader.ReadInt();
+        int targetId    = reader.ReadInt();
         ushort blockType= reader.ReadUShort();
         string password = reader.ReadString();
         int endTag      = reader.ReadInt();
@@ -295,7 +296,7 @@ public static class InMessageHandler {
 
         var position    = new WorldPoint(x, y, z);
         var result      = World.ReadResource(socket.GetActor(), position, blockType, password);
-        OutMessageHandler.SendReadResourceResponse(socket, position, blockType, result);
+        OutMessageHandler.SendReadResourceResponse(socket, position, blockType, result, targetId);
     }
 
 

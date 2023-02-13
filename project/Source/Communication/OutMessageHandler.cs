@@ -53,7 +53,7 @@ public static class OutMessageHandler {
 
 
 
-    public static void SendReadResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResult result) {
+    public static void SendReadResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResult result, int targetId) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
@@ -62,6 +62,7 @@ public static class OutMessageHandler {
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
+        builder.WriteInt(targetId);
         builder.WriteUShort(blockType);
         builder.WriteUShort((ushort)result.Response);
         builder.WriteUShort(result.Resource != null ? (ushort)result.Resource.AccessRights : (ushort)0);

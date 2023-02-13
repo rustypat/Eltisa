@@ -70,7 +70,7 @@ function InternetEditor(viewManager, serverIn, serverOut, player) {
     }
 
 
-    function updateUrl(messageType, blockType, resourceResponse, jsonText) {
+    function updateUrl(messageType, blockType, resourceResponse, jsonText, targetId) {
         if( resourceResponse == SR_Ok && blockType==Block.Internet && messageType == SM_ReadResourceResponse) {
             let jsonObject =  JSON.parse(jsonText);
             url.setText(jsonObject.text);

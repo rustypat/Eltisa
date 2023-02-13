@@ -178,6 +178,7 @@ function ServerOut(serverSocket) {
 
 
     this.requestCreateResource = function(blockPos, type, password, stringData) {
+        if(!targetId) targetId = ST_Any;
         writer.reset();
         writer.writeInteger(SM_CreateResourceRequest);
         writer.writeInteger(blockPos.x);
@@ -194,12 +195,13 @@ function ServerOut(serverSocket) {
     }
 
 
-    this.requestReadResource = function(blockPos, type, password) {
+    this.requestReadResource = function(blockPos, type, password, targetId) {
         writer.reset();
         writer.writeInteger(SM_ReadResourceRequest);
         writer.writeInteger(blockPos.x);
         writer.writeInteger(blockPos.y);
         writer.writeInteger(blockPos.z);
+        writer.writeInteger(targetId);
         writer.writeShort(type);
         writer.writeString(password);
         writer.writeInteger(SMT_EndTag);

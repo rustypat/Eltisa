@@ -185,13 +185,14 @@ function ServerIn(serversocket) {
         const x            = reader.readInteger();
         const y            = reader.readInteger();
         const z            = reader.readInteger();
+        const targetId     = reader.readInteger();
         const blockType    = reader.readUShort();
         const response     = reader.readUShort();
         const accessRights = reader.readUShort();
         const resourceType = reader.readUShort();
         const resourceText = reader.readString();    
         assert(SMT_EndTag == reader.readInteger());
-        self.receiveResourceHandler?.(SM_ReadResourceResponse, blockType, response, resourceText);
+        self.receiveResourceHandler?.(SM_ReadResourceResponse, blockType, response, resourceText, targetId);
     }
 
 

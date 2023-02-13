@@ -92,7 +92,7 @@ function BookEditor(viewManager, serverIn, serverOut, player) {
     }
 
 
-    function updateContent(messageType, blockType, resourceResponse, jsonText) {
+    function updateContent(messageType, blockType, resourceResponse, jsonText, targetId) {
         if( resourceResponse == SR_Ok && blockType==Block.Book && messageType == SM_ReadResourceResponse) {
             const deltaContent = JSON.parse(jsonText);
             quill.setContents(deltaContent);

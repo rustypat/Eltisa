@@ -31,7 +31,7 @@ function CameraViewer(viewManager, serverIn, serverOut, player) {
     
 
 
-    function updatePicture(messageType, blockType, resourceResponse, text) {
+    function updatePicture(messageType, blockType, resourceResponse, text, targetId) {
         if( resourceResponse == SR_Ok && blockType==Block.Camera && messageType == SM_ReadResourceResponse) {
             let image = new Image();
             image.onload = () => canvas.drawImage(image);

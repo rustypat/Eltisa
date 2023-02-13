@@ -2,8 +2,11 @@
 
 
 // server response target, where to send the response of a request to
+const ST_Any                          = 1000;
 const ST_Edit                         = 1001;
-const ST_Act                          = 1002;
+const ST_View                         = 1002;
+const ST_Info                         = 1003;
+const ST_Act                          = 1004;
 
 
 // Server Responses

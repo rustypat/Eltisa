@@ -155,19 +155,26 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         else if( BlockData.isBook(blockData) )      viewManager.showModal(bookEditor);
         else if( BlockData.isTetris(blockData) )    viewManager.showModal(tetrisViewer);
         else if( BlockData.isTresor(blockData) )    viewManager.showModal(tresorViewer);
-        else if( BlockData.isPortal(blockData))     serverOut.requestReadResource(targetPos, Block.Portal, ""); 
+        else if( BlockData.isPortal(blockData))     serverOut.requestReadResource(targetPos, Block.Portal, "", ST_Act); 
 
         // if( !handled ) handled = chat.addText(" ");
     }
 
 
-    function receiveResource(messageType, blockType, resourceResponse, text) {
-        if( resourceResponse == SR_Ok && blockType==Block.Portal && messageType == SM_ReadResourceResponse) {
+    function receiveResource(messageType, blockType, resourceResponse, text, targetId) {
+        if( resourceResponse == SR_Ok && blockType==Block.Portal && messageType == SM_ReadResourceResponse && targetId == ST_Act) {
             const targetPos = JSON.parse(text);
             player.setPosition(targetPos.x, targetPos.y, targetPos.z);
         }
-        else if( resourceResponse == SR_Ok && blockType==Block.Oracle && messageType == SM_ReadResourceResponse) {
+        if( resourceResponse == SR_Ok && blockType==Block.Portal && messageType == SM_ReadResourceResponse && targetId == ST_Info) {
+            const target = JSON.parse(text);
+            statusbar.setBlockInfo(target.description, Block.Portal);
+        }
+        else if( resourceResponse == SR_Ok && blockType==Block.Oracle && messageType == SM_ReadResourceResponse && targetId == ST_Info) {
             statusbar.setBlockInfo(text, Block.Oracle);
+        }
+        else {
+            Log.warning("received invalid message " + messageType + " for " + blockType);
         }
     }
 
@@ -181,7 +188,10 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         const blockData  = chunkStore.getBlockData(targetPos);     
         
         if( BlockData.isOracleUsed(blockData) ) {
-            serverOut.requestReadResource(targetPos, Block.Oracle, ""); 
+            serverOut.requestReadResource(targetPos, Block.Oracle, "", ST_Info); 
+        }
+        else if( BlockData.isPortal(blockData) ) {
+            serverOut.requestReadResource(targetPos, Block.Portal, "", ST_Info); 
         }
         else { // clear message if focus leaves block
             statusbar.clearBlockInfo();
