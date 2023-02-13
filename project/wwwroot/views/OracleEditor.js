@@ -3,9 +3,9 @@
 
 function OracleEditor(viewManager, serverIn, serverOut, player) {
     const self = this;
-    var blockPos;
-    var blockData;
-    var text;
+    let blockPos;
+    let blockData;
+    let text;
 
     // event handler
     const eventHandlers    = new Array(EV_Max);

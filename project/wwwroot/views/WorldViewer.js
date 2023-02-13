@@ -65,7 +65,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         if( player.targetIsActor() ) return false;
 
         const blockDefinition = carousel.getSelectedBlock();
-        var   targetPos       = player.getTargetPoint();
+        let   targetPos       = player.getTargetPoint();
 
         if( targetPos == null && BlockData.isFlightStone(blockDefinition) ) {
             const addDirection = player.getDirection().scale(10);

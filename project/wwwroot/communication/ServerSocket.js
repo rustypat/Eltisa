@@ -3,8 +3,8 @@
 function ServerSocket(serverLocation, webSocketPath) {
     
     const self             = this;
-    var   webSocket        = {};    
-    var   messageHandler   = function(event) {};
+    let   webSocket        = {};    
+    let   messageHandler   = function(event) {};
 
     this.setMessageHandler = function(handler) {
         messageHandler      = handler;

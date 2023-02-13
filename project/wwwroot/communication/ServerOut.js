@@ -111,7 +111,7 @@ function ServerOut(serverSocket) {
         writer.reset();
         writer.writeInteger(SM_SwitchBlock);
         writer.writeInteger(coordinatesNumberArray.getLength());            
-        for(var i=0; i < coordinatesNumberArray.getLength(); i++) {
+        for(let i=0; i < coordinatesNumberArray.getLength(); i++) {
             writer.writeInteger( coordinatesNumberArray.get(i) );
         }
         writer.writeInteger(SMT_EndTag);
@@ -164,7 +164,7 @@ function ServerOut(serverSocket) {
         for (let [regionPoint, chunkList] of regionMap) {
             writer.writeInteger(regionPoint);
             writer.writeShort(chunkList.length);
-            for(var i=0; i<chunkList.length; i++) {
+            for(let i=0; i<chunkList.length; i++) {
                 writer.writeShort(chunkList[i]);
             }
         }
@@ -267,7 +267,7 @@ function ServerOut(serverSocket) {
 
     function convertChunkNumberArrayToRegionMap(regionMap, chunkNumberArray) {
         regionMap.clear();
-        for(var i=0; i < chunkNumberArray.getLength(); i++) {
+        for(let i=0; i < chunkNumberArray.getLength(); i++) {
             const chunkPos = chunkNumberArray.get(i);
             const regionPoint = ChunkPos.getServerRegionPoint(chunkPos);
             const chunkPoint  = ChunkPos.getServerChunkPoint(chunkPos);

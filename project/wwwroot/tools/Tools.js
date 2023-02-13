@@ -158,8 +158,8 @@ const Vector = new function() {
 
 const ChunkPos = new function() {
 
-    var byteBuffer = new ArrayBuffer(8);
-    var byteView = new DataView(byteBuffer);
+    let byteBuffer = new ArrayBuffer(8);
+    let byteView = new DataView(byteBuffer);
     byteView.setFloat64(0, 1);
 
     this.create = function(chunkPosX, chunkPosY, chunkPosZ) {
@@ -256,9 +256,9 @@ function NumberArray(startCapacity, capacityIncrement) {
     if(!startCapacity)       startCapacity     = 256;
     else                     startCapacity     = Math.ceil(startCapacity / capacityIncrement) * capacityIncrement;
     
-    var length      = 0;
-    var capacity    = startCapacity;
-    var floatArray  = new Float64Array(capacity);
+    let length      = 0;
+    let capacity    = startCapacity;
+    let floatArray  = new Float64Array(capacity);
 
 
     this.getLength = function() {
@@ -280,7 +280,7 @@ function NumberArray(startCapacity, capacityIncrement) {
             capacity = newCapacity;
         }
 
-        for(var i = 0; i < arguments.length; i++) {
+        for(let i = 0; i < arguments.length; i++) {
             floatArray[length] = arguments[i];
             length++;
         }        
@@ -294,15 +294,15 @@ function NumberArray(startCapacity, capacityIncrement) {
 
 
     this.contains = function(value) {
-        for(var i=length-1; i >= 0; i--) {
+        for(let i=length-1; i >= 0; i--) {
             if(floatArray[i] == value) return true;
         }
         return false;
     }
 
     this.removeFirstMatch = function(value,  matchFunction) {
-        var shift = false;
-        for(var i=0; i < length; i++) {
+        let shift = false;
+        for(let i=0; i < length; i++) {
             if(!shift && matchFunction(floatArray[i], value)) {
                 length--;
                 shift = true;
@@ -314,7 +314,7 @@ function NumberArray(startCapacity, capacityIncrement) {
 
 
     this.replaceFirstMatch = function(value,  matchFunction) {
-        for(var i=0; i < length; i++) {
+        for(let i=0; i < length; i++) {
             if(matchFunction(floatArray[i], value)) {
                 floatArray[i] = value;
                 return true;
@@ -327,7 +327,7 @@ function NumberArray(startCapacity, capacityIncrement) {
     // returns true if replaced and false if added
     this.replaceOrAdd = function(value,  matchFunction) {
         // try replace
-        for(var i=0; i < length; i++) {
+        for(let i=0; i < length; i++) {
             if(matchFunction(floatArray[i], value)) {
                 floatArray[i] = value;
                 return true;
@@ -358,9 +358,9 @@ function NumberArray(startCapacity, capacityIncrement) {
 
 
 function IntegerArray(startCapacity, capacityIncrement, int32Array) {
-    var length;
-    var capacity;
-    var intArray;
+    let length;
+    let capacity;
+    let intArray;
     
     if(startCapacity == -1) {
         length      = int32Array.length;
@@ -404,8 +404,8 @@ function IntegerArray(startCapacity, capacityIncrement, int32Array) {
 
 
     this.removeFirstMatch = function(value,  matchFunction) {
-        var shift = false;
-        for(var i=0; i < length; i++) {
+        let shift = false;
+        for(let i=0; i < length; i++) {
             if(!shift && matchFunction(intArray[i], value)) {
                 length--;
                 shift = true;
@@ -417,7 +417,7 @@ function IntegerArray(startCapacity, capacityIncrement, int32Array) {
 
 
     this.replaceFirstMatch = function(value,  matchFunction) {
-        for(var i=0; i < length; i++) {
+        for(let i=0; i < length; i++) {
             if(matchFunction(intArray[i], value)) {
                 intArray[i] = value;
                 return true;
@@ -430,7 +430,7 @@ function IntegerArray(startCapacity, capacityIncrement, int32Array) {
     // returns true if replaced and false if added
     this.replaceOrAdd = function(value,  matchFunction) {
         // try replace
-        for(var i=0; i < length; i++) {
+        for(let i=0; i < length; i++) {
             if(matchFunction(intArray[i], value)) {
                 intArray[i] = value;
                 return true;
@@ -462,7 +462,7 @@ function IntegerArray(startCapacity, capacityIncrement, int32Array) {
 
 function WaitWatch(minWaitSeconds) {
     const waitTime      = minWaitSeconds * 1000;
-    var   startTime     = performance.now();
+    let   startTime     = performance.now();
     
 
     this.hasWaitedEnough = function() {
@@ -489,7 +489,7 @@ const System = new function() {
 
     this.browserIsLittleEndian = (
         function() {
-            var buffer = new ArrayBuffer(2);
+            let buffer = new ArrayBuffer(2);
             new DataView(buffer).setInt16(0, 256, true /* littleEndian */);
             // Int16Array uses the platform's endianness.
             return new Int16Array(buffer)[0] === 256;
@@ -562,7 +562,7 @@ const fail = function(message) {
 
 
 function isOneOf(obj, values) {
-    for(var i = 1; i < arguments.length; i++) {
+    for(let i = 1; i < arguments.length; i++) {
         if( obj == arguments[i] ) return true;
     }
     return false;

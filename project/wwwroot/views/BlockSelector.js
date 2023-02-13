@@ -57,8 +57,8 @@ function BlockSelector(viewManager, carousel) {
     initialize();
 
     function initialize() {
-        var index     = 0;
-        var lineInfo  = CarouselInfo.getLineInfo(index++);
+        let index     = 0;
+        let lineInfo  = CarouselInfo.getLineInfo(index++);
         while( lineInfo ) {
             if( lineInfo.lineType == CarouselInfo.LineTypes.Nature) {
                 addBlockLine(natureDiv, lineInfo);
@@ -135,7 +135,7 @@ function BlockSelector(viewManager, carousel) {
         lineDescription.style.verticalAlign  = 'top';
         lineDescription.style.width          = '110px';
         lineDescription.style.whiteSpace     = 'normal'
-        for(var i=0; i < lineInfo.length; i++) {
+        for(let i=0; i < lineInfo.length; i++) {
             createBlockSelection(parent, lineInfo[i]);
         }        
         GuiTools.createLineBreak(parent);

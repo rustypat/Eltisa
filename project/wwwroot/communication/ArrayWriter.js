@@ -7,7 +7,7 @@ function ArrayWriter(maxBufferLength) {
     const buffer   = new ArrayBuffer(maxBufferLength);
     const dataView = new DataView(buffer, 0);
 
-    var   pos      = 0;    
+    let   pos      = 0;    
 
 
     this.reset = function() {
@@ -51,7 +51,7 @@ function ArrayWriter(maxBufferLength) {
             dataView.setInt32(pos, uint8Array.byteLength, true);        
             pos += 4;
             
-            for(var i=0; i < uint8Array.byteLength; i++) {
+            for(let i=0; i < uint8Array.byteLength; i++) {
                 dataView.setUint8(pos, uint8Array[i]);
                 pos += 1;
             }    

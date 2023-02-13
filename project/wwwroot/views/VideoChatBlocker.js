@@ -499,7 +499,7 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
 
 
     function getRemoteIdFirstIdle() {
-        for(var id=0; id < remotes.length; id++) {
+        for(let id=0; id < remotes.length; id++) {
             const remote = remotes[id];
             if(remote.videoRTC.isIdle()) {
                 return id;
@@ -510,7 +510,7 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
 
 
     function getRemoteIdByName(name) {
-        for(var id=0; id < remotes.length; id++) {
+        for(let id=0; id < remotes.length; id++) {
             const remote = remotes[id];
             if(remote.videoRTC.getRemoteName() == name || remote.name.getText() == name) {
                return id;

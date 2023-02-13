@@ -31,7 +31,7 @@ function WorldPort(body) {
     light.specular           = new BABYLON.Color3(0, 0, 0);
     light.groundColor        = new BABYLON.Color3(0.5, 0.5, 0.5);    
 
-    var skyBox               = null;
+    let skyBox               = null;
         
     // materials
     const solidMaterial      = new BABYLON.StandardMaterial("solidMaterial",scene);
@@ -47,8 +47,8 @@ function WorldPort(body) {
     actorMaterial.diffuseTexture   = new BABYLON.Texture("/resources/actor.png", scene)
     actorMaterial.freeze();
     
-    var environmentBlockRadius = Config.getEnvironmentBlockRadius();;
-    var needsRendering       = true;
+    let environmentBlockRadius = Config.getEnvironmentBlockRadius();;
+    let needsRendering       = true;
     
     const babylonBlack       = new BABYLON.Color3(0, 0, 0);
     const babylonSkyBlue     = new BABYLON.Color3(0.58, 0.81, 0.91);  
@@ -111,7 +111,7 @@ function WorldPort(body) {
     }
 
 
-    var isRendering = false;
+    let isRendering = false;
     this.startRenderLoop = function(renderFunction) {
         if(isRendering) return;
         engine.runRenderLoop( renderFunction);
@@ -258,7 +258,7 @@ function WorldPort(body) {
         clearVertexData(transparentVertexData);
         clearVertexData(permeableVertexData);
         
-        for(var i=0; i < chunk.blocks.getLength(); i++) {
+        for(let i=0; i < chunk.blocks.getLength(); i++) {
             const blockData = chunk.blocks.get(i);
             const viewInfo  = WorldInfo.getViewInfo(blockData);   
             if( viewInfo.isPermeable ) {
@@ -320,8 +320,8 @@ function WorldPort(body) {
         vertexData.material            = material;
         vertexData.checkCollisions     = checkCollisions;
 
-        var verticeIndex = 0;
-        var index = 0;
+        let verticeIndex = 0;
+        let index = 0;
         while(index < vertexData.triangles.length - 6) {
             vertexData.triangles[index++] = verticeIndex;  vertexData.triangles[index++] = verticeIndex+1;  vertexData.triangles[index++] = verticeIndex+2;  
             vertexData.triangles[index++] = verticeIndex;  vertexData.triangles[index++] = verticeIndex+2;  vertexData.triangles[index++] = verticeIndex+3;  
@@ -359,9 +359,9 @@ function WorldPort(body) {
 
 
     function addRectanglesToVertexData(vertexData, x, y, z, rectangleInfo) { 
-        var v  = vertexData.rectanglesCount * 4 * 3;
-        var n  = vertexData.rectanglesCount * 4 * 3;
-        var u  = vertexData.rectanglesCount * 4 * 2;
+        let v  = vertexData.rectanglesCount * 4 * 3;
+        let n  = vertexData.rectanglesCount * 4 * 3;
+        let u  = vertexData.rectanglesCount * 4 * 2;
         
         vertexData.orthogonals.set(rectangleInfo.normals, n);
         vertexData.textures.set(rectangleInfo.texture, u);        
@@ -369,7 +369,7 @@ function WorldPort(body) {
 
         const numberOfVertices = rectangleInfo.numberOfRectangles * 4;
         const vertices         = vertexData.vertices;
-        for(var i=0; i < numberOfVertices; i++) {
+        for(let i=0; i < numberOfVertices; i++) {
             vertices[v++] +=x;  
             vertices[v++] +=y;  
             vertices[v++] +=z;
@@ -418,7 +418,7 @@ function WorldPort(body) {
     this.createActorMesh = function(actor) {
         actorFaceColors[1]        = intToColor(actor.color);                    // individual side color
         
-        var mesh = BABYLON.MeshBuilder.CreateCylinder("actor", actorCylinderOptions, scene);
+        let mesh = BABYLON.MeshBuilder.CreateCylinder("actor", actorCylinderOptions, scene);
         mesh.material             = actorMaterial;        
         mesh.position.x           = actor.positionX;
         mesh.position.y           = actor.positionY - 0.51;
@@ -451,8 +451,8 @@ function WorldPort(body) {
 
 
     function createSpaceSkybox() {
-        var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1000}, scene);
-        var skyboxMaterial = new BABYLON.StandardMaterial("skyBoxMaterail", scene);
+        let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1000}, scene);
+        let skyboxMaterial = new BABYLON.StandardMaterial("skyBoxMaterail", scene);
         skyboxMaterial.backFaceCulling = false;
         skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("/resources/skybox/space", scene);
         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;

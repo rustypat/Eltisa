@@ -1,7 +1,7 @@
 'use strict';
 
 function BookmarkBlocker(body, activateGame, deactivateGame) {
-    var player;
+    let player;
     
     const baseDiv            = GuiTools.createOverlay();
     
@@ -41,10 +41,10 @@ function BookmarkBlocker(body, activateGame, deactivateGame) {
         const x         = Math.floor(pos.x);
         const y         = Math.floor(pos.y) + 10;
         const z         = Math.floor(pos.z);
-        var params      = "x=" + x + "&y=" + y + "&z=" + z;
-        var caption     = "Eltisa " + x + " " + y + " " + z;
+        let params      = "x=" + x + "&y=" + y + "&z=" + z;
+        let caption     = "Eltisa " + x + " " + y + " " + z;
         
-        var url         = window.location.origin;
+        let url         = window.location.origin;
         link.href       = url + "?" + params;
         link.title      = caption;
         link.innerText  = caption;
@@ -56,9 +56,9 @@ function BookmarkBlocker(body, activateGame, deactivateGame) {
         const x         = Math.floor(pos.x);
         const y         = Math.floor(pos.y) + 10;
         const z         = Math.floor(pos.z);
-        var params      = "x=" + x + "&y=" + y + "&z=" + z;
+        let params      = "x=" + x + "&y=" + y + "&z=" + z;
         
-        var url         = window.location.origin;
+        let url         = window.location.origin;
         mail.href       = 'mailto:?subject=Eltisa&body=' + escape("Hello my friend\nlook, what I have build:\n\n" + url + "?" + params + " \n\n regards " + player.getName());
 
         window.history.replaceState(null, null, "?hello=world");
@@ -70,8 +70,8 @@ function BookmarkBlocker(body, activateGame, deactivateGame) {
         const x         = Math.floor(pos.x);
         const y         = Math.floor(pos.y) + 10;
         const z         = Math.floor(pos.z);
-        var params      = "x=" + x + "&y=" + y + "&z=" + z;
-        var caption     = "Eltisa " + x + "/" + y + "/" + z;
+        let params      = "x=" + x + "&y=" + y + "&z=" + z;
+        let caption     = "Eltisa " + x + "/" + y + "/" + z;
 
         document.title  = caption;
         window.history.replaceState(null, null, "?" + params);

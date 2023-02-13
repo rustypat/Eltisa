@@ -10,7 +10,7 @@ const VideoMessageType = { RequestChat: 1, StopChat:2,  SendSdpOffer: 3, SendSdp
 
 function VideoLocal(changeHandler) {
 
-    var localVideo;
+    let localVideo;
 
     const mediaConstraints = {
         audio: true,
@@ -19,8 +19,8 @@ function VideoLocal(changeHandler) {
 
     const Status             = { Idle: "off", Connected: "on" };
     this.Status              = Status;
-    var statusMessage;
-    var status               = Status.Idle;
+    let statusMessage;
+    let status               = Status.Idle;
     const self               = this;
 
     function setStatus(_status, _statusMessage) {
@@ -95,12 +95,12 @@ function VideoRTC(server, changeHandler, id) {
 
 
     // connection data
-    var localName;
-    var remoteName;
-    var remoteVideo;
-    var statusMessage;
-    var status               = Status.Idle;
-    var peerConnection;
+    let localName;
+    let remoteName;
+    let remoteVideo;
+    let statusMessage;
+    let status               = Status.Idle;
+    let peerConnection;
     const self               = this;
 
 
@@ -177,7 +177,7 @@ function VideoRTC(server, changeHandler, id) {
             peerConnection        = createPeerConnection();
             localVideoStream.getTracks().forEach(track => peerConnection.addTrack(track, localVideoStream));            
             setStatus(Status.Calling, "answering to " + remoteName);
-            var sdpOffer          = await peerConnection.createOffer();
+            let sdpOffer          = await peerConnection.createOffer();
             peerConnection.setLocalDescription(sdpOffer);
             server.requestVideoChat(localName, remoteName, VideoMessageType.SendSdpOffer, sdpOffer);
         } catch(e) {
@@ -226,7 +226,7 @@ function VideoRTC(server, changeHandler, id) {
 
     async function acceptIceCandidat(iceCandidat) {
         try {
-            var candidate = new RTCIceCandidate(iceCandidat);
+            let candidate = new RTCIceCandidate(iceCandidat);
             await peerConnection.addIceCandidate(candidate)
         } catch(e) {
             Log.error(e);
@@ -237,7 +237,7 @@ function VideoRTC(server, changeHandler, id) {
     async function acceptSdpOffer(sdp) {
         try {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
-            var sdpAnswer         = await peerConnection.createAnswer();
+            let sdpAnswer         = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(sdpAnswer);
             server.requestVideoChat(localName, remoteName, VideoMessageType.SendSdpAnswer, sdpAnswer);
         } catch(e) {
@@ -257,8 +257,8 @@ function VideoRTC(server, changeHandler, id) {
 
 
     function createPeerConnection() {
-        var connectionConfig = { iceServers: [ {urls: 'stun:stun.l.google.com:19302'} ]};
-        var connection       = new RTCPeerConnection(connectionConfig);
+        let connectionConfig = { iceServers: [ {urls: 'stun:stun.l.google.com:19302'} ]};
+        let connection       = new RTCPeerConnection(connectionConfig);
 
         connection.onicecandidate = function(event){
             server.requestVideoChat(localName, remoteName, VideoMessageType.SendIce, event.candidate);

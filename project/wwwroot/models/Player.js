@@ -8,11 +8,11 @@ function Player(viewport, chunkStore) {
     const self               = this;
 
     // player data
-    var id                   = 0;
-    var name                 = null;
-    var password             = null;
-    var type                 = PlayerType.Unknown;
-    var moveMode             = MoveType.Walk;
+    let id                   = 0;
+    let name                 = null;
+    let password             = null;
+    let type                 = PlayerType.Unknown;
+    let moveMode             = MoveType.Walk;
 
     // camera
     const walkEllipsoid      = new BABYLON.Vector3(0.35, 0.8, 0.35);
@@ -37,13 +37,13 @@ function Player(viewport, chunkStore) {
     camera.keysRight         = [39]; // ->
 
     // jump
-    var jumpSpeed            = NaN;
+    let jumpSpeed            = NaN;
     const jumpDeceleration   = 0.015;
     const initialJumpSpeed   = 0.2;
     
     // detecting changes
-    var lastPosition         = Vector.create(0, 0, 0);
-    var lastReportedPosition = Vector.create(0, 0, 0);
+    let lastPosition         = Vector.create(0, 0, 0);
+    let lastReportedPosition = Vector.create(0, 0, 0);
 
 
     let railMoveMode         = new RailMoveMode(chunkStore, camera);
@@ -330,7 +330,7 @@ function Player(viewport, chunkStore) {
         if( moveMode != MoveType.Walk && moveMode != MoveType.Run && moveMode) return false;
         return true;
 
-        // var pos = Vector.roundToFloor(camera.position);
+        // let pos = Vector.roundToFloor(camera.position);
         // pos     = Vector.down(pos);
         // pos     = Vector.down(pos);
         // return chunkStore.isSolid(pos);

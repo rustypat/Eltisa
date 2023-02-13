@@ -2,8 +2,8 @@
 
 
 function TresorViewer(viewManager, serverIn, serverOut, player) {
-    var blockPos;
-    var blockData;    
+    let blockPos;
+    let blockData;    
     const self   = this;
 
     // event handler

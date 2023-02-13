@@ -91,7 +91,7 @@ function ServerIn(serversocket) {
         const message        = {};
         message.actorCount   = reader.readInteger();
         message.names        = new Array(message.actorCount);
-        for(var x=0; x < message.actorCount; x++) {
+        for(let x=0; x < message.actorCount; x++) {
             message.names[x] = reader.readString();
         }
         assert(SMT_EndTag       == reader.readInteger());
@@ -113,7 +113,7 @@ function ServerIn(serversocket) {
     function receiveBlocksChangedMessage(reader) {
         const changedChunks = new Set();
         const blockCount     = reader.readInteger();
-        for(var i=0; i < blockCount; i++) {
+        for(let i=0; i < blockCount; i++) {
             const x        = reader.readInteger();
             const y        = reader.readInteger();
             const z        = reader.readInteger();
@@ -148,7 +148,7 @@ function ServerIn(serversocket) {
         message.requestId    = reader.readInteger();
         message.chunkCount   = reader.readInteger();
         message.chunks       = new Array(message.chunkCount);
-        for(var x=0; x < message.chunkCount; x++) {
+        for(let x=0; x < message.chunkCount; x++) {
             const regionPoint= reader.readInteger();
             const chunkPoint = reader.readUShort();
             const chunkPos   = ChunkPos.createFromServerRegionPoint(regionPoint, chunkPoint);

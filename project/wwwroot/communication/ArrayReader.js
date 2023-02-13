@@ -5,7 +5,7 @@ function ArrayReader(messageArrayBuffer) {
     const message  = messageArrayBuffer;
     const dataView = new DataView(message, 0);
 
-    var   pos      = 0;    
+    let   pos      = 0;    
 
     
     this.reset = function() {
@@ -50,7 +50,7 @@ function ArrayReader(messageArrayBuffer) {
         }
         else {
             const intArray = new Int32Array(intLength);
-            for(var i=0; i < intLength; i++) {
+            for(let i=0; i < intLength; i++) {
                 intArray[i] = dataView.getInt32(pos, true);
                 pos += 4;
             }

@@ -3,7 +3,7 @@
 
 function PortalEditor(viewManager, serverIn, serverOut, player) {
     const self               = this;
-    var blockPos;
+    let blockPos;
 
     // event handler
     const eventHandlers    = new Array(EV_Max);

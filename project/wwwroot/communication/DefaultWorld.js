@@ -23,8 +23,8 @@ const DefaultWorld = new function() {
 
         chunk.blocks              = new IntegerArray(Config.chunkSize * Config.chunkSize, 64);
         const y = Config.chunkSize - 1;
-        for(var x=0; x < Config.chunkSize; x++) {
-            for(var z=0; z < Config.chunkSize; z++) {
+        for(let x=0; x < Config.chunkSize; x++) {
+            for(let z=0; z < Config.chunkSize; z++) {
                 const blockData = BlockData.createBlockData(x, y, z, BlockFaces.Top, Block.Water);
                 chunk.blocks.add(blockData);
             }                    

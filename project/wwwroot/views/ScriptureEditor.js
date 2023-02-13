@@ -2,9 +2,9 @@
 
 
 function ScriptureEditor(viewManager, serverIn, serverOut, player) {
-    var blockPos;
-    var blockData;
-    var noKeyPressed;    
+    let blockPos;
+    let blockData;
+    let noKeyPressed;    
     const self               = this;
 
     // event handler

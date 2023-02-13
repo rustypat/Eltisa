@@ -3,8 +3,8 @@
 
 function OracleShower(chunkStore, statusbar, server) {
 
-    var showOracle;
-    var text;
+    let showOracle;
+    let text;
 
     this.updateStatusbar = function(newText) {
         text = newText;
@@ -37,8 +37,8 @@ function OracleShower(chunkStore, statusbar, server) {
 
 function PortalShower(chunkStore, statusbar, server) {
 
-    var showDescription;
-    var text;
+    let showDescription;
+    let text;
 
     this.updateStatusbar = function(resourceText) {
         const target         = JSON.parse(resourceText);

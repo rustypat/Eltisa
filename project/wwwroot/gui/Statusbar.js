@@ -28,10 +28,10 @@ function Statusbar() {
     const infoBgColor        = "rgba(255, 255, 0, 0.5)";
     const oracleBgColor      = "rgba(150, 150, 150, 1)";
 
-    var   statusText         = null;
-    var   messageText        = null;
-    var   messageStartTime   = null;
-    var   messageShowTime    = null;
+    let   statusText         = null;
+    let   messageText        = null;
+    let   messageStartTime   = null;
+    let   messageShowTime    = null;
 
 
 

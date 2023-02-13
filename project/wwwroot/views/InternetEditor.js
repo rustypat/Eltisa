@@ -21,7 +21,7 @@ function InternetEditor(viewManager, serverIn, serverOut, player) {
     GuiTools.createLineBreak(panel);    
     const iframe             = GuiTools.createIframe(panel, "", "95%", "90%");
 
-    var blockPos;
+    let blockPos;
     const self               = this;
 
 

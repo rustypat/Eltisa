@@ -462,7 +462,7 @@ const WorldInfo = new function() {
         const t = 1-topInset;
 
         const info           = createInfo();
-        var i=0;
+        let i=0;
         const rectangles     = [];
         if(l > 0) rectangles[i++]     = createRectangle( createCorners(l,0,1,  l,0,0,  l,1,0,  l,1,1), leftNormales, createSquareTexture(leftTextureIndex,   leftOrientation));
         else      info.leftRectangle  = createRectangle( createCorners(l,0,1,  l,0,0,  l,1,0,  l,1,1), leftNormales, createSquareTexture(leftTextureIndex,   leftOrientation));
@@ -496,7 +496,7 @@ const WorldInfo = new function() {
         const t = 1-topMargin;
 
         const info           = createInfo();
-        var i=0;
+        let i=0;
         const rectangles     = [];
         if( l != 0 ) rectangles[i++]     = createRectangle( createCorners(l,o,f,  l,o,b,  l,t,b,  l,t,f), leftNormales, createSquareTexture(leftTextureIndex,   leftOrientation));
         else         info.leftRectangle  = createRectangle( createCorners(l,o,f,  l,o,b,  l,t,b,  l,t,f), leftNormales, createSquareTexture(leftTextureIndex,   leftOrientation));
@@ -929,16 +929,16 @@ const WorldInfo = new function() {
     function createChairInfo(sideTextureIndex, backTextureIndex, frontTextureIndex, topTextureIndex, orientation) {
         const rectangles      = [];
         
-        var leftIndex, leftInnerIndex;
-        var leftOrientation, leftInnerOrientation;
-        var rightIndex, rightInnerIndex;
-        var rightOrientation, rightInnerOrientation;
-        var backIndex, backInnerIndex;
-        var backOrientation, backInnerOrientation;
-        var frontIndex, frontInnerIndex;
-        var frontOrientation, frontInnerOrientation;
-        var topIndex, bottomIndex;
-        var topOrientation, bottomOrientation;
+        let leftIndex, leftInnerIndex;
+        let leftOrientation, leftInnerOrientation;
+        let rightIndex, rightInnerIndex;
+        let rightOrientation, rightInnerOrientation;
+        let backIndex, backInnerIndex;
+        let backOrientation, backInnerOrientation;
+        let frontIndex, frontInnerIndex;
+        let frontOrientation, frontInnerOrientation;
+        let topIndex, bottomIndex;
+        let topOrientation, bottomOrientation;
 
         if(orientation == Orientation.Normal) {
             leftIndex       = backTextureIndex;     leftOrientation       = Orientation.Normal;
@@ -1016,8 +1016,8 @@ const WorldInfo = new function() {
 
 
     function createLowerHalfBlockInfo(leftTextureIndex, backTextureIndex, rightTextureIndex, frontTextureIndex, bottomTextureIndex, topTextureIndex, orientation) {
-        var leftIndex, rightIndex, backIndex, frontIndex, bottomIndex, topIndex;
-        var leftOrientation, rightOrientation, backOrientation, frontOrientation, bottomOrientation, topOrientation;
+        let leftIndex, rightIndex, backIndex, frontIndex, bottomIndex, topIndex;
+        let leftOrientation, rightOrientation, backOrientation, frontOrientation, bottomOrientation, topOrientation;
         if(orientation == Orientation.Normal)  {  // head to the right
             leftIndex   = leftTextureIndex;    leftOrientation  = Orientation.Normal;
             backIndex   = backTextureIndex;    backOrientation  = Orientation.Normal;
@@ -1067,50 +1067,50 @@ const WorldInfo = new function() {
 
 
     function createUpperHalfBlockInfo(leftTextureIndex, backTextureIndex, rightTextureIndex, frontTextureIndex, bottomTextureIndex, topTextureIndex, orientation) {
-        var leftTextureIndex, rightTextureIndex, backTextureIndex, frontTextureIndex;
-        var leftOrientation, rightOrientation, backOrientation, frontOrientation, bottomOrientation, topOrientation;
+        let leftIndex, rightIndex, backIndex, frontIndex, bottomIndex, topIndex;
+        let leftOrientation, rightOrientation, backOrientation, frontOrientation, bottomOrientation, topOrientation;
         if(orientation == Orientation.Normal)  {  // head to the right
-            leftTextureIndex  = backTextureIndex;    leftOrientation  = Orientation.Normal;
-            rightTextureIndex = frontTextureIndex;   rightOrientation = Orientation.Normal;
-            backTextureIndex  = rightTextureIndex;   backOrientation  = Orientation.Normal;
-            frontTextureIndex = leftTextureIndex;    frontOrientation = Orientation.Flip;
-            bottomOrientation = Orientation.Normal;
-            topOrientation    = Orientation.Normal;
+            leftIndex  = backTextureIndex;    leftOrientation  = Orientation.Normal;
+            rightIndex = frontTextureIndex;   rightOrientation = Orientation.Normal;
+            backIndex  = rightTextureIndex;   backOrientation  = Orientation.Normal;
+            frontIndex = leftTextureIndex;    frontOrientation = Orientation.Flip;
+            bottomIndex = bottomTextureIndex; bottomOrientation = Orientation.Normal;
+            topIndex    = topTextureIndex;    topOrientation    = Orientation.Normal;
         }
         else if(orientation == Orientation.Turn90)  {  
-            leftTextureIndex  = leftTextureIndex;    leftOrientation  = Orientation.Flip;
-            rightTextureIndex = rightTextureIndex;   rightOrientation = Orientation.Normal;
-            backTextureIndex  = backTextureIndex;    backOrientation  = Orientation.Normal;
-            frontTextureIndex = frontTextureIndex;   frontOrientation = Orientation.Normal;
-            bottomOrientation = Orientation.Turn90;
-            topOrientation    = Orientation.Turn90;
+            leftIndex  = leftTextureIndex;    leftOrientation  = Orientation.Flip;
+            rightIndex = rightTextureIndex;   rightOrientation = Orientation.Normal;
+            backIndex  = backTextureIndex;    backOrientation  = Orientation.Normal;
+            frontIndex = frontTextureIndex;   frontOrientation = Orientation.Normal;
+            bottomIndex = bottomTextureIndex; bottomOrientation = Orientation.Turn90;
+            topIndex    = topTextureIndex;    topOrientation    = Orientation.Turn90;
         }
         else if(orientation == Orientation.Turn180)  { 
-            leftTextureIndex  = frontTextureIndex;   leftOrientation  = Orientation.Normal;
-            rightTextureIndex = backTextureIndex;    rightOrientation = Orientation.Normal;
-            backTextureIndex  = leftTextureIndex;    backOrientation  = Orientation.Flip;
-            frontTextureIndex = rightTextureIndex;   frontOrientation = Orientation.Normal;
-            bottomOrientation = Orientation.Turn180;
-            topOrientation    = Orientation.Turn180;
+            leftIndex  = frontTextureIndex;   leftOrientation  = Orientation.Normal;
+            rightIndex = backTextureIndex;    rightOrientation = Orientation.Normal;
+            backIndex  = leftTextureIndex;    backOrientation  = Orientation.Flip;
+            frontIndex = rightTextureIndex;   frontOrientation = Orientation.Normal;
+            bottomIndex = bottomTextureIndex; bottomOrientation = Orientation.Turn180;
+            topIndex    = topTextureIndex;    topOrientation    = Orientation.Turn180;
         }
         else if(orientation == Orientation.Turn270)  {  
-            leftTextureIndex  = rightTextureIndex;   leftOrientation  = Orientation.Normal;
-            rightTextureIndex = leftTextureIndex;    rightOrientation = Orientation.Flip;
-            backTextureIndex  = frontTextureIndex;   backOrientation  = Orientation.Normal;
-            frontTextureIndex = backTextureIndex;    frontOrientation = Orientation.Normal;
-            bottomOrientation = Orientation.Turn270;
-            topOrientation    = Orientation.Turn270;
+            leftIndex  = rightTextureIndex;   leftOrientation  = Orientation.Normal;
+            rightIndex = leftTextureIndex;    rightOrientation = Orientation.Flip;
+            backIndex  = frontTextureIndex;   backOrientation  = Orientation.Normal;
+            frontIndex = backTextureIndex;    frontOrientation = Orientation.Normal;
+            bottomIndex = bottomTextureIndex; bottomOrientation = Orientation.Turn270;
+            topIndex    = topTextureIndex;    topOrientation    = Orientation.Turn270;
         }
 
         const info           = createInfo();
         info.isTransparent   = true;
         info.hasBlockSides   = true;
-        info.leftRectangle   = createRectangle( createCorners(0,0.5,1,  0,0.5,0,  0,1,0,   0,1,1), leftNormales, createRectangleTexture(leftTextureIndex,   leftOrientation, 0, 0, 0, 32));
-        info.rightRectangle  = createRectangle( createCorners(1,0.5,0,  1,0.5,1,  1,1,1,   1,1,0), rightNormales, createRectangleTexture(rightTextureIndex,  rightOrientation, 0, 0, 0, 32));
-        info.backRectangle   = createRectangle( createCorners(0,0.5,0,  1,0.5,0,  1,1,0,   0,1,0), backNormales, createRectangleTexture(backTextureIndex,   backOrientation, 0, 0, 0, 32));
-        info.frontRectangle  = createRectangle( createCorners(1,0.5,1,  0,0.5,1,  0,1,1,   1,1,1), frontNormales, createRectangleTexture(frontTextureIndex,  frontOrientation, 0, 0, 0, 32));
-        info.topRectangle    = createRectangle( createCorners(0,1,0,    1,1,0,    1,1,1,   0,1,1), topNormales,   createSquareTexture(topTextureIndex,    topOrientation));
-        info.innerRectangles = createRectangle( createCorners(1,0.5,0,  0,0.5,0,  0,0.5,1, 1,0.5,1), bottomNormales, createSquareTexture(bottomTextureIndex, bottomOrientation));
+        info.leftRectangle   = createRectangle( createCorners(0,0.5,1,  0,0.5,0,  0,1,0,   0,1,1), leftNormales, createRectangleTexture(leftIndex,   leftOrientation, 0, 0, 0, 32));
+        info.rightRectangle  = createRectangle( createCorners(1,0.5,0,  1,0.5,1,  1,1,1,   1,1,0), rightNormales, createRectangleTexture(rightIndex,  rightOrientation, 0, 0, 0, 32));
+        info.backRectangle   = createRectangle( createCorners(0,0.5,0,  1,0.5,0,  1,1,0,   0,1,0), backNormales, createRectangleTexture(backIndex,   backOrientation, 0, 0, 0, 32));
+        info.frontRectangle  = createRectangle( createCorners(1,0.5,1,  0,0.5,1,  0,1,1,   1,1,1), frontNormales, createRectangleTexture(frontIndex,  frontOrientation, 0, 0, 0, 32));
+        info.topRectangle    = createRectangle( createCorners(0,1,0,    1,1,0,    1,1,1,   0,1,1), topNormales,   createSquareTexture(topIndex,    topOrientation));
+        info.innerRectangles = createRectangle( createCorners(1,0.5,0,  0,0.5,0,  0,0.5,1, 1,0.5,1), bottomNormales, createSquareTexture(bottomIndex, bottomOrientation));
 
         return info;
     }
@@ -1281,8 +1281,8 @@ const WorldInfo = new function() {
         const c  = 0.499;
         const z  = 0.501
 
-        var orientationA;
-        var orientationB;
+        let orientationA;
+        let orientationB;
 
         const rectangles     = [];        
         const info           = createInfo();
@@ -1411,8 +1411,8 @@ const WorldInfo = new function() {
         const f              = 0.5 + rd - 0.001;            // diagonal right
         const g              = 0.5 + rd + 0.001;            // diagonal right
 
-        var frontTexture;
-        var backTexture;
+        let frontTexture;
+        let backTexture;
         if( height > 1 && radius > 0.5 ) {
             frontTexture = createDoubleSquareTexture(frontTextureIndex);
             backTexture  = createDoubleSquareTexture(backTextureIndex, Orientation.Flip);
@@ -1594,7 +1594,7 @@ const WorldInfo = new function() {
         rectangle.points               = new Float32Array(12 * rectangle.numberOfRectangles);
         rectangle.normals              = new Float32Array(12 * rectangle.numberOfRectangles);
         rectangle.texture              = new Float32Array(8 * rectangle.numberOfRectangles);
-        for(var i=0; i < rectangles.length; i++) {
+        for(let i=0; i < rectangles.length; i++) {
             const r = rectangles[i];
             rectangle.points.set(r.points, i*12);
             rectangle.normals.set(r.normals, i*12);

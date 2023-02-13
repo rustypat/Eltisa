@@ -170,7 +170,7 @@ function ViewManager() {
 
     function searchEventHandler(eventType) {
         if(eventType == EV_Invalid) return null;
-        for (var i = viewStack.length - 1; i >= 0; i--) {
+        for (let i = viewStack.length - 1; i >= 0; i--) {
             const view = viewStack[i];
             const handler = view.getEventHandler?.(eventType);
             if(handler) return handler;

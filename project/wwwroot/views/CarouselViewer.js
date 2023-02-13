@@ -3,10 +3,10 @@
 function CarouselViewer() {
     const carouselDiv             = document.createElement("div")
     const gondolasHeight          = 100;
-    var   distanceToTarget        = 0;
+    let   distanceToTarget        = 0;
 
     const gondolaLines            = [];
-    var   selectedGondolaLine     = null;
+    let   selectedGondolaLine     = null;
     
     const eventHandlers    = new Array(EV_Max);
     eventHandlers[EV_Keyboard_PageUp]         = moveUp;
@@ -26,8 +26,8 @@ function CarouselViewer() {
     function initialize() {
         carouselDiv.id = "carousel";
 
-        var index     = 0;
-        var lineInfo  = CarouselInfo.getLineInfo(index++);
+        let index     = 0;
+        let lineInfo  = CarouselInfo.getLineInfo(index++);
         while( lineInfo ) {
             addBlockLine(lineInfo)
             lineInfo = CarouselInfo.getLineInfo(index++);
@@ -87,7 +87,7 @@ function CarouselViewer() {
     this.animate = function(){
         if(distanceToTarget == 0) return;
         
-        var delta;
+        let delta;
         if(      Math.abs(distanceToTarget) >  50 )  delta = 15 * Math.sign(distanceToTarget);
         else if( Math.abs(distanceToTarget) >  10 )  delta =  5 * Math.sign(distanceToTarget);
         else if( Math.abs(distanceToTarget) >   0 )  delta =  1 * Math.sign(distanceToTarget);
@@ -96,8 +96,8 @@ function CarouselViewer() {
 
         const lineCount    = gondolaLines.length;
 
-        for(var i=0; i < lineCount; i++) {
-            var distanceToBottom = gondolaLines[i].position;
+        for(let i=0; i < lineCount; i++) {
+            let distanceToBottom = gondolaLines[i].position;
             
             distanceToBottom += delta;
             if(distanceToBottom < 0-gondolasHeight)                distanceToBottom += lineCount * gondolasHeight;
@@ -122,7 +122,7 @@ function CarouselViewer() {
 
         for(const gondolaLine of gondolaLines) {
 
-            var pos = (gondolaLine.index - lineIndex) * gondolasHeight;
+            let pos = (gondolaLine.index - lineIndex) * gondolasHeight;
             if(pos < 0-gondolasHeight)                pos += lineCount * gondolasHeight;
             if(pos > (lineCount-1) * gondolasHeight)  pos -= lineCount * gondolasHeight;
             gondolaLine.position     = pos;
@@ -141,7 +141,7 @@ function CarouselViewer() {
         const gondolaLine              = createGondolaLine(index);
         gondolaLines.push(gondolaLine);
         
-        for(var i=0; i < lineInfo.length; i++) {
+        for(let i=0; i < lineInfo.length; i++) {
             const info = CarouselInfo.getBlockInfo(lineInfo[i]);
             gondolaLine.addGondola(info.block, info.name, info.icon);
         }
@@ -163,7 +163,7 @@ function CarouselViewer() {
 
         gondolaLine.selectNextGondola = function() {
             gondolaLine.removeChild(gondolaLine.selectedGondola);        
-            var i = gondolaLine.selectedGondola.index + 1;
+            let i = gondolaLine.selectedGondola.index + 1;
             if(i >= gondolaLine.gondolas.length ) i = 0;
             gondolaLine.selectedGondola = gondolaLine.gondolas[i];                
             gondolaLine.appendChild(gondolaLine.selectedGondola);                        
@@ -171,7 +171,7 @@ function CarouselViewer() {
 
         gondolaLine.selectPreviousGondola = function() {
             gondolaLine.removeChild(gondolaLine.selectedGondola);        
-            var i = gondolaLine.selectedGondola.index - 1;
+            let i = gondolaLine.selectedGondola.index - 1;
             if(i < 0 ) i = gondolaLine.gondolas.length - 1;
             gondolaLine.selectedGondola = gondolaLine.gondolas[i];                
             gondolaLine.appendChild(gondolaLine.selectedGondola);                        

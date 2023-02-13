@@ -2,9 +2,9 @@
 
 
 function TresorEditor(viewManager, serverIn, serverOut, player) {
-    var blockPos;
-    var blockData;
-    var noKeyPressed;    
+    let blockPos;
+    let blockData;
+    let noKeyPressed;    
     let pwd;
     const self   = this;
     let saveType = "Update";

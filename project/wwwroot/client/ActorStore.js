@@ -15,7 +15,7 @@ function ActorStore(_worldport) {
     
     this.handleActorMessage = function(actorMessage) {
         const key   = actorMessage.id;
-        var actor    = actors.get(key);        
+        let actor    = actors.get(key);        
         if(actor) {
             worldport.updateActorMesh(actor, actorMessage);
         }
@@ -31,10 +31,10 @@ function ActorStore(_worldport) {
     // actor maintenance
     ///////////////////////////////////////////////////////////////////////////////////////////////    
     
-    var actorIterator        = null;
-    var actorUpdateNeeded    = false;
-    var centerChunkPosition  = Vector.create(0, 0, 0);
-    var playerPosition       = Vector.create(0, 0, 0);
+    let actorIterator        = null;
+    let actorUpdateNeeded    = false;
+    let centerChunkPosition  = Vector.create(0, 0, 0);
+    let playerPosition       = Vector.create(0, 0, 0);
 
     this.updateCenterPosition = function(newPlayerPosition) {
         playerPosition               = newPlayerPosition;
@@ -72,7 +72,7 @@ function ActorStore(_worldport) {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     
     this.isOccupying = function(blockPos) {
-        for(var actor in actors.values()) {
+        for(let actor in actors.values()) {
             const playerHeadBlock = Vector.roundToFloor(actor);
             const playerFeetBlock = Vector.down(playerHeadBlock);
             return Vector.equals(blockPos, playerHeadBlock) || Vector.equals(blockPos, playerFeetBlock);    

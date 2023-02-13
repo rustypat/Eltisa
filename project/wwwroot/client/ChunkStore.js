@@ -19,7 +19,7 @@ function ChunkStore(_worldport) {
 
     this.handleChunkMessage = function(chunksMessage) {
         if(chunksMessage.requestId != requestTimeStamp) return;
-        for(var i=0; i < requestChunkList.getLength(); i++) {
+        for(let i=0; i < requestChunkList.getLength(); i++) {
             const chunkKey         = requestChunkList.get(i);
             const chunkDescription = getChunkDescription(chunksMessage, chunkKey);
             newChunks.push(chunkDescription);
@@ -55,7 +55,7 @@ function ChunkStore(_worldport) {
     function replaceChunk(chunkDescription) {
         // add or replace mesh
         const key       = ChunkPos.create(chunkDescription.x, chunkDescription.y, chunkDescription.z);
-        var   chunk     = chunks.get(key);
+        let   chunk     = chunks.get(key);
         
         worldport.removeChunkMesh(chunk);
 
@@ -82,7 +82,7 @@ function ChunkStore(_worldport) {
         chunkPos.y = ChunkPos.getY(key);
         chunkPos.z = ChunkPos.getZ(key);
 
-        for(var i=0; i < chunksMessage.chunks.length; i++) {
+        for(let i=0; i < chunksMessage.chunks.length; i++) {
             const chunk = chunksMessage.chunks[i];
             if(chunk.x == chunkPos.x && chunk.y == chunkPos.y && chunk.z == chunkPos.z) {
                 chunksMessage.chunks.splice(i, 1);
@@ -108,9 +108,9 @@ function ChunkStore(_worldport) {
     // chunk maintenance
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    var environmentIterator  = null;
-    var chunkUpdateNeeded    = false;
-    var centerChunkPosition  = Vector.create(0, 0, 0);
+    let environmentIterator  = null;
+    let chunkUpdateNeeded    = false;
+    let centerChunkPosition  = Vector.create(0, 0, 0);
 
     this.updateCenterPosition = function(playerPosition) {
         const newCenterChunkPosition = Vector.toChunkVector(playerPosition);
@@ -174,13 +174,13 @@ function ChunkStore(_worldport) {
 
     function getEnvironmentIterator(centerPosition, radius) {
         const iterator = new function() {
-            var xMin = centerPosition.x - radius
-            var yMin = centerPosition.y - radius
-            var zMin = centerPosition.z - radius
+            let xMin = centerPosition.x - radius
+            let yMin = centerPosition.y - radius
+            let zMin = centerPosition.z - radius
 
-            var xMax = centerPosition.x + radius
-            var yMax = centerPosition.y + radius
-            var zMax = centerPosition.z + radius
+            let xMax = centerPosition.x + radius
+            let yMax = centerPosition.y + radius
+            let zMax = centerPosition.z + radius
 
             if( xMin < -Config.chunkRadius         ) xMin = -Config.chunkRadius;
             if( xMax >= Config.chunkRadius         ) xMax =  Config.chunkRadius - 1;
@@ -214,10 +214,10 @@ function ChunkStore(_worldport) {
         const position = {};
 
         yield center;
-        for(var radius=1; radius <= Config.getEnvironmentChunkRadius() + 1; radius++) {
-            for(var x = center.x - radius; x <= center.x + radius; x++) {
+        for(let radius=1; radius <= Config.getEnvironmentChunkRadius() + 1; radius++) {
+            for(let x = center.x - radius; x <= center.x + radius; x++) {
                 position.x = x;
-                for(var y = center.y - radius; y <= center.y + radius; y++) {
+                for(let y = center.y - radius; y <= center.y + radius; y++) {
                     position.y = y;
                     position.z = center.z-radius;
                     yield position;
@@ -225,9 +225,9 @@ function ChunkStore(_worldport) {
                     yield position;
                 }        
             }        
-            for(var x = center.x - radius; x <= center.x + radius; x++) {
+            for(let x = center.x - radius; x <= center.x + radius; x++) {
                 position.x = x;
-                for(var z = center.z - radius; z <= center.z + radius; z++) {
+                for(let z = center.z - radius; z <= center.z + radius; z++) {
                     position.z = z;
                     position.y = center.y-radius;
                     yield position;
@@ -235,9 +235,9 @@ function ChunkStore(_worldport) {
                     yield position;
                 }        
             }        
-            for(var z = center.z - radius; z <= center.z + radius; z++) {
+            for(let z = center.z - radius; z <= center.z + radius; z++) {
                 position.z = z;
-                for(var y = center.y - radius; y <= center.y + radius; y++) {
+                for(let y = center.y - radius; y <= center.y + radius; y++) {
                     position.y = y;
                     position.x = center.x-radius;
                     yield position;
@@ -253,9 +253,9 @@ function ChunkStore(_worldport) {
     // chunk request
     ///////////////////////////////////////////////////////////////////////////////////////////////
         
-    var   missingChunkList         = new NumberArray(256, 256);    
-    var   requestChunkList         = new NumberArray(256, 256);    
-    var   requestTimeStamp         = 0;
+    let   missingChunkList         = new NumberArray(256, 256);    
+    let   requestChunkList         = new NumberArray(256, 256);    
+    let   requestTimeStamp         = 0;
     const requestTimeoutSeconds    = 10;
 
 
@@ -298,11 +298,11 @@ function ChunkStore(_worldport) {
     this.getBlockData = function(worldPos) {
         if(!worldPos)  return Block.InvalidBlock;
         const key       = ChunkPos.createFromWorldPos(worldPos.x, worldPos.y, worldPos.z);
-        var   chunk     = chunks.get(key);
+        let   chunk     = chunks.get(key);
         if(!chunk) return Block.NoBlock;
         if(!chunk.blocks) return Block.NoBlock;
         const blockPos  = Vector.toBlockVector(worldPos);
-        for(var i=0; i < chunk.blocks.getLength(); i++) {
+        for(let i=0; i < chunk.blocks.getLength(); i++) {
             const blockData = chunk.blocks.get(i);
             const blockX = BlockData.getX(blockData);
             const blockY = BlockData.getY(blockData);
@@ -347,7 +347,7 @@ function ChunkStore(_worldport) {
         const chunkPos = ChunkPos.createFromWorldPos(worldPosX, worldPosY, worldPosZ);
         if(!chunkPos)   return false;
 
-        var chunk  = chunks.get(chunkPos);        
+        let chunk  = chunks.get(chunkPos);        
         if(chunk)  return chunk.isValid;
         else       return false;
     }    

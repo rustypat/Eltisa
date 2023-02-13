@@ -279,8 +279,8 @@ const GuiTools = new function() {
 
     this.createLineBreak = function(parent, numberOfLineBreaks) {
         if(!numberOfLineBreaks) numberOfLineBreaks = 1;
-        var linebreak;
-        for(var i=0; i < numberOfLineBreaks; i++) {
+        let linebreak;
+        for(let i=0; i < numberOfLineBreaks; i++) {
             linebreak                  = document.createElement("br");
             if(parent) parent.appendChild(linebreak);                
         }
@@ -368,7 +368,7 @@ const GuiTools = new function() {
     this.createTableRow = function(parent /*, text...*/ ) {
         const tableRow                 = document.createElement("tr");
         if(parent) parent.appendChild(tableRow);
-        for(var i = 1; i < arguments.length; i++) {
+        for(let i = 1; i < arguments.length; i++) {
             const tableCell            = document.createElement("td");
             tableCell.innerHTML        = arguments[i];
             tableRow.appendChild(tableCell);
@@ -582,8 +582,8 @@ const GuiTools = new function() {
         }
 
         list.removeEntry = function(object) { 
-            var entries = list.getElementsByTagName("li");
-            for (var i=0; i < entries.length; i++) {
+            let entries = list.getElementsByTagName("li");
+            for (let i=0; i < entries.length; i++) {
                 const entry = entries[i];
                 if(entry.object == object) {
                     list.removeChild(entry);
@@ -596,7 +596,7 @@ const GuiTools = new function() {
         }
 
         list.containsEntry = function(object) {
-            var entries = list.getElementsByTagName("li");
+            let entries = list.getElementsByTagName("li");
             for (const entry of entries) {
                 if(entry.object == object) {
                     list.removeChild(entry);
@@ -623,7 +623,7 @@ const GuiTools = new function() {
 
         dropDown.setOptions = function(optionsVarArg) {
             dropDown.innerHTML = ""; 
-            for(var i = 0; i < arguments.length; i++) {
+            for(let i = 0; i < arguments.length; i++) {
                 const option      = document.createElement('option');
                 option.valueObject= arguments[i];
                 option.value      = arguments[i].toString();

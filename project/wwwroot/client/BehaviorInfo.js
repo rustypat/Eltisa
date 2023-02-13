@@ -78,7 +78,7 @@ const BehaviorInfo = new function() {
 
     this.variants = function(block, variantCount) {
         assert( variantCount >= 2 && variantCount <= 8 );
-        for(var i=0; i < variantCount; i++) {
+        for(let i=0; i < variantCount; i++) {
             const nextChangeVariant = i+1 < variantCount ? block + i + 1 : block;
             setNextChangeVariant(block+i, nextChangeVariant);
         }
@@ -87,7 +87,7 @@ const BehaviorInfo = new function() {
 
     this.variantsAttachAt = function(block, blockRange, attachSide) {
         assert( blockRange >= 1 && blockRange <= 8 );
-        for(var i=0; i < blockRange; i++) {
+        for(let i=0; i < blockRange; i++) {
             setAttachSide(block+i, attachSide);
         }
     }
@@ -95,7 +95,7 @@ const BehaviorInfo = new function() {
 
     this.variantsCanSwitch = function(block, blockRange) {
         assert( blockRange >= 1 && blockRange <= 8 );
-        for(var i=0; i < blockRange; i++) {
+        for(let i=0; i < blockRange; i++) {
             setSwitch(block+i, true);
         }
     }
@@ -429,7 +429,7 @@ const BehaviorInfo = new function() {
 
     
     function getInfo(block) {
-        var info = infoMap.get(block);
+        let info = infoMap.get(block);
         if(!info) {
             info = {};
             info.block = block;

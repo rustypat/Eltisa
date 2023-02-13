@@ -89,7 +89,7 @@ const eltisa = new function() {
         if( player.targetIsActor() ) return false;
 
         const blockDefinition = carousel.getSelectedBlock();
-        var   targetPos       = player.getTargetPoint();
+        let   targetPos       = player.getTargetPoint();
 
         if( targetPos == null && BlockData.isFlightStone(blockDefinition) ) {
             const addDirection = player.getDirection().scale(10);
@@ -191,7 +191,7 @@ const eltisa = new function() {
         }
 
         else if( keyCode == KeyCode.RETURN ) {
-            var text = chat.getText();
+            let text = chat.getText();
             if( text == "") return true;
             if( player.targetIsActor() && !text.indexOf("@") > -1 ) {
                 text = "@" + player.getTargetInfo() + " " + text;   // dedicate message to player pointed at
@@ -225,7 +225,7 @@ const eltisa = new function() {
             const inTargetPos    = targetPos.add(direction);
             const blockPos       = Vector.roundToFloor(inTargetPos);
 
-            var            handled = portalBlocker.show(chunkStore, blockPos);
+            let            handled = portalBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = oracleBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = scriptureEditor.show(chunkStore, blockPos);
             if( !handled ) handled = cameraEditor.show(chunkStore, blockPos);
@@ -236,7 +236,7 @@ const eltisa = new function() {
 
         else if( keyCode == KeyCode.F4 ) {
             event.preventDefault();
-            var peerName;
+            let peerName;
             if(player.targetIsActor()) peerName = player.getTargetInfo();
             statusbar.clearMessage();
             videoChatBlocker.show(player.getName(), peerName);
@@ -278,7 +278,7 @@ const eltisa = new function() {
             const inTargetPos    = targetPos.add(direction);
             const blockPos       = Vector.roundToFloor(inTargetPos);
            
-            var            handled = Behavior.switchState(serverOut, chunkStore, blockPos);
+            let            handled = Behavior.switchState(serverOut, chunkStore, blockPos);
             if( !handled ) handled = scriptureViewer.show(chunkStore, blockPos);
             if( !handled ) handled = bookBlocker.show(chunkStore, blockPos);
             if( !handled ) handled = tetrisBlocker.show(chunkStore, blockPos);
@@ -502,8 +502,8 @@ const eltisa = new function() {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    var updateCounter = 0;
-    var breakTime     = Number.MAX_SAFE_INTEGER;
+    let updateCounter = 0;
+    let breakTime     = Number.MAX_SAFE_INTEGER;
 
     function renderFunction() {
         if( player.getId() == 0 ) {
@@ -638,8 +638,8 @@ function stopGame() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-var updateCounter = 0;
-var breakTime     = Number.MAX_SAFE_INTEGER;
+let updateCounter = 0;
+let breakTime     = Number.MAX_SAFE_INTEGER;
 
 function renderFunction() {
     if( player.getId() == 0 ) {

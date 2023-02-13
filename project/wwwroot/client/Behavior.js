@@ -12,7 +12,7 @@ const Behavior = new function() {
         if( actorStore.isOccupying(addPos) ) return false;  
         if( player.isOccupying(addPos)     ) return false;
 
-        var attachDefinition;
+        let attachDefinition;
         if(attachPos) {
             if( !chunkStore.isSolid(attachPos) ) return false;  // must not attach blocks to any kind of transparent block
             const attachFace = getAttachFace(addPos, attachPos);
@@ -31,7 +31,7 @@ const Behavior = new function() {
 
 
     function getAttachFace(addPos, attachPos) {
-        var attachFace = null;
+        let attachFace = null;
         if(addPos.x - attachPos.x == -1)  {
             if(attachFace == null)   attachFace = BlockFaces.Right;
             else                     return null;
@@ -61,7 +61,7 @@ const Behavior = new function() {
 
 
     function getAttachableDefinition(blockData, attachFace) {
-        var nextData = blockData;
+        let nextData = blockData;
         do {
             if( BehaviorInfo.addsWith(nextData, attachFace)) return nextData;
             nextData = BehaviorInfo.getNextAttachBlock(nextData);
@@ -71,7 +71,7 @@ const Behavior = new function() {
 
 
     this.removeBlock = function(server, chunkStore, removePos) {
-        var blockData = chunkStore.getBlockData(removePos);
+        let blockData = chunkStore.getBlockData(removePos);
 
         if(blockData == Block.NoBlock) {
             removePos = Vector.down(removePos);
@@ -124,7 +124,7 @@ const Behavior = new function() {
 
 
     this.changeState = function(server, chunkStore, blockPos) {
-        var blockData     = chunkStore.getBlockData(blockPos);
+        let blockData     = chunkStore.getBlockData(blockPos);
         if(blockData == Block.NoBlock) {
             blockPos = Vector.down(blockPos);
             blockData = chunkStore.getBlockData(blockPos);
@@ -147,7 +147,7 @@ const Behavior = new function() {
     const switchCoordinates = new NumberArray(256, 256);    
 
     this.switchState = function(server, chunkStore, blockPos) {
-        var blockData     = chunkStore.getBlockData(blockPos);    
+        let blockData     = chunkStore.getBlockData(blockPos);    
         if(blockData == Block.NoBlock) {
             blockPos = Vector.down(blockPos);
             blockData = chunkStore.getBlockData(blockPos);
@@ -162,11 +162,11 @@ const Behavior = new function() {
         }
 
         else if( BlockData.isButton(blockData) ) {
-            var switched = 1;
+            let switched = 1;
             switchCoordinates.add(blockPos.x, blockPos.y, blockPos.z);          
-            for(var x=blockPos.x-1; x <= blockPos.x+1; x++)  {
-                for(var y=blockPos.y-1; y <= blockPos.y+1; y++)  {
-                    for(var z=blockPos.z-1; z <= blockPos.z+1; z++)  {
+            for(let x=blockPos.x-1; x <= blockPos.x+1; x++)  {
+                for(let y=blockPos.y-1; y <= blockPos.y+1; y++)  {
+                    for(let z=blockPos.z-1; z <= blockPos.z+1; z++)  {
                         if(switched >= Config.maxSwitches) break;
                         const neighbourPos = Vector.create(x, y, z);
                         const neighbourData = chunkStore.getBlockData(neighbourPos);
@@ -232,8 +232,8 @@ const Behavior = new function() {
     //const radio = new Audio("http://live.963.is:443/sudurlandfm");
     //const radio = new Audio("http://www.trioeuter.ch/snd/02%20Ei_Ding.mp3");
     const radio = new Audio();
-    var radioBlock = null;
-    var radioPlays = false;
+    let radioBlock = null;
+    let radioPlays = false;
     
     
     function turnOffRadio() {

@@ -2,8 +2,8 @@
 
 
 function BookEditor(viewManager, serverIn, serverOut, player) {
-    var quill;
-    var blockPos;
+    let quill;
+    let blockPos;
     const self               = this;
 
     // event handler
@@ -23,7 +23,7 @@ function BookEditor(viewManager, serverIn, serverOut, player) {
     function lazyCreateQuillEditor() {
         if (!quill) {
 
-            var toolbarOptions = [
+            let toolbarOptions = [
                 ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
                 ['blockquote', 'code-block'],
 
