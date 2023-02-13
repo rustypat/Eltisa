@@ -1,6 +1,11 @@
 'use strict';
 
 
+// server response target, where to send the response of a request to
+const ST_Edit                         = 1001;
+const ST_Act                          = 1002;
+
+
 // Server Responses
 const SR_Ok                            = 0;
 const SR_NotAllowed                    = 1;
@@ -44,11 +49,7 @@ const SM_WriteResourceResponse         = 55;
 const SM_UpdateResourceResponse        = 57;
 const SM_DeleteResourceResponse        = 59;    
 
-const SM_GetBlockResourceRequest       = 60;
-const SM_GetBlockResourceResponse      = 61;
-const SM_SaveBlockResource             = 62;
-
-const SM_Max                           = 100;
+const SM_Max                           = 60;
 
 
 // Server Message Tag
