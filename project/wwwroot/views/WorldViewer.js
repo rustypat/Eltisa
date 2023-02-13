@@ -157,7 +157,6 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         else if( BlockData.isTresor(blockData) )    viewManager.showModal(tresorViewer);
         else if( BlockData.isPortal(blockData))     serverOut.requestReadResource(targetPos, Block.Portal, ""); 
 
-        // if( !handled ) handled = tresorBlocker.show(chunkStore, blockPos);
         // if( !handled ) handled = chat.addText(" ");
     }
 

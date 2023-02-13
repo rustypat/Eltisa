@@ -87,7 +87,11 @@ function ViewManager() {
         const eventType    = EV_Mouse_Move;
         const eventHandler = searchEventHandler(eventType);
         if(eventType != EV_Invalid && eventHandler) {
-            eventHandler();
+            try {
+                eventHandler();
+            } catch(e) {
+                log.error(e);
+            }
         }
         return true;
     }
@@ -184,7 +188,11 @@ function ViewManager() {
         if(eventHandler) {
             event.preventDefault();
             event.stopPropagation();
-            eventHandler();
+            try {
+                eventHandler();
+            } catch(e) {
+                log.error(e);
+            }
             return false;
         }
         else {
