@@ -465,7 +465,7 @@ const GuiTools = new function() {
     }
 
 
-    this.createTextInput = function(parent, maxLength, width, height, textAlign, placeholder) {
+    this.createTextInput = function(parent, maxLength, width, height, textAlign, placeholder, keyDownAction) {
         const input                         = document.createElement("input");
         input.style.margin                  = '10px';   
         if(maxLength) input.maxLength       = maxLength;
@@ -474,6 +474,7 @@ const GuiTools = new function() {
         if(textAlign) input.style.textAlign = textAlign;
         if(placeholder) input.placeholder   = placeholder;
         if(parent) parent.appendChild(input);
+        if(keyDownAction) input.addEventListener("keydown", keyDownAction); 
         input.style.fontSize           = "15px";        
         input.style.borderRadius       = "10px";
         input.style.borderStyle        = "solid";

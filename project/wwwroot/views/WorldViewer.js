@@ -33,6 +33,8 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
     const portalEditor           = new PortalEditor(viewManager, serverIn, serverOut, player);
     const oracleEditor           = new OracleEditor(viewManager, serverIn, serverOut, player);
     const tetrisViewer           = new TetrisViewer(viewManager);
+    const tresorEditor           = new TresorEditor(viewManager, serverIn, serverOut, player);
+    const tresorViewer           = new TresorViewer(viewManager, serverIn, serverOut, player);
 
     this.enable = function() {
         player.activateControls();
@@ -136,6 +138,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         else if( BlockData.isScripture(blockData) ) viewManager.showModal(scriptureEditor);
         else if( BlockData.isPortal(blockData) )    viewManager.showModal(portalEditor);
         else if( BlockData.isOracle(blockData) )    viewManager.showModal(oracleEditor);
+        else if( BlockData.isTresor(blockData) )    viewManager.showModal(tresorEditor);
     }
 
 
@@ -151,6 +154,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         else if( BlockData.isScripture(blockData) ) viewManager.showModal(scriptureViewer);
         else if( BlockData.isBook(blockData) )      viewManager.showModal(bookEditor);
         else if( BlockData.isTetris(blockData) )    viewManager.showModal(tetrisViewer);
+        else if( BlockData.isTresor(blockData) )    viewManager.showModal(tresorViewer);
         else if( BlockData.isPortal(blockData))     serverOut.requestReadResource(targetPos, Block.Portal, ""); 
 
         // if( !handled ) handled = tresorBlocker.show(chunkStore, blockPos);
