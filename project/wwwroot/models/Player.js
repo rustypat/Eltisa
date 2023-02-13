@@ -263,7 +263,7 @@ function Player(viewport, chunkStore) {
 
         if(moveMode === MoveType.Train) {
             let nextBlock = railMoveMode.move();
-            if(nextBlock !== null) self.setPosition(nextBlock.x, nextBlock.y, nextBlock.z);
+            if(nextBlock) self.setPosition(nextBlock.x, nextBlock.y, nextBlock.z);
         }
 
         if( isOnLadder() ) {
@@ -441,13 +441,22 @@ function RailMoveMode(chunkStore, camera) {
     ///////////////////////////////////////////////////////////////////////////
 
     this.move = function() {
-        //Check if check nextTarget must load
-        if(speed <= 0) return null;
-        if(nextTarget === undefined) nextTarget = getNextTarget();
+        if(speed <= 0) return null; //Check if the player moves
+        if(!nextTarget) nextTarget = getNextTarget(); 
+        
+        if(nextTarget === null) {
+            speed = 0;
+            return;
+        }
+
         let disNextTargetAbs = Vector.calculateDistanceAbsolute(camera.position, nextTarget);
         if(disNextTargetAbs.x < 0.15 && disNextTargetAbs.y < 0.15 && disNextTargetAbs.z < 0.15) nextTarget = getNextTarget();
 
-
+        if(nextTarget === null) {
+            speed = 0;
+            return;
+        }
+        
         //move
         let newX          = camera.position.x;
         let newY          = camera.position.y;
@@ -499,7 +508,7 @@ function RailMoveMode(chunkStore, camera) {
 
     this.speedUp = function(event) {
         const keyCode = KeyCode.getFromEvent(event);
-        if(keyCode === KeyCode.ArrUp && speed < 0.15) speed+=0.001;
+        if(keyCode === KeyCode.ArrUp && speed < 0.25) speed+=0.001;
     }
 
     this.slowDown = function(event) {
@@ -521,7 +530,9 @@ function RailMoveMode(chunkStore, camera) {
         let nextBlock = getNextRailBlock(chunkStore, blockPosRailJet, lastRailPosition);
         
         //check if there is a next block
-        if(nextBlock === null) return;
+        if(nextBlock === null){
+            return null;
+        }
 
         //set lastRailPosition
         lastRailPosition = getCameraToRightPositionForARailBlock(blockPosRailJet, chunkStore); 

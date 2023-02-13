@@ -2,12 +2,15 @@
 
 
 function TresorEditor(viewManager, serverIn, serverOut, player) {
+    const ST_Update = 1;
+    const ST_Write  = 2;
+
     let blockPos;
     let blockData;
     let noKeyPressed;    
     let pwd;
     const self   = this;
-    let saveType = "Update";
+    let saveType = ST_Update;
 
     // event handler
     const eventHandlers    = new Array(EV_Max);
@@ -34,8 +37,9 @@ function TresorEditor(viewManager, serverIn, serverOut, player) {
         const newPassword = textAreaPass.value.trim();
 
 
-        if(saveType === "Update") serverOut.requestUpdateResource(blockPos, Block.Tresor, pwd, newPassword, text);
-        if(saveType === "Write")  serverOut.requestWriteResource( blockPos, Block.Tresor, newPassword, text); 
+        if(saveType === ST_Update) serverOut.requestUpdateResource(blockPos, Block.Tresor, pwd, newPassword, text);
+        else if(saveType === ST_Write)  serverOut.requestWriteResource( blockPos, Block.Tresor, newPassword, text);
+        else throw new Error('Unknow Savetype'); 
         viewManager.unshow(self);
     }
 
@@ -53,7 +57,7 @@ function TresorEditor(viewManager, serverIn, serverOut, player) {
 
     this.enable = function() {
         blockPos      = player.getTargetPos();
-        if( blockPos == null ) return;
+        if(blockPos == null ) return;
 
         textArea.value       = "";
         textAreaPass.value   = "";
@@ -74,10 +78,11 @@ function TresorEditor(viewManager, serverIn, serverOut, player) {
     
 
     function updateText(messageType, blockType, resourceResponse, text) {
+        if(blockType !== Block.Tresor) return;
         if(resourceResponse === SR_Ok) {
             textArea.value    = text;
             textArea.disabled = false;
-            saveType = "Update";
+            saveType = ST_Update;
             textAreaPass.addEventListener("input", changeAction);
         }              
         if(resourceResponse === SR_PasswordInvalid) {
@@ -86,7 +91,7 @@ function TresorEditor(viewManager, serverIn, serverOut, player) {
         }
 
         if(resourceResponse === SR_ResourceDoesNotExist) {
-            saveType = "Write";
+            saveType = ST_Write;
             textArea.disabled = false;
         }
     }
