@@ -139,6 +139,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         else if( BlockData.isPortal(blockData) )    viewManager.showModal(portalEditor);
         else if( BlockData.isOracle(blockData) )    viewManager.showModal(oracleEditor);
         else if( BlockData.isTresor(blockData) )    viewManager.showModal(tresorEditor);
+        else Behavior.changeState(serverOut, chunkStore, targetPos);
     }
 
 

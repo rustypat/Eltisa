@@ -90,7 +90,7 @@ function ViewManager() {
             try {
                 eventHandler();
             } catch(e) {
-                log.error(e);
+                Log.error(e);
             }
         }
         return true;
@@ -191,7 +191,7 @@ function ViewManager() {
             try {
                 eventHandler();
             } catch(e) {
-                log.error(e);
+                Log.error(e);
             }
             return false;
         }
