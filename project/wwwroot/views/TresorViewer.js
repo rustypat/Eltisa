@@ -14,10 +14,13 @@ function TresorViewer(viewManager, serverIn, serverOut, player) {
 
     // gui elements
     const baseDiv            = GuiTools.createOverlayTransparent();
-    const textAreaPass       = GuiTools.createTextInput(baseDiv, null, "50%", "5%", "left", "Passwort", eventHandlersTextareaPass);
-    GuiTools.createLineBreak(baseDiv);
-    const textArea           = GuiTools.createTextArrea(baseDiv, "50%", "65%");
-    GuiTools.createLineBreak(baseDiv);  
+    const panel              = GuiTools.createCenteredPanel(baseDiv, "700px", "615px");
+    panel.style.backgroundColor = "rgb(149, 149, 149)";
+
+    const textAreaPass       = GuiTools.createTextInput(panel, null, "600px", "30px", "left", "Passwort", eventHandlersTextareaPass);
+    GuiTools.createLineBreak(panel);
+    const textArea           = GuiTools.createTextArrea(panel, "600px", "500px");
+    GuiTools.createLineBreak(panel);  
     textArea.disabled = true;  
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////

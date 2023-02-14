@@ -172,7 +172,7 @@ function initializeBlockViewDescriptions() {
     WorldInfo.addVerticalBlock(Block.Radio_1,       121, 121, 121);
     WorldInfo.addVerticalBlock(Block.Radio_2,       122, 122, 122);
     WorldInfo.addVerticalBlock(Block.Radio_3,       123, 123, 123);
-    WorldInfo.addVerticalBlock(Block.Stove,         243, 244, 242);
+    WorldInfo.addVerticalBlock(Block.Stove,         203, 204, 205);
     WorldInfo.addVerticalBlock(Block.Waterlily,      26,  26, 154);
     WorldInfo.addVerticalBlock(Block.Dirt_5,        178,  14, 179);
     WorldInfo.addVerticalBlock(Block.Caldron,       180, 181, 182); 
