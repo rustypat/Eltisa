@@ -623,18 +623,15 @@ function RailMoveMode(chunkStore, camera) {
         if(BlockData.isRail(blockDataUpOption1)) option1 = Vector.up(option1);
         if(BlockData.isRail(blockDataUpOption2)) option2 = Vector.up(option2);
 
-        //let blockDataOption1 = chunkStore.getBlockData(option1);
-        //let blockDataOption2 = chunkStore.getBlockData(option2);
-        //if(BlockData.isRail(blockDataOption1) === false) option1 = Vector.up(option1);
-        //if(BlockData.isRail(blockDataOption2) === false) option2 = Vector.up(option2);
-    
     
         //check if there is a rail block
         let blockDataOption1 = chunkStore.getBlockData(option1);
         let blockDataOption2 = chunkStore.getBlockData(option2);
+        let option1IsRail    = BlockData.isRail(blockDataOption1);
+        let option2IsRail    = BlockData.isRail(blockDataOption2);
     
-        if(BlockData.isRail(blockDataOption1) === false) return null;
-        if(BlockData.isRail(blockDataOption2) === false) return null;
+       // if(BlockData.isRail(blockDataOption1) === false) return null;
+       // if(BlockData.isRail(blockDataOption2) === false) return null;
     
         //set Camera Up
         option1 = getCameraToRightPositionForARailBlock(option1, chunkStore);
@@ -643,11 +640,13 @@ function RailMoveMode(chunkStore, camera) {
         //check witch is the next block and witch is the block before if last position is defined
         if(lastRailPosition !== undefined) {
     
-            if(Vector.equals(lastRailPosition, option1)) return option2; 
-            if(Vector.equals(lastRailPosition, option2)) return option1; 
+            if(Vector.equals(lastRailPosition, option1) && option2IsRail) return option2; 
+            if(Vector.equals(lastRailPosition, option2) && option1IsRail) return option1;
+            return null; 
         }
     
-        return option1;
+        if(option1IsRail) return option1;
+        return null;
     }
     
     function getCameraToRightPositionForARailBlock(blockPos, chunkStore) {
