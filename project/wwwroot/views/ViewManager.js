@@ -51,13 +51,13 @@ function ViewManager() {
     function registerGlobalHandler() {
         //document.addEventListener("contextmenu", contextMenuHandler);
         //document.addEventListener("keypress",    keypressHandler);
-        document.addEventListener( "keydown",             keydownHandler);
-        document.addEventListener( "mousemove",           mouseMoveHandler);
-        document.addEventListener( "click",               clickHandler); 
-        document.addEventListener( "auxclick",            auxclickHandler); 
-        document.addEventListener( "wheel",               wheelHandler);
-        document.addEventListener( 'pointerlockchange',   pointerlockchangeHandler);
-        window.addEventListener(   "resize",              windowResizeHandler);    
+        document.addEventListener( "keydown",             keydownHandler, true);
+        document.addEventListener( "mousemove",           mouseMoveHandler, true);
+        document.addEventListener( "click",               clickHandler, true); 
+        document.addEventListener( "auxclick",            auxclickHandler, true); 
+        document.addEventListener( "wheel",               wheelHandler, true);
+        document.addEventListener( 'pointerlockchange',   pointerlockchangeHandler, true);
+        window.addEventListener(   "resize",              windowResizeHandler, true);    
     }
 
 
