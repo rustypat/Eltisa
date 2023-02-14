@@ -342,7 +342,7 @@ public static class InMessageHandler {
     static void HandleDeleteResourceRequest(HomeSocket socket, byte[] inBuffer) {
         var reader      = new ArrayReader(inBuffer);
         int messageId   = reader.ReadInt();
-        Assert(messageId == (int)MessageId.UpdateResourceRequest);
+        Assert(messageId == (int)MessageId.DeleteResourceRequest);
         int x           = reader.ReadInt();
         int y           = reader.ReadInt();
         int z           = reader.ReadInt();

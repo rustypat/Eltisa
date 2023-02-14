@@ -27,6 +27,7 @@ function TresorEditor(viewManager, serverIn, serverOut, player) {
     const buttonDiv          = GuiTools.createDiv(baseDiv);        
     const saveButton         = GuiTools.createButton(buttonDiv, "save",   saveAction);
     const cancelButton       = GuiTools.createButton(buttonDiv, "cancel", cancelAction);
+    const deleteButton       = GuiTools.createButton(buttonDiv, "delete", deleteAction);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // tab events
@@ -45,6 +46,11 @@ function TresorEditor(viewManager, serverIn, serverOut, player) {
 
 
     function cancelAction()  {
+        viewManager.unshow(self);
+    }
+
+    function deleteAction() {
+        serverOut.requestDeleteResource(blockPos, Block.Tresor, pwd);
         viewManager.unshow(self);
     }
 
@@ -80,19 +86,22 @@ function TresorEditor(viewManager, serverIn, serverOut, player) {
     function updateText(messageType, blockType, resourceResponse, text) {
         if(blockType !== Block.Tresor) return;
         if(resourceResponse === SR_Ok) {
-            textArea.value    = text;
-            textArea.disabled = false;
-            saveType = ST_Update;
+            textArea.value        = text;
+            textArea.disabled     = false;
+            deleteButton.disabled = false;
+            saveType              = ST_Update;
             textAreaPass.addEventListener("input", changeAction);
         }              
         if(resourceResponse === SR_PasswordInvalid) {
-            textArea.value    = "Password Invalid";
-            textArea.disabled = true;
+            textArea.value        = "Password Invalid";
+            textArea.disabled     = true;
+            deleteButton.disabled = true;
         }
 
         if(resourceResponse === SR_ResourceDoesNotExist) {
-            saveType = ST_Write;
-            textArea.disabled = false;
+            saveType              = ST_Write;
+            textArea.disabled     = false;
+            deleteButton.disabled = true;
         }
     }
 
