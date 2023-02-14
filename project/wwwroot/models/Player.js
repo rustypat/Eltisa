@@ -617,17 +617,21 @@ function RailMoveMode(chunkStore, camera) {
         }
     
         //Check if the rail line changes on the y axes (with RailUp)
-        let blockDataOption1 = chunkStore.getBlockData(option1);
-        let blockDataOption2 = chunkStore.getBlockData(option2);
+        let blockDataUpOption1 = chunkStore.getBlockData(Vector.up(option1));
+        let blockDataUpOption2 = chunkStore.getBlockData(Vector.up(option2));
 
-    
-        if(BlockData.isRail(blockDataOption1) === false) option1 = Vector.up(option1);
-        if(BlockData.isRail(blockDataOption2) === false) option2 = Vector.up(option2);
+        if(BlockData.isRail(blockDataUpOption1)) option1 = Vector.up(option1);
+        if(BlockData.isRail(blockDataUpOption2)) option2 = Vector.up(option2);
+
+        //let blockDataOption1 = chunkStore.getBlockData(option1);
+        //let blockDataOption2 = chunkStore.getBlockData(option2);
+        //if(BlockData.isRail(blockDataOption1) === false) option1 = Vector.up(option1);
+        //if(BlockData.isRail(blockDataOption2) === false) option2 = Vector.up(option2);
     
     
         //check if there is a rail block
-        blockDataOption1 = chunkStore.getBlockData(option1);
-        blockDataOption2 = chunkStore.getBlockData(option2);
+        let blockDataOption1 = chunkStore.getBlockData(option1);
+        let blockDataOption2 = chunkStore.getBlockData(option2);
     
         if(BlockData.isRail(blockDataOption1) === false) return null;
         if(BlockData.isRail(blockDataOption2) === false) return null;
