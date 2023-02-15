@@ -22,10 +22,12 @@ const SR_PasswordInvalid               = 4;
 const SM_LoginRequest                  = 10;
 const SM_LoginResponse                 = 11;
 
-const SM_MoveActor                     = 20;
-const SM_ActorChanged                  = 21;
-const SM_ListActorsRequest             = 22;
-const SM_ListActorsResponse            = 23;
+const SM_ListActorsRequest             = 20;
+const SM_ListActorsResponse            = 21;
+const SM_MoveActor                     = 22;
+const SM_ActorMoved                    = 23;
+const SM_ActorJoined                   = 25;
+const SM_ActorLeft                     = 27;
 
 const SM_GetChunksRequest              = 30;
 const SM_GetChunksResponse             = 31;

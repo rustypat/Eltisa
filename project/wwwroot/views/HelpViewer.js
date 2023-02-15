@@ -136,11 +136,15 @@ function HelpViewer(viewManager, serverOut, exitAction) {
 
     this.enable = function() {
         serverIn.receiveActorListHandler = updateActorList;
+        serverIn.actorJoinedObserver.add(handleActorJoined);
+        serverIn.actorLeftObserver.add(handleActorLeft);
         serverOut.requestListActors();                
     }
 
 
     this.disable = function() {
+        serverIn.actorJoinedObserver.remove(handleActorJoined);
+        serverIn.actorLeftObserver.remove(handleActorLeft);
         serverIn.receiveActorListHandler = updateActorList;
     }
 
@@ -158,14 +162,16 @@ function HelpViewer(viewManager, serverOut, exitAction) {
     }
     
 
-    this.handleActorChangedMessage = function(message) {
-        if(message.change == ActorChangeType.Login && !nameList.containsEntry(message.name)) {
-            nameList.addEntry(message.name);
-        }
-        if(message.change == ActorChangeType.Logout) {
-            nameList.removeEntry(message.name);
+
+    function handleActorJoined(id, name, type, look) {
+        if(!nameList.containsEntry(name)) {
+            nameList.addEntry(name);
         }
     }
 
-    
+
+    function handleActorLeft(id, name) {
+        nameList.removeEntry(name);
+    }
+
 }

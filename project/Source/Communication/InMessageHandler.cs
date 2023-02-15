@@ -92,7 +92,7 @@ public static class InMessageHandler {
                 }
             }
 
-            byte[] loginMessage = OutMessage.createActorChangedMessage(actor, OutMessage.ActorChange.Login);
+            byte[] loginMessage = OutMessage.createActorJoinedMessage(actor);
             OutMessageHandler.SendMessageToAll(loginMessage, actor);
         }
     }
@@ -105,7 +105,7 @@ public static class InMessageHandler {
         actor.Turn(inMessage.RotationY);
         var couldMoveActor = actor.Move(inMessage.PositionX, inMessage.PositionY, inMessage.PositionZ);
         if(couldMoveActor) {
-            var actorMessage   = OutMessage.createActorChangedMessage(actor, OutMessage.ActorChange.Moved);
+            var actorMessage   = OutMessage.createActorMovedMessage(actor);
             var newPos         = new WorldPoint(actor.PositionX, actor.PositionY, actor.PositionZ);
             OutMessageHandler.SendMessageToRange(actorMessage, newPos, ClientCacheBlockRadius, actor);                
         }

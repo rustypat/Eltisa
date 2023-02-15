@@ -5,10 +5,12 @@ public enum MessageId {
     LoginRequest                  = 10,
     LoginResponse                 = 11,
 
-    MoveActor                     = 20,
-    ActorChanged                  = 21,
-    ListActorsRequest             = 22,
-    ListActorsResponse            = 23,
+    ListActorsRequest             = 20,
+    ListActorsResponse            = 21,
+    MoveActor                     = 22,
+    ActorMoved                    = 23,
+    ActorJoined                   = 25,
+    ActorLeft                     = 27,
 
     GetChunksRequest              = 30,
     GetChunksResponse             = 31,

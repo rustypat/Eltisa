@@ -10,8 +10,6 @@ using static Eltisa.Communication.Constant;
 
 public static class OutMessage {
 
-    public enum ActorChange { Login=1, Moved=2, Logout=3 };
-
 
     private static int messageCounter;
 
@@ -33,16 +31,13 @@ public static class OutMessage {
     }
 
 
-    public static byte[] createActorChangedMessage(Actor actor, ActorChange change) {
+    public static byte[] createActorMovedMessage(Actor actor) {
         messageCounter += 1;
 
         ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt(   (int)MessageId.ActorChanged);
+        builder.WriteInt(   (int)MessageId.ActorMoved);
         builder.WriteInt(   messageCounter);
-        builder.WriteInt(   (int)change);            
         builder.WriteInt(   actor.ID);
-        builder.WriteString(actor.Name);         
-        builder.WriteInt(   actor.Color);
         builder.WriteFloat( actor.PositionX);
         builder.WriteFloat( actor.PositionY);
         builder.WriteFloat( actor.PositionZ);
@@ -54,10 +49,42 @@ public static class OutMessage {
     }
 
 
-public enum LoginResponse {
-    Ok,
-    LoginFailed,
-}
+    public static byte[] createActorJoinedMessage(Actor actor) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt(   (int)MessageId.ActorJoined);
+        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   actor.ID);
+        builder.WriteInt(   (int)actor.ActorType);
+        builder.WriteInt(   actor.Color);
+        builder.WriteString(actor.Name);         
+        builder.WriteInt(   EndTag);
+
+        byte[] message = builder.ToArray();
+        return message;
+    }
+
+
+    public static byte[] createActorLeftMessage(Actor actor) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt(   (int)MessageId.ActorLeft);
+        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   actor.ID);
+        builder.WriteString(actor.Name);         
+        builder.WriteInt(   EndTag);
+
+        byte[] message = builder.ToArray();
+        return message;
+    }
+
+
+    public enum LoginResponse {
+        Ok,
+        LoginFailed,
+    }
 
 
     public static byte[] createLoginMessage(Actor actor, string errorMessage) {

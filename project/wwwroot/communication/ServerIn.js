@@ -5,9 +5,11 @@ function ServerIn(serversocket) {
     const self        = this;
     const handlers    = new Array(SM_Max).fill(receiveUnknownMessage);
     handlers[SM_GetChunksResponse]          = receiveChunksMessage;
-    handlers[SM_ActorChanged]               = receiveActorChangedMessage;
-    handlers[SM_BlocksChangedNotification]  = receiveBlocksChangedMessage;
     handlers[SM_ListActorsResponse]         = receiveActorListMessage;
+    handlers[SM_ActorMoved]                 = receiveActorMovedMessage;
+    handlers[SM_ActorJoined]                = receiveActorJoinedMessage;
+    handlers[SM_ActorLeft]                  = receiveActorLeftMessage;
+    handlers[SM_BlocksChangedNotification]  = receiveBlocksChangedMessage;
     handlers[SM_ChatMessageResponse]        = receiveChatMessage;
     handlers[SM_LoginResponse]              = receiveLoginMessage;
     handlers[SM_VideoChatMessageResponse]   = receiveVideoChatMessage;
@@ -39,8 +41,10 @@ function ServerIn(serversocket) {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     this.receiveLoginHandler           = function(message) {};
-    this.receiveActorChangedHandler    = function(message) {};
     this.receiveActorListHandler       = function(names) {};
+    this.receiveActorMovedHandler      = function(id, x, y, z, orientation) {};
+    this.actorJoinedObserver           = new Observer();    // (id, name, type, look) 
+    this.actorLeftObserver             = new Observer();    // (id, name)
     this.receiveChatHandler            = function(message) {};
     this.receiveChunksHandler          = function(message) {};
     this.receiveVideoChatHandler       = function(message) {};
@@ -71,19 +75,32 @@ function ServerIn(serversocket) {
     }
 
 
-    function receiveActorChangedMessage(reader) {
-        const message        = {};
-        message.change       = reader.readInteger();       // change type
-        message.id           = reader.readInteger();       // actor id
-        message.name         = reader.readString();
-        message.color        = reader.readInteger();
-        message.positionX    = reader.readFloat();
-        message.positionY    = reader.readFloat();
-        message.positionZ    = reader.readFloat();
-        message.rotationY    = reader.readFloat();
-        assert(SMT_EndTag == reader.readInteger());
-        
-        self.receiveActorChangedHandler(message);
+    function receiveActorMovedMessage(reader) {
+        const id           = reader.readInteger();      
+        const x            = reader.readFloat();
+        const y            = reader.readFloat();
+        const z            = reader.readFloat();
+        const orientation  = reader.readFloat();
+        assert(SMT_EndTag == reader.readInteger());        
+        self.receiveActorMovedHandler(id, x, y, z, orientation);
+    }
+
+
+    function receiveActorJoinedMessage(reader) {
+        const id           = reader.readInteger(); 
+        const type         = reader.readInteger(); 
+        const look         = reader.readInteger(); 
+        const name         = reader.readString();
+        assert(SMT_EndTag == reader.readInteger());        
+        self.actorJoinedObserver.call(id, name, type, look);
+    }
+
+
+    function receiveActorLeftMessage(reader) {
+        const id           = reader.readInteger();    
+        const name         = reader.readString();
+        assert(SMT_EndTag == reader.readInteger());        
+        self.actorLeftObserver.call(id, name);
     }
 
 
