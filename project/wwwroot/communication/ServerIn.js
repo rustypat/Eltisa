@@ -40,7 +40,7 @@ function ServerIn(serversocket) {
 
     this.receiveLoginHandler           = function(message) {};
     this.receiveActorChangedHandler    = function(message) {};
-    this.receiveActorListHandler       = function(message) {};
+    this.receiveActorListHandler       = function(names) {};
     this.receiveChatHandler            = function(message) {};
     this.receiveChunksHandler          = function(message) {};
     this.receiveVideoChatHandler       = function(message) {};
@@ -88,15 +88,14 @@ function ServerIn(serversocket) {
 
 
     function receiveActorListMessage(reader) {
-        const message        = {};
-        message.actorCount   = reader.readInteger();
-        message.names        = new Array(message.actorCount);
-        for(let x=0; x < message.actorCount; x++) {
-            message.names[x] = reader.readString();
+        const actorCount   = reader.readInteger();
+        const names        = new Array(actorCount);
+        for(let x=0; x < actorCount; x++) {
+            names[x] = reader.readString();
         }
         assert(SMT_EndTag       == reader.readInteger());
         
-        self.receiveActorListHandler(message);
+        self.receiveActorListHandler(names);
     }
 
 

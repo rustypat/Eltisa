@@ -49,7 +49,6 @@ function ViewManager() {
     
 
     function registerGlobalHandler() {
-        //document.addEventListener("contextmenu", contextMenuHandler);
         //document.addEventListener("keypress",    keypressHandler);
         document.addEventListener( "keydown",             keydownHandler, true);
         document.addEventListener( "mousemove",           mouseMoveHandler, true);

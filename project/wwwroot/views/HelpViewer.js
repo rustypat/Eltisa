@@ -135,7 +135,13 @@ function HelpViewer(viewManager, serverOut, exitAction) {
 
 
     this.enable = function() {
+        serverIn.receiveActorListHandler = updateActorList;
         serverOut.requestListActors();                
+    }
+
+
+    this.disable = function() {
+        serverIn.receiveActorListHandler = updateActorList;
     }
 
 
@@ -144,19 +150,15 @@ function HelpViewer(viewManager, serverOut, exitAction) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     
 
-    this.handleActorListMessage = function(message) {
-        if( !this.isVisible() ) return;
-
+    function updateActorList(names) {
         nameList.clearEntries();
-        for(name of message.names) {
+        for(const name of names) {
             nameList.addEntry(name);
         }
     }
     
 
     this.handleActorChangedMessage = function(message) {
-        if( !this.isVisible() ) return;
-
         if(message.change == ActorChangeType.Login && !nameList.containsEntry(message.name)) {
             nameList.addEntry(message.name);
         }
