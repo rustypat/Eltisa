@@ -593,7 +593,7 @@ const statusbar              = new Statusbar();
 const carouselViewer         = new CarouselViewer();
 const blockSelector          = new BlockSelector(viewManager, carouselViewer);
 const helpViewer             = new HelpViewer(viewManager, serverOut, stopGame);
-const worldViewer            = new WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, worldport, carouselViewer, blockSelector, helpViewer, stopGame);
+const worldViewer            = new WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, worldport, statusbar, carouselViewer, blockSelector, helpViewer, stopGame);
 
 
 

@@ -1,7 +1,7 @@
 'use strict';
 
 
-function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, worldport, carousel, blockSelector, helpViewer) {
+function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, worldport, statusbar, carousel, blockSelector, helpViewer) {
 
     const eventHandlers    = new Array(EV_Max);
     eventHandlers[EV_Keyboard_F1]      = toggleMoveMode;
@@ -41,11 +41,15 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         worldport.lockPointer();
         worldport.resize();
         serverIn.receiveResourceHandler = receiveResource;
+        serverIn.actorJoinedObserver.add(handleActorJoined);
+        serverIn.actorLeftObserver.add(handleActorLeft);
     }
     
     
     this.disable = function() {
         serverIn.receiveResourceHandler = null;
+        serverIn.actorJoinedObserver.remove(handleActorJoined);
+        serverIn.actorLeftObserver.remove(handleActorLeft);
         document.exitPointerLock();
         player.deactivateControls();
     }
@@ -199,5 +203,16 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         }
         statusbar.updateInfo();
     }
+
+
+    function handleActorJoined(id, name, type, look) {
+        statusbar.setSystemInfo(name + " has joined");
+    }
+
+
+    function handleActorLeft(id, name) {
+        statusbar.setSystemInfo(name + " has left");
+    }
+    
 
 }
