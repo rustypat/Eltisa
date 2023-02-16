@@ -64,25 +64,6 @@ public static class InMessage {
         return message;
     }    
 
-    public class ChatMessage {
-        public string Message;
-        public string Receiver;
-    }
-
-    static public ChatMessage ToChatMessage(byte[] inBuffer) {
-        var reader                 = new ArrayReader(inBuffer);
-        var message                = new ChatMessage();
-
-        int messageId              = reader.ReadInt();
-        message.Message            = reader.ReadString();
-        message.Receiver           = reader.ReadString();
-        int endTag                 = reader.ReadInt();
-
-        Assert(messageId == (int)MessageId.ChatMessageRequest);
-        Assert(endTag    == EndTag);            
-        return message;
-    }
-
 
     public class VideoChatMessage {
         public enum Type  {RequestChat= 1, StopChat= 2, SendSdpOffer= 3, SendSdpAnswer= 4, SendIce= 5};
