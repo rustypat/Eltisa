@@ -98,11 +98,20 @@ public static class InMessageHandler {
 
 
     static void HandleMoveActor(HomeSocket socket, byte[] inBuffer) {
-        var inMessage      = InMessage.ToMoveActorMessage(inBuffer);
-        var actor          = socket.GetActor();
+        var reader                 = new ArrayReader(inBuffer);
 
-        actor.Turn(inMessage.RotationY);
-        var couldMoveActor = actor.Move(inMessage.PositionX, inMessage.PositionY, inMessage.PositionZ);
+        int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.MoveActor);
+        var x = reader.ReadFloat();
+        var y = reader.ReadFloat();
+        var z = reader.ReadFloat();
+        var orientation = reader.ReadFloat();
+        int endTag                 = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+
+        var actor          = socket.GetActor();
+        actor.Turn(orientation);
+        var couldMoveActor = actor.Move(x, y, z);
         if(couldMoveActor) {
             OutMessageHandler.SendActorMovedNotificationToRange(actor);
         }
@@ -207,20 +216,27 @@ public static class InMessageHandler {
 
 
     static void HandleChatMessage(HomeSocket socket, byte[] inBuffer) {
-        var inMessage    = InMessage.ToChatMessage(inBuffer);
+        var reader                 = new ArrayReader(inBuffer);
+        int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.ChatMessageRequest);
+        var message                = reader.ReadString();
+        var receiver               = reader.ReadString();
+        int endTag                 = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+        
         var actor        = socket.GetActor();
 
         if( actor == null                 ) return;
-        if( inMessage.Message.Length == 0 ) return;
+        if( !message.IsDefined() ) return;
 
-        if( inMessage.Message[0] == '@' ) {
-            HandleDedicatedChatMessage(actor, inMessage.Message);
+        if( message[0] == '@' ) {
+            HandleDedicatedChatMessage(actor, message);
         }
-        else if( inMessage.Message[0] == '$' && Policy.CanAdministrate(actor) ) {
-            HandleAdministratorCommand(actor, inMessage.Message);
+        else if( message[0] == '$' && Policy.CanAdministrate(actor) ) {
+            HandleAdministratorCommand(actor, message);
         }
         else {
-            var chatMessage  = OutMessage.createChatMessage(actor.Name, inMessage.Message);
+            var chatMessage  = OutMessage.createChatMessage(actor.Name, message);
             OutMessageHandler.SendMessageToAll(chatMessage);
         }
 
