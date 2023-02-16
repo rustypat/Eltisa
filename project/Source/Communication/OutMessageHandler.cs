@@ -6,11 +6,80 @@ using Eltisa.Tools;
 using Eltisa.Server.Players;
 using static Eltisa.Administration.Configuration;
 using static Eltisa.Communication.Constant;
-
+using System.Collections.Generic;
 
 public static class OutMessageHandler {
 
     private static int messageCounter;
+
+
+
+    public static void SendActorListResponse(HomeSocket socket, IEnumerable<Actor> actors, int count) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt(   (int)MessageId.ListActorsResponse);
+        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   count);
+        foreach(var actor in actors) {
+            builder.WriteString(actor.Name);         
+        }
+        builder.WriteInt(   EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageTo(socket, message);
+    }
+
+
+    public static void SendActorMovedNotificationToRange(Actor actor) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt(   (int)MessageId.ActorMoved);
+        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   actor.ID);
+        builder.WriteFloat( actor.PositionX);
+        builder.WriteFloat( actor.PositionY);
+        builder.WriteFloat( actor.PositionZ);
+        builder.WriteFloat( actor.RotationY);
+        builder.WriteInt(   EndTag);
+
+        byte[] message = builder.ToArray();
+        var pos = new WorldPoint(actor.PositionX, actor.PositionY, actor.PositionZ);
+        SendMessageToRange(message, pos, ClientCacheBlockRadius, actor);
+    }
+
+
+    public static void SendActorJoinedNotification(Actor actor) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt(   (int)MessageId.ActorJoined);
+        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   actor.ID);
+        builder.WriteInt(   (int)actor.ActorType);
+        builder.WriteInt(   actor.Color);
+        builder.WriteString(actor.Name);         
+        builder.WriteInt(   EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageToAll(message);
+    }
+
+
+    public static void SendActorLeftNotification(Actor actor) {
+        messageCounter += 1;
+
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt(   (int)MessageId.ActorLeft);
+        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   actor.ID);
+        builder.WriteString(actor.Name);         
+        builder.WriteInt(   EndTag);
+        byte[] message = builder.ToArray();
+        SendMessageToAll(message);
+    }
+
 
 
     public static void SendBlocksChangedNotification(WorldPoint position, Change[] changes) {

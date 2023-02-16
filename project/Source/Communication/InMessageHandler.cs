@@ -92,8 +92,7 @@ public static class InMessageHandler {
                 }
             }
 
-            byte[] loginMessage = OutMessage.createActorJoinedMessage(actor);
-            OutMessageHandler.SendMessageToAll(loginMessage, actor);
+            OutMessageHandler.SendActorJoinedNotification(actor);
         }
     }
 
@@ -105,9 +104,7 @@ public static class InMessageHandler {
         actor.Turn(inMessage.RotationY);
         var couldMoveActor = actor.Move(inMessage.PositionX, inMessage.PositionY, inMessage.PositionZ);
         if(couldMoveActor) {
-            var actorMessage   = OutMessage.createActorMovedMessage(actor);
-            var newPos         = new WorldPoint(actor.PositionX, actor.PositionY, actor.PositionZ);
-            OutMessageHandler.SendMessageToRange(actorMessage, newPos, ClientCacheBlockRadius, actor);                
+            OutMessageHandler.SendActorMovedNotificationToRange(actor);
         }
         else {
             // TODO send reject move message to sender
@@ -255,10 +252,14 @@ public static class InMessageHandler {
 
 
     static void HandleListActors(HomeSocket socket, byte[] inBuffer) {
-        var inMessage         = InMessage.ToListActorsMessage(inBuffer);
+        var reader                 = new ArrayReader(inBuffer);
+        int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.ListActorsRequest);
+        int endTag                 = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+
         var (actors, count)   = ActorStore.GetActorsAndCount();
-        var outMessage        = OutMessage.createActorListMessage(actors, count);
-        socket.SendMessageAsync(outMessage);                          
+        OutMessageHandler.SendActorListResponse(socket, actors, count);
     }
 
 

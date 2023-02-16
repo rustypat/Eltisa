@@ -53,22 +53,6 @@ public static class InMessage {
     }
     
 
-    public class ListActors {
-    }
-
-    static public ListActors ToListActorsMessage(byte[] inBuffer) {
-        var reader                 = new ArrayReader(inBuffer);
-        var message                = new ListActors();
-
-        int messageId              = reader.ReadInt();
-        Assert(messageId == (int)MessageId.ListActorsRequest);
-        int endTag                 = reader.ReadInt();
-        Assert(endTag    == EndTag);            
-
-        return message;
-    }
-    
-
     public class GetChunks {
         public int            RequestId;
         public RegionPoint[]  Regions;
