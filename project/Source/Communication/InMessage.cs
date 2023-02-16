@@ -106,6 +106,7 @@ public static class InMessage {
 
     public class ChatMessage {
         public string Message;
+        public string Receiver;
     }
 
     static public ChatMessage ToChatMessage(byte[] inBuffer) {
@@ -114,6 +115,7 @@ public static class InMessage {
 
         int messageId              = reader.ReadInt();
         message.Message            = reader.ReadString();
+        message.Receiver           = reader.ReadString();
         int endTag                 = reader.ReadInt();
 
         Assert(messageId == (int)MessageId.ChatMessageRequest);
