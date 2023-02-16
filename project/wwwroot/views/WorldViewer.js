@@ -1,7 +1,7 @@
 'use strict';
 
 
-function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, worldport, statusbar, carousel, blockSelector, helpViewer) {
+function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, worldport, statusbar, chatViewer, carousel, blockSelector, helpViewer) {
 
     const eventHandlers    = new Array(EV_Max);
     eventHandlers[EV_Keyboard_F1]      = toggleMoveMode;
@@ -149,7 +149,10 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
 
     function switchBlock() {
         const targetPos      = player.getTargetPos();
-        if( targetPos == null ) return;
+        if( targetPos == null ) {
+            chatViewer.addText(" ");
+            return;
+        }
         if( !switchWaitWatch.hasWaitedEnough() ) return;
         const blockData      = chunkStore.getBlockData(targetPos);
        
@@ -161,8 +164,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         else if( BlockData.isTetris(blockData) )    viewManager.showModal(tetrisViewer);
         else if( BlockData.isTresor(blockData) )    viewManager.showModal(tresorViewer);
         else if( BlockData.isPortal(blockData))     serverOut.requestReadResource(targetPos, Block.Portal, "", ST_Act); 
-
-        // if( !handled ) handled = chat.addText(" ");
+        else chatViewer.addText(" ");
     }
 
 

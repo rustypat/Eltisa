@@ -590,10 +590,11 @@ const viewManager            = new ViewManager();
 
 const crosshairViewer        = new CrosshairViewer();
 const statusbar              = new Statusbar();
+const chatViewer             = new ChatViewer(serverIn, serverOut, player);
 const carouselViewer         = new CarouselViewer();
 const blockSelector          = new BlockSelector(viewManager, carouselViewer);
 const helpViewer             = new HelpViewer(viewManager, serverOut, stopGame);
-const worldViewer            = new WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, worldport, statusbar, carouselViewer, blockSelector, helpViewer, stopGame);
+const worldViewer            = new WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, worldport, statusbar, chatViewer, carouselViewer, blockSelector, helpViewer, stopGame);
 
 
 
@@ -620,6 +621,7 @@ function startGame(actorId, actorType, actorName, startLocation) {
     viewManager.show(crosshairViewer);
     viewManager.show(carouselViewer);
     viewManager.show(statusbar);
+    viewManager.show(chatViewer);
 }
 
 

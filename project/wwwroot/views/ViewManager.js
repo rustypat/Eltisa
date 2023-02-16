@@ -49,7 +49,7 @@ function ViewManager() {
     
 
     function registerGlobalHandler() {
-        //document.addEventListener("keypress",    keypressHandler);
+        document.addEventListener( "keypress",            keypressHandler);
         document.addEventListener( "keydown",             keydownHandler, true);
         document.addEventListener( "mousemove",           mouseMoveHandler, true);
         document.addEventListener( "click",               clickHandler, true); 
@@ -76,9 +76,9 @@ function ViewManager() {
 
 
     function keypressHandler(event) {
-        // if (event.key.length == 1) {
-        //     chat.addText(event.key);
-        // }    
+        let eventType = EV_Keyboard_Any;
+        const eventHandler = searchEventHandler(eventType);
+        return callEventHandler(event, eventHandler, event.key);
     }
 
 
@@ -183,12 +183,12 @@ function ViewManager() {
     }
 
 
-    function callEventHandler(event, eventHandler) {
+    function callEventHandler(event, eventHandler, ...args) {
         if(eventHandler) {
             event.preventDefault();
             event.stopPropagation();
             try {
-                eventHandler();
+                eventHandler(...args);
             } catch(e) {
                 Log.error(e);
             }

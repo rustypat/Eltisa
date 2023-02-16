@@ -1,40 +1,83 @@
 'use strict';
 
 
-function ScriptureViewer(viewManager, serverIn, serverOut, player) {
+function ChatViewer(serverIn, serverOut, player) {
     const self               = this;
 
     // event handler
     const eventHandlers    = new Array(EV_Max);
-    eventHandlers[EV_Keyboard_Any]   = keyPressedHandler;
+    eventHandlers[EV_Keyboard_Return] = sendMessageHandler;
+    eventHandlers[EV_Keyboard_Any]    = addTextHandler;
     this.getEventHandler = (eventType) => eventHandlers[eventType];
-    this.getHtmlElement  = () => baseDiv;
+    this.getHtmlElement  = () => chatRoot;
 
     // gui elements
-    const baseDiv            = GuiTools.createOverlayTransparent();
+    const chatRoot      = document.createElement("div");
+    const chatMessages  = document.createElement("div");
+    const chatInput     = document.createElement("input");
 
+    initialize();
 
-    function close()  {
-        viewManager.unshow(self);
+    function initialize() {
+        chatRoot.id     = "chatRoot";
+        chatMessages.id = "chatMessages";
+        chatInput.id    = "chatInput";
+        chatInput.type  = "text";
+        chatInput.maxLength = "" + Config.maxChatMessageLength;
+        chatInput.value = "";   
+        
+        chatRoot.appendChild(chatMessages);
+        chatRoot.appendChild(chatInput);
     }
 
-
+    
     this.enable = function() {
-        const blockPos      = player.getTargetPos();
-        if( blockPos == null ) return;
-
-        textArea.value       = "";
-        textArea.disabled    = true;
-        serverIn.receiveResourceHandler = updateText;
-        serverOut.requestReadResource(blockPos, Block.Scripture, "");             
+        serverIn.receiveChatHandler = receiveMessageHandler
     }
     
     
     this.disable = function() {
-        serverIn.receiveResourceHandler = null;
+        serverIn.receiveChatHandler = null;
     }
 
 
-    function updateText(messageType, blockType, resourceResponse, text) {
-        textArea.value = text;
+    this.addText = function(text) {
+        if( chatInput.value.length >= Config.maxChatMessageLength ) return false;
+        if( text == " " && chatInput.value.length == 0            ) return false;
+ 
+        chatInput.value += text;
+        chatInput.scrollLeft = chatInput.scrollWidth        
     }
+
+
+    function addTextHandler(key) {
+        self.addText(key);
+    }
+
+
+    function sendMessageHandler() {
+        if( chatInput.value == "") return true;
+        serverOut.requestChat(chatInput.value);
+        chatInput.value = "";
+    }
+
+
+    function receiveMessageHandler(message, sender) {
+        const paragraph                     = document.createElement("p");
+        paragraph.id                        = "chatParagraph";
+
+        const senderTextNode                = GuiTools.createText(paragraph, sender + ": ");
+        senderTextNode.style.color          = "#FFFFFF";
+        senderTextNode.style.textShadow     = "1px 1px 4px #000000";
+        const messageTextNode               = GuiTools.createText(paragraph, message);
+        messageTextNode.style.color         = "#000000";
+        //messageTextNode.style.textShadow    = "-1px -1px 7px #FFFFFF, -1px 1px 7px #FFFFFF, 1px -1px 7px #FFFFFF, 1px 1px 7px #FFFFFF";
+        messageTextNode.style.textShadow    = "0px 0px 7px #FFFFFF";
+
+        chatMessages.appendChild(paragraph);
+    
+        if(chatMessages.childElementCount > 50) {
+            chatMessages.removeChild(chatMessages.getElementsByTagName('p')[0]);
+        }    
+    }
+}

@@ -45,7 +45,7 @@ function ServerIn(serversocket) {
     this.receiveActorMovedHandler      = function(id, x, y, z, orientation) {};
     this.actorJoinedObserver           = new Observer();    // (id, name, type, look) 
     this.actorLeftObserver             = new Observer();    // (id, name)
-    this.receiveChatHandler            = function(message) {};
+    this.receiveChatHandler            = function(chatText, sender) {};
     this.receiveChunksHandler          = function(message) {};
     this.receiveVideoChatHandler       = function(message) {};
     this.updateBlock                   = function(x, y, z, blockData) {};
@@ -117,12 +117,11 @@ function ServerIn(serversocket) {
 
 
     function receiveChatMessage(reader) {
-        const message        = {};
-        message.message      = reader.readString();
-        message.sender       = reader.readString();
-        assert(SMT_EndTag       == reader.readInteger());
+        const chatText     = reader.readString();
+        const sender       = reader.readString();
+        assert(SMT_EndTag == reader.readInteger());
         
-        self.receiveChatHandler(message);
+        self.receiveChatHandler(chatText, sender);
     }
     
 

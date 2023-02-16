@@ -20,6 +20,7 @@ const EV_Keyboard_PageDown             = 25;
 const EV_Keyboard_Shift_PageUp         = 26;
 const EV_Keyboard_Shift_PageDown       = 27;
 const EV_Keyboard_Control              = 28;
+const EV_Keyboard_Any                  = 29;
 
 const EV_Mouse_Move                    = 30;
 const EV_Mouse_Left                    = 31;
