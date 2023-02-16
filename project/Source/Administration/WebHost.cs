@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Eltisa.Communication;
 using Eltisa.Tools;
 using Eltisa.Server;
-using Eltisa.Server.Players;
 
 
 public static class WebHost {
@@ -35,8 +34,7 @@ public static class WebHost {
     public static void Stop() {
         try {
             Log.Info("start shutdown");
-            var chatMessage  = OutMessage.createChatMessage("Admin", "system is going down, by by");
-            OutMessageHandler.SendMessageToAll(chatMessage);
+            OutMessageHandler.SendChatMessageToAll("Admin", "system is going down, by by");
             World.StopMaintenanceThread();  
             World.Persist();
             Log.Info("end shutdown");            

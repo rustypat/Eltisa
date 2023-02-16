@@ -88,21 +88,6 @@ public static class OutMessage {
     }
 
 
-    public static byte[] createChatMessage(string sender, string text) {
-        messageCounter += 1;
-
-        ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)MessageId.ChatMessageResponse);
-        builder.WriteInt(messageCounter);
-        builder.WriteString(text);
-        builder.WriteString(sender);
-        builder.WriteInt(EndTag);
-
-        byte[] message = builder.ToArray();
-        return message;
-    }
-
-
     public static byte[] createBlocksChangedMessage(Change[] changes) {
         messageCounter += 1;
 

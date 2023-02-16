@@ -13,6 +13,31 @@ public static class OutMessageHandler {
     private static int messageCounter;
 
 
+    public static void SendChatMessageTo(HomeSocket socket, string sender, string text) {
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((byte)MessageId.ChatMessageResponse);
+        builder.WriteInt(messageCounter);
+        builder.WriteString(text);
+        builder.WriteString(sender);
+        builder.WriteInt(EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageTo(socket, message);
+    }
+
+
+    public static void SendChatMessageToAll(string sender, string text) {
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((byte)MessageId.ChatMessageResponse);
+        builder.WriteInt(messageCounter);
+        builder.WriteString(text);
+        builder.WriteString(sender);
+        builder.WriteInt(EndTag);
+
+        byte[] message = builder.ToArray();
+        SendMessageToAll(message);
+    }
+
 
     public static void SendActorListResponse(HomeSocket socket, IEnumerable<Actor> actors, int count) {
         messageCounter += 1;

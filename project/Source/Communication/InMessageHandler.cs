@@ -83,15 +83,6 @@ public static class InMessageHandler {
             byte[] outMessage = OutMessage.createLoginMessage(actor, null);
             socket.SendMessageAsync(outMessage);  
             Log.Info(actor.Name + " logged in");
-
-            if( actor.Citizen != null && actor.Citizen.HasChatMessages() ) {
-                var chatMessages = actor.Citizen.GetChatMessages();
-                foreach(var chatMessage in chatMessages) {
-                    outMessage = OutMessage.createChatMessage(chatMessage.Sender, chatMessage.Message);
-                    socket.SendMessageAsync(outMessage);                          
-                }
-            }
-
             OutMessageHandler.SendActorJoinedNotification(actor);
         }
     }
@@ -236,8 +227,7 @@ public static class InMessageHandler {
             HandleAdministratorCommand(actor, message);
         }
         else {
-            var chatMessage  = OutMessage.createChatMessage(actor.Name, message);
-            OutMessageHandler.SendMessageToAll(chatMessage);
+            OutMessageHandler.SendChatMessageToAll(actor.Name, message);
         }
 
     }
@@ -382,12 +372,10 @@ public static class InMessageHandler {
     static void HandleAdministratorCommand(Actor admin, string message) {
         if(message == "$store regions") {
             World.Persist();
-            var chatMessage  = OutMessage.createChatMessage("System", "cache stored ");
-            admin.Socket.SendMessageAsync(chatMessage);
+            OutMessageHandler.SendChatMessageTo(admin.Socket, "System", "cache stored ");
         }
         else if(message == "$version") {
-            var chatMessage  = OutMessage.createChatMessage("System", "Version " + Configuration.Version + "  " + Configuration.VersionType);
-            admin.Socket.SendMessageAsync(chatMessage);
+            OutMessageHandler.SendChatMessageTo(admin.Socket, "System", "Version " + Configuration.Version + "  " + Configuration.VersionType);
         }
     }
 
@@ -403,21 +391,12 @@ public static class InMessageHandler {
 
         Actor receiver = ActorStore.GetActor(receiverName);
         if( receiver != null) {
-            var chatMessage  = OutMessage.createChatMessage(sender.Name,dedicatedMessage);                
-            sender.Socket.SendMessageAsync(chatMessage);
-            receiver.Socket.SendMessageAsync(chatMessage);
+            OutMessageHandler.SendChatMessageTo(receiver.Socket, sender.Name, dedicatedMessage);
+            OutMessageHandler.SendChatMessageTo(sender.Socket, sender.Name, dedicatedMessage);
             return;
         }
-
-        Citizen citizen = CitizenStore.GetCitizen(receiverName);
-        if( citizen != null ) {
-            citizen.AddChatMessage(sender.Name, dedicatedMessage);
-            return;
-        }
-        
-        {
-            var chatMessage  = OutMessage.createChatMessage("System", receiverName + " is unknown");                
-            sender.Socket.SendMessageAsync(chatMessage);                
+        else {
+            OutMessageHandler.SendChatMessageTo(sender.Socket, "System", receiverName + " is unknown");                
             return;
         }            
     }
