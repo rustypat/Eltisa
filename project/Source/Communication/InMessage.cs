@@ -29,30 +29,6 @@ public static class InMessage {
     }        
 
 
-    public class MoveActor {
-        public float PositionX;
-        public float PositionY;
-        public float PositionZ;
-        public float RotationY;
-    }
-
-    static public MoveActor ToMoveActorMessage(byte[] inBuffer) {
-        var reader                 = new ArrayReader(inBuffer);
-        var moveActorMessage       = new MoveActor();
-
-        int messageId              = reader.ReadInt();
-        Assert(messageId == (int)MessageId.MoveActor);
-        moveActorMessage.PositionX = reader.ReadFloat();
-        moveActorMessage.PositionY = reader.ReadFloat();
-        moveActorMessage.PositionZ = reader.ReadFloat();
-        moveActorMessage.RotationY = reader.ReadFloat();
-        int endTag                 = reader.ReadInt();
-
-        Assert(endTag    == EndTag);            
-        return moveActorMessage;
-    }
-    
-
     public class GetChunks {
         public int            RequestId;
         public RegionPoint[]  Regions;
