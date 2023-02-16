@@ -6,17 +6,14 @@ function ScriptureViewer(viewManager, serverIn, serverOut, player) {
 
     // event handler
     const eventHandlers    = new Array(EV_Max);
-    eventHandlers[EV_Keyboard_Space]   = close;
-    eventHandlers[EV_Mouse_Left]       = close;
+    eventHandlers[EV_Keyboard_Any]   = keyPressedHandler;
     this.getEventHandler = (eventType) => eventHandlers[eventType];
     this.getHtmlElement  = () => baseDiv;
 
     // gui elements
     const baseDiv            = GuiTools.createOverlayTransparent();
-    const textArea           = GuiTools.createCenteredTextArrea(baseDiv, "400px", "400px", true);
 
 
-    
     function close()  {
         viewManager.unshow(self);
     }
@@ -41,5 +38,3 @@ function ScriptureViewer(viewManager, serverIn, serverOut, player) {
     function updateText(messageType, blockType, resourceResponse, text) {
         textArea.value = text;
     }
-
-}

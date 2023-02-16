@@ -23,6 +23,8 @@ function CarouselViewer() {
 
     initialize();
 
+
+
     function initialize() {
         carouselDiv.id = "carousel";
 

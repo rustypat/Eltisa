@@ -22,9 +22,7 @@ function ScriptureEditor(viewManager, serverIn, serverOut, player) {
     const saveButton         = GuiTools.createButton(buttonDiv, "save",   saveAction);
     const cancelButton       = GuiTools.createButton(buttonDiv, "cancel", cancelAction);
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // tab events
-    ///////////////////////////////////////////////////////////////////////////////////////////////////    
+
 
     function saveAction()  {
         const text = textArea.value.trim();
