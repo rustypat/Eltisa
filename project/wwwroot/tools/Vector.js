@@ -67,7 +67,13 @@ const Vector = new function() {
         if (vector1.z != vector2.z) return false;    
         return true;
     }
-
+    
+    this.equalsXZ = function(vector1, vector2) {
+        if (!vector1 || !vector2  ) return false;
+        if (vector1.x != vector2.x) return false;     
+        if (vector1.z != vector2.z) return false;    
+        return true;
+    }
 
     this.copy = function(sinkVector, sourceVector) {
         sinkVector.x = sourceVector.x;

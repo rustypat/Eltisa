@@ -621,20 +621,7 @@ function RailMoveMode(chunkStore, camera) {
         option1 = getCameraToRightPositionForARailBlock(option1, chunkStore);
         option2 = getCameraToRightPositionForARailBlock(option2, chunkStore);
     
-        //check witch is the next block and witch is the block before if last position is defined
-        if(lastRailPosition !== undefined) {
-    
-            if(Vector.equals(lastRailPosition, option1) && option2IsRail) return option2; 
-            else if(Vector.equals(lastRailPosition, option2) && option1IsRail) return option1;
-            else if(blockType === Block.RailSwitch) {
-                if(blockStage === 2 || blockStage === 3 || blockStage === 5 || blockStage === 6 || blockStage === 7) return option1;
-                if(blockStage === 0 || blockStage === 1 || blockStage === 4)                                         return option2;
-            }
-            return null; 
-        }
-    
-        if(option1IsRail) return option1;
-        return null;
+        return selectNextBlockFromTwoOption(option1, option2, lastRailPosition, option1IsRail, option2IsRail, blockType, blockStage);
     }
     
     function getCameraToRightPositionForARailBlock(blockPos, chunkStore) {
@@ -667,6 +654,57 @@ function RailMoveMode(chunkStore, camera) {
          }
     
         return blockPos;
+    }
+
+    function selectNextBlockFromTwoOption(option1, option2, lastRailPosition, option1IsRail, option2IsRail, blockType, blockStage) {
+        if(lastRailPosition !== undefined) {
+    
+            if(Vector.equals(lastRailPosition, option1) && option2IsRail) return option2; 
+            else if(Vector.equals(lastRailPosition, option2) && option1IsRail) return option1;
+            else if(blockType === Block.RailSwitch) {
+                if(blockStage === 2 || blockStage === 3 || blockStage === 5 || blockStage === 6 || blockStage === 7) return option1;
+                if(blockStage === 0 || blockStage === 1 || blockStage === 4)                                         return option2;
+            }
+            return null; 
+        }
+    
+        let rotationY = camera.rotation.y % (Math.PI*2);
+        let posJetRound = Vector.roundToFloor(camera.position);
+        posJetRound.x += 0.5;
+        posJetRound.z += 0.5;
+        
+
+        if(rotationY > (Math.PI + Math.PI/4*3) || rotationY < (Math.PI / 4)) {
+            let jetFor = Vector.forward(posJetRound);
+            if(Vector.equalsXZ(jetFor, option1) && option1IsRail) return option1;
+            if(Vector.equalsXZ(jetFor, option2) && option2IsRail) return option2;
+            console.log("ERROR 1");
+        }
+
+        if(rotationY > (Math.PI / 4) && rotationY < (Math.PI /4 * 3)) {
+            let jetRight = Vector.right(posJetRound);
+            if(Vector.equalsXZ(jetRight, option1) && option1IsRail) return option1;
+            if(Vector.equalsXZ(jetRight, option2) && option2IsRail) return option2;
+            console.log("ERROR 2");
+        }
+
+        if(rotationY > (Math.PI / 4 * 3) && rotationY < (Math.PI + Math.PI/4)) {
+            let jetBack = Vector.back(posJetRound);
+            if(Vector.equalsXZ(jetBack, option1) && option1IsRail) return option1;
+            if(Vector.equalsXZ(jetBack, option2) && option2IsRail) return option2;
+            console.log("ERROR 3");
+        }
+
+        if(rotationY > (Math.PI + Math.PI/4) && rotationY < (Math.PI + Math.PI/4*3)) {
+            let jetLeft = Vector.left(posJetRound);
+            if(Vector.equalsXZ(jetLeft, option1) && option1IsRail) return option1;
+            if(Vector.equalsXZ(jetLeft, option2) && option2IsRail) return option2;
+            console.log("ERROR 4");
+        }
+
+
+        if(option1IsRail) return option1;
+        return null;
     }
 }
 
