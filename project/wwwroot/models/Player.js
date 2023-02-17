@@ -551,45 +551,25 @@ function RailMoveMode(chunkStore, camera) {
     
     
         //define the two options for the next block
-        if(blockType === Block.RailsLeftRight) {
-            if(blockStage === 2) {
+        if(blockType === Block.RailsLeftRight || blockType === Block.RailSwitch && blockStage >=4) {
+            let blockStageUseHere = blockStage;
+            if(blockType == Block.RailSwitch) blockStageUseHere = blockStage -2;
+            if(blockStageUseHere === 2) {
                 option1 = Vector.back(option1);
                 option2 = Vector.right(option2);
             }
     
-            if(blockStage === 3) {
+            if(blockStageUseHere === 3) {
                 option1 = Vector.forward(option1);
                 option2 = Vector.right(option2);
             }
     
-            if(blockStage === 4) {
+            if(blockStageUseHere === 4) {
                 option1 = Vector.left(option1);
                 option2 = Vector.forward(option2);
             }
     
-            if(blockStage === 5) {
-                option1 = Vector.back(option1);
-                option2 = Vector.left(option2);
-            }
-        }
-    
-        if(blockType === Block.RailSwitch) {
-            if(blockStage === 4) {
-                option1 = Vector.back(option1);
-                option2 = Vector.right(option2);
-            }
-    
-            if(blockStage === 5) {
-                option1 = Vector.forward(option1);
-                option2 = Vector.right(option2);
-            }
-    
-            if(blockStage === 6) {
-                option1 = Vector.left(option1);
-                option2 = Vector.forward(option2);
-            }
-    
-            if(blockStage === 7) {
+            if(blockStageUseHere === 5) {
                 option1 = Vector.back(option1);
                 option2 = Vector.left(option2);
             }
@@ -616,6 +596,10 @@ function RailMoveMode(chunkStore, camera) {
                 }
         }
     
+
+
+
+
         //Check if the rail line changes on the y axes (with RailUp)
         let blockDataUpOption1 = chunkStore.getBlockData(Vector.up(option1));
         let blockDataUpOption2 = chunkStore.getBlockData(Vector.up(option2));
@@ -641,7 +625,11 @@ function RailMoveMode(chunkStore, camera) {
         if(lastRailPosition !== undefined) {
     
             if(Vector.equals(lastRailPosition, option1) && option2IsRail) return option2; 
-            if(Vector.equals(lastRailPosition, option2) && option1IsRail) return option1;
+            else if(Vector.equals(lastRailPosition, option2) && option1IsRail) return option1;
+            else if(blockType === Block.RailSwitch) {
+                if(blockStage === 2 || blockStage === 3 || blockStage === 5 || blockStage === 6 || blockStage === 7) return option1;
+                if(blockStage === 0 || blockStage === 1 || blockStage === 4)                                         return option2;
+            }
             return null; 
         }
     
