@@ -88,19 +88,3 @@ textarea:focus, input:focus{
     outline: none;
 }
 
-#loginDiv {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: -webkit-box;
-    display: box;
-    -webkit-box-orient: horizontal;
-    box-orient: horizontal;
-    -webkit-box-pack: center;
-    box-pack: center;
-    -webkit-box-align: center;
-    box-align: center;
-    text-align: center;
-    cursor: pointer;
-}
-
