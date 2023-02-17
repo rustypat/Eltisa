@@ -682,13 +682,11 @@ const GuiTools = new function() {
     }
 
 
-    this.createCanvas = function(parent, width, height, id) {
+    this.createCanvas = function(parent, width, height) {
         const canvas                   = document.createElement("canvas");
         canvas.style.borderRadius      = "10px";
-
-        if(width)  canvas.width        = width;
-        if(height) canvas.height       = height;
-        if(id) canvas.id               = id;
+        canvas.width                   = width;
+        canvas.height                  = height;
         if(parent) parent.appendChild(canvas);
 
         canvas.clear = function() {
@@ -704,6 +702,19 @@ const GuiTools = new function() {
             canvas.getContext('2d').drawImage(image, 0, 0);
         }
 
+        return canvas;
+    }    
+
+
+    this.createGameCanvas = function(parent, width, height) {
+        const canvas                   = document.createElement("canvas");
+        canvas.style.borderRadius      = "10px";
+        canvas.style.position          = "absolute";
+        canvas.style.touchAction       = "none";
+        canvas.style.backgroundColor   = "rgb(148, 206, 232)";
+        canvas.style.width             = width;
+        canvas.style.height            = height;
+        if(parent) parent.appendChild(canvas);
         return canvas;
     }    
 

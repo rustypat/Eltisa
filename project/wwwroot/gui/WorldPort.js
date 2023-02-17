@@ -3,7 +3,7 @@
 
 function WorldPort(body) {
     
-    const canvas             = GuiTools.createCanvas(body, null, null, "renderCanvas");
+    const canvas             = GuiTools.createGameCanvas(body, "100%", "100%");
     
     // scene
     const engine             = new BABYLON.Engine(canvas, true);    
