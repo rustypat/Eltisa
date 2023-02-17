@@ -28,19 +28,11 @@ function ChatViewer(serverIn, serverOut, player) {
         
         chatRoot.appendChild(chatMessages);
         chatRoot.appendChild(chatInput);
-    }
 
-    
-    this.enable = function() {
         serverIn.receiveChatHandler = receiveMessageHandler
     }
-    
-    
-    this.disable = function() {
-        serverIn.receiveChatHandler = null;
-    }
 
-
+    
     this.addText = function(text) {
         if( chatInput.value.length >= Config.maxChatMessageLength ) return false;
         if( text == " " && chatInput.value.length == 0            ) return false;
