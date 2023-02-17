@@ -1,11 +1,5 @@
 'use strict';
 
-function CrosshairViewer(body) {
-    const crosshair      = GuiTools.createImage(body, "/resources/crosshair.png", null, null, "crosshair");
-    this.getEventHandler = (eventType) => null;
-    this.getHtmlElement  = () => crosshair;
-}
-
 
 function WorldPort(body) {
     

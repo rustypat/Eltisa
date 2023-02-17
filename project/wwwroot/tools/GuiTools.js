@@ -99,7 +99,6 @@ const GuiTools = new function() {
     }
 
 
-
     this.createDiv = function(parent) {
         const display                  = 'inline-block';
         const div                      = document.createElement("div");
@@ -651,6 +650,22 @@ const GuiTools = new function() {
         if(height) image.style.height  = height;
         image.src                      = pictureURL;
         if(id) image.id                = id;
+        if(parent) parent.appendChild(image);
+        return image;
+    }
+
+
+    this.createCenteredImage = function(parent, pictureURL, width, height) {
+        if(!width) width = 'auto';
+        if(!width) height = 'auto';
+        const image                    = document.createElement("img");
+        image.style.width              = width;
+        image.style.height             = height;
+        image.src                      = pictureURL;
+        image.style.position           = 'absolute';
+        image.style.top                = '50%';
+        image.style.left               = '50%';
+        image.style.transform          = 'translate(-50%,-50%)';
         if(parent) parent.appendChild(image);
         return image;
     }
