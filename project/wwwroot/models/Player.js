@@ -617,17 +617,15 @@ function RailMoveMode(chunkStore, camera) {
 
     
         //check if there is a rail block
-        let blockDataOption1 = chunkStore.getBlockData(option1);
-        let blockDataOption2 = chunkStore.getBlockData(option2);
-        let option1IsRail    = BlockData.isRail(blockDataOption1);
-        let option2IsRail    = BlockData.isRail(blockDataOption2);
+        let option1Rail = option1;
+        let option2Rail = option2
     
     
         //set Camera Up
         option1 = getCameraToRightPositionForARailBlock(option1, chunkStore);
         option2 = getCameraToRightPositionForARailBlock(option2, chunkStore);
     
-        return selectNextBlockFromTwoOption(option1, option2, lastRailPosition, option1IsRail, option2IsRail, blockType, blockStage);
+        return selectNextBlockFromTwoOption(option1, option2, lastRailPosition, option1Rail, option2Rail, blockType, blockStage);
     }
     
     function getCameraToRightPositionForARailBlock(blockPos, chunkStore) {
@@ -662,11 +660,23 @@ function RailMoveMode(chunkStore, camera) {
         return blockPos;
     }
 
-    function selectNextBlockFromTwoOption(option1, option2, lastRailPosition, option1IsRail, option2IsRail, blockType, blockStage) {
+    function selectNextBlockFromTwoOption(option1, option2, lastRailPosition, option1Rail, option2Rail, blockType, blockStage) {
+        let blockDataOption1 = chunkStore.getBlockData(option1Rail);
+        let blockDataOption2 = chunkStore.getBlockData(option2Rail);
+        let option1_ok    = BlockData.isRail(blockDataOption1);
+        let option2_ok    = BlockData.isRail(blockDataOption2);
+
+        //check if there is block in the way
+        if(!BlockData.isNoBlock(chunkStore.getBlockData(Vector.up(option1Rail))))            option1_ok = false;
+        if(!BlockData.isNoBlock(chunkStore.getBlockData(Vector.up(Vector.up(option1Rail))))) option1_ok = false;
+        if(!BlockData.isNoBlock(chunkStore.getBlockData(Vector.up(option2Rail))))            option2_ok = false;
+        if(!BlockData.isNoBlock(chunkStore.getBlockData(Vector.up(Vector.up(option2Rail))))) option2_ok = false;
+
+
         if(lastRailPosition !== undefined) {
     
-            if(Vector.equals(lastRailPosition, option1) && option2IsRail) return option2; 
-            else if(Vector.equals(lastRailPosition, option2) && option1IsRail) return option1;
+            if(Vector.equals(lastRailPosition, option1) && option2_ok) return option2; 
+            else if(Vector.equals(lastRailPosition, option2) && option1_ok) return option1;
             else if(blockType === Block.RailSwitch) {
                 if(blockStage === 2 || blockStage === 3 || blockStage === 5 || blockStage === 6 || blockStage === 7) return option1;
                 if(blockStage === 0 || blockStage === 1 || blockStage === 4)                                         return option2;
@@ -682,30 +692,31 @@ function RailMoveMode(chunkStore, camera) {
 
         if(rotationY > (Math.PI + Math.PI/4*3) || rotationY < (Math.PI / 4)) {
             let jetFor = Vector.forward(posJetRound);
-            if(Vector.equalsXZ(jetFor, option1) && option1IsRail) return option1;
-            if(Vector.equalsXZ(jetFor, option2) && option2IsRail) return option2;
+            if(Vector.equalsXZ(jetFor, option1) && option1_ok) return option1;
+            if(Vector.equalsXZ(jetFor, option2) && option2_ok) return option2;
         }
 
         if(rotationY > (Math.PI / 4) && rotationY < (Math.PI /4 * 3)) {
             let jetRight = Vector.right(posJetRound);
-            if(Vector.equalsXZ(jetRight, option1) && option1IsRail) return option1;
-            if(Vector.equalsXZ(jetRight, option2) && option2IsRail) return option2;
+            if(Vector.equalsXZ(jetRight, option1) && option1_ok) return option1;
+            if(Vector.equalsXZ(jetRight, option2) && option2_ok) return option2;
         }
 
         if(rotationY > (Math.PI / 4 * 3) && rotationY < (Math.PI + Math.PI/4)) {
             let jetBack = Vector.back(posJetRound);
-            if(Vector.equalsXZ(jetBack, option1) && option1IsRail) return option1;
-            if(Vector.equalsXZ(jetBack, option2) && option2IsRail) return option2;
+            if(Vector.equalsXZ(jetBack, option1) && option1_ok) return option1;
+            if(Vector.equalsXZ(jetBack, option2) && option2_ok) return option2;
         }
 
         if(rotationY > (Math.PI + Math.PI/4) && rotationY < (Math.PI + Math.PI/4*3)) {
             let jetLeft = Vector.left(posJetRound);
-            if(Vector.equalsXZ(jetLeft, option1) && option1IsRail) return option1;
-            if(Vector.equalsXZ(jetLeft, option2) && option2IsRail) return option2;
+            if(Vector.equalsXZ(jetLeft, option1) && option1_ok) return option1;
+            if(Vector.equalsXZ(jetLeft, option2) && option2_ok) return option2;
         }
 
 
-        if(option1IsRail) return option1;
+        if(option1_ok) return option1;
+        console.log("return null");
         return null;
     }
 }
