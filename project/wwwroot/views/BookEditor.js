@@ -11,7 +11,7 @@ function BookEditor(viewManager, serverIn, serverOut, player) {
     this.getHtmlElement  = () => baseDiv;
 
     // gui elements    
-    const baseDiv            = GuiTools.createOverlay();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_Glossy);
     baseDiv.style.backgroundColor      = 'rgba(255,255,255,0.8)'
     const editor             = GuiTools.createEditorDiv(baseDiv);
 

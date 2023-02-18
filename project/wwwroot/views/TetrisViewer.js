@@ -11,7 +11,7 @@ function TetrisViewer(viewManager) {
     this.getHtmlElement  = () => baseDiv;
 
     // gui elements
-    const baseDiv            = GuiTools.createOverlayTransparent();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_GlossyLight);
     const panel              = GuiTools.createCenteredPanel(baseDiv, "500px", "800px", "rgba(250, 160, 0, 0.8)");
 
     const headerDiv           = GuiTools.createDiv(panel);

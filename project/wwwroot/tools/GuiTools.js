@@ -1,53 +1,27 @@
 'use strict';
 
+const CLR_White       = 'white';
+const CLR_Glossy      = 'rgba(255,255,255,0.6)';
+const CLR_GlossyLight = 'rgba(255,255,255,0.2)';
+const CLR_Transparent = 'transparent';
+
+
 const GuiTools = new function() {
-
+    
     /** 
-     * @param parent {HTMLElement}
-     * @param id     {string}
+     * Creates a div that covers the whole area.
+     * 
+     * @param parent {HTMLElement} 
+     * @param color  {string} a CSS color for the background
      * @returns      {HTMLDivElement} 
      * */
-    this.createOverlayOpaque = function(parent) {
+    this.createOverlay = function(parent, color = CLR_Transparent) {
         const div                      = document.createElement("div");
         div.style.position             = 'absolute';
         div.style.width                = '100%';
         div.style.height               = '100%';
         div.style.textAlign            = 'center';
-        div.style.backgroundColor      = 'rgba(255,255,255,1)';
-        if(parent) parent.appendChild(div);
-        return div;        
-    }
-
-
-    /** 
-     * @param parent {HTMLElement}
-     * @param id     {string}
-     * @returns      {HTMLDivElement} 
-     * */
-    this.createOverlay = function(parent) {
-        const div                      = document.createElement("div");
-        div.style.position             = 'absolute';
-        div.style.width                = '100%';
-        div.style.height               = '100%';
-        div.style.textAlign            = 'center';
-        div.style.backgroundColor      = 'rgba(255,255,255,0.6)';
-        if(parent) parent.appendChild(div);
-        return div;        
-    }
-
-
-    /** 
-     * @param parent {HTMLElement}
-     * @param id     {string}
-     * @returns      {HTMLDivElement} 
-     * */
-    this.createOverlayTransparent = function(parent) {
-        const div                      = document.createElement("div");
-        div.style.position             = 'absolute';
-        div.style.width                = '100%';
-        div.style.height               = '100%';
-        div.style.textAlign            = 'center';        
-        div.style.backgroundColor      = 'rgba(255,255,255,0.2)';
+        div.style.backgroundColor      = color;
         if(parent) parent.appendChild(div);
         return div;        
     }

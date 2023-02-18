@@ -14,7 +14,7 @@ function OracleEditor(viewManager, serverIn, serverOut, player) {
     this.getHtmlElement  = () => baseDiv;
 
     // gui elements
-    const baseDiv            = GuiTools.createOverlayTransparent();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_GlossyLight);
     const panel              = GuiTools.createCenteredPanel(baseDiv, "500px", "300px").setGradient("#cec7bf", "#5c5650");
     const closeDiv           = GuiTools.createCloseButtonDiv(panel);    
     const closeButton        = GuiTools.createCloseButton(closeDiv, closeAction);

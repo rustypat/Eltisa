@@ -5,7 +5,7 @@ const ErrorType = { ConnectionLost: 1};
 
 function ErrorBlocker(body, activateGame, deactivateGame) {
 
-    const baseDiv            = GuiTools.createOverlay();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_Glossy);
     const textDiv            = GuiTools.createDiv(baseDiv);        
     textDiv.style.textAlign  = "left";        
     GuiTools.createLineBreak(baseDiv);

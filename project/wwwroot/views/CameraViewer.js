@@ -11,7 +11,7 @@ function CameraViewer(viewManager, serverIn, serverOut, player) {
     this.getHtmlElement  = () => baseDiv;
 
     // gui elements
-    const baseDiv            = GuiTools.createOverlayTransparent();    
+    const baseDiv            = GuiTools.createOverlay(null, CLR_GlossyLight);    
     const canvas             = GuiTools.createCenteredCanvas(baseDiv, 320, 240);
     
 

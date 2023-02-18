@@ -12,7 +12,7 @@ function PortalEditor(viewManager, serverIn, serverOut, player) {
     this.getHtmlElement  = () => baseDiv;
 
     // gui elements
-    const baseDiv            = GuiTools.createOverlayTransparent();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_GlossyLight);
     const panel              = GuiTools.createCenteredPanel(baseDiv, "550px", "300px").setGradient('#00dee7', '#00627c');
     const closeDiv           = GuiTools.createCloseButtonDiv(panel);    
     const closeButton        = GuiTools.createCloseButton(closeDiv, closeAction);
