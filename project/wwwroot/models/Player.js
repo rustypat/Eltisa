@@ -465,20 +465,28 @@ function RailMoveMode(chunkStore, camera) {
         let reachTargetIn = undefined;
         let speedY        = speed;
 
-        if(disNextTarget.y > 0.15) {
-            if(disNextTarget.x > 0.15) reachTargetIn = disNextTarget.x/speed;
-            if(disNextTarget.z > 0.15) reachTargetIn = disNextTarget.z/speed;
+        if(disNextTarget.y > 0) {
+            if(disNextTarget.x > 0) reachTargetIn = disNextTarget.x/speed;
+            else if(disNextTarget.z > 0) reachTargetIn = disNextTarget.z/speed;
             if(reachTargetIn != undefined) speedY    = disNextTarget.y/reachTargetIn;
         }
 
-        if(disNextTarget.x > 0.15 && nextTarget.x > camera.position.x)  newX+=speed;
-        if(disNextTarget.x > 0.15 && nextTarget.x < camera.position.x)  newX-=speed;
+        //x
+        if(nextTarget.x > camera.position.x && newX+speed < nextTarget.x) newX+=speed;
+        else if(nextTarget.x < camera.position.x && newX-speed > nextTarget.x) newX-=speed;
+        else newX = nextTarget.x;
 
-        if(disNextTarget.y > 0.15 && nextTarget.y > camera.position.y)  newY+=speedY;
-        if(disNextTarget.y > 0.15 && nextTarget.y < camera.position.y)  newY-=speedY;
+        //y
+        if(nextTarget.y > camera.position.y && newY+speedY < nextTarget.y) newY+=speedY;
+        else if(nextTarget.y < camera.position.y && newY-speedY > nextTarget.y) newY-=speedY;
+        else newY = nextTarget.y;
 
-        if(disNextTarget.z > 0.15 && nextTarget.z > camera.position.z)  newZ+=speed;
-        if(disNextTarget.z > 0.15 && nextTarget.z < camera.position.z)  newZ-=speed;
+        //z
+        if(nextTarget.z > camera.position.z && newZ+speed < nextTarget.z) newZ+=speed;
+        else if(nextTarget.z < camera.position.z && newZ-speed > nextTarget.z) newZ-=speed;
+        else newZ = nextTarget.z;
+
+    
 
         return {x: newX, y: newY, z: newZ};
     }
@@ -614,8 +622,6 @@ function RailMoveMode(chunkStore, camera) {
         let option1IsRail    = BlockData.isRail(blockDataOption1);
         let option2IsRail    = BlockData.isRail(blockDataOption2);
     
-       // if(BlockData.isRail(blockDataOption1) === false) return null;
-       // if(BlockData.isRail(blockDataOption2) === false) return null;
     
         //set Camera Up
         option1 = getCameraToRightPositionForARailBlock(option1, chunkStore);
@@ -678,28 +684,24 @@ function RailMoveMode(chunkStore, camera) {
             let jetFor = Vector.forward(posJetRound);
             if(Vector.equalsXZ(jetFor, option1) && option1IsRail) return option1;
             if(Vector.equalsXZ(jetFor, option2) && option2IsRail) return option2;
-            console.log("ERROR 1");
         }
 
         if(rotationY > (Math.PI / 4) && rotationY < (Math.PI /4 * 3)) {
             let jetRight = Vector.right(posJetRound);
             if(Vector.equalsXZ(jetRight, option1) && option1IsRail) return option1;
             if(Vector.equalsXZ(jetRight, option2) && option2IsRail) return option2;
-            console.log("ERROR 2");
         }
 
         if(rotationY > (Math.PI / 4 * 3) && rotationY < (Math.PI + Math.PI/4)) {
             let jetBack = Vector.back(posJetRound);
             if(Vector.equalsXZ(jetBack, option1) && option1IsRail) return option1;
             if(Vector.equalsXZ(jetBack, option2) && option2IsRail) return option2;
-            console.log("ERROR 3");
         }
 
         if(rotationY > (Math.PI + Math.PI/4) && rotationY < (Math.PI + Math.PI/4*3)) {
             let jetLeft = Vector.left(posJetRound);
             if(Vector.equalsXZ(jetLeft, option1) && option1IsRail) return option1;
             if(Vector.equalsXZ(jetLeft, option2) && option2IsRail) return option2;
-            console.log("ERROR 4");
         }
 
 
