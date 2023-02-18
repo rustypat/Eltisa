@@ -13,7 +13,7 @@ function CameraEditor(viewManager, serverIn, serverOut, player) {
 
     // gui elements
     const baseDiv            = GuiTools.createOverlayTransparent(null);    
-    const panel              = GuiTools.createCenteredPanel(baseDiv, '600px', '500px');
+    const panel              = GuiTools.createCenteredPanel(baseDiv, '500px', '500px').setGradient('#edbf8f', '#70451a');
     
     const closeDiv           = GuiTools.createCloseButtonDiv(panel);    
     GuiTools.createCloseButton(closeDiv, close);

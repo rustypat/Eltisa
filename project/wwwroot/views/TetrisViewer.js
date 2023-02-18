@@ -12,8 +12,7 @@ function TetrisViewer(viewManager) {
 
     // gui elements
     const baseDiv            = GuiTools.createOverlayTransparent();
-    const panel              = GuiTools.createCenteredPanel(baseDiv, "500px", "800px");
-    panel.style.backgroundColor = "rgba(250, 160, 0, 0.8)";
+    const panel              = GuiTools.createCenteredPanel(baseDiv, "500px", "800px", "rgba(250, 160, 0, 0.8)");
 
     const headerDiv           = GuiTools.createDiv(panel);
     headerDiv.style.position  = "relative";

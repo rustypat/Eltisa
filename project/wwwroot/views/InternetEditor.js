@@ -11,7 +11,7 @@ function InternetEditor(viewManager, serverIn, serverOut, player) {
 
     // gui elements
     const baseDiv            = GuiTools.createOverlayTransparent();    
-    const panel              = GuiTools.createCenteredPanel(baseDiv, '70%', '70%');
+    const panel              = GuiTools.createCenteredPanel(baseDiv, '70%', '70%').setGradient('#fdfdfd', '#41806e');
 
     const url                = GuiTools.createTextInput(panel, 256, "50%");  
     const width              = GuiTools.createTextInput(panel, 256, "7%");  

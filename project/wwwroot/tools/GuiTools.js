@@ -54,7 +54,8 @@ const GuiTools = new function() {
     }
 
 
-    this.createCenteredPanel = function(parent, width, height) {
+    this.createCenteredPanel = function(parent, width, height, color) {
+        if(!color) color = 'rgba(220,220,220, 0.8)';
         const div                      = document.createElement("div");
         div.style.width                = width;
         div.style.height               = height;
@@ -64,8 +65,13 @@ const GuiTools = new function() {
         div.style.transform            = 'translate(-50%,-50%)';
         div.style.borderRadius         = "20px";
         div.style.padding              = "10px";
-        div.style.backgroundColor      = 'rgba(220,220,220, 0.8)';
+        div.style.backgroundColor      = color;
         if(parent) parent.appendChild(div);
+
+        div.setGradient = function(startColor, endColor) {
+            div.style.backgroundImage = "linear-gradient(170deg, " + startColor + ", " + endColor + " )";
+            return div;
+        }
         return div;        
     }
 
