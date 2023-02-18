@@ -4,7 +4,7 @@
 function Player(viewport, chunkStore) {
 
     const PlayerType         = { Unknown: 0, Visitor: 1, Citizen: 2, Administrator:4};
-    const MoveType           = { Walk: 0, Run: 1, Fly: 2, Ghost: 3, Train: 4}
+    const MoveType           = { Walk: 0, Run: 1, Train: 2, Fly: 3, Ghost: 4}
     const self               = this;
 
     // player data
@@ -143,19 +143,27 @@ function Player(viewport, chunkStore) {
     this.toogleMoveMode = function() {
         if(type == PlayerType.Visitor) {
             moveMode++;
-            if(moveMode > MoveType.Run) moveMode = MoveType.Walk;
+            if(moveMode === MoveType.Train) {
+                if(isOnRail()) moveMode = MoveType.Train;
+                else moveMode++;
+            }
+            if(moveMode > MoveType.Train) moveMode = MoveType.Walk;
         }
         else if(type == PlayerType.Citizen) {
             moveMode++;
+            if(moveMode === MoveType.Train) {
+                if(isOnRail()) moveMode = MoveType.Train;
+                else moveMode++;
+            }
             if(moveMode > MoveType.Fly) moveMode = MoveType.Walk;
         }
         else if(type == PlayerType.Administrator) {
             moveMode++;
-            if(moveMode > MoveType.Ghost) {
-                if(moveMode > MoveType.Train) moveMode = MoveType.Walk;
-                else if(isOnRail()) moveMode = MoveType.Train;
-                     else moveMode = MoveType.Walk;
+            if(moveMode === MoveType.Train) {
+                if(isOnRail()) moveMode = MoveType.Train;
+                else moveMode++;
             }
+            if(moveMode > MoveType.Ghost) moveMode = MoveType.Walk;
         }        
 
         if(moveMode == MoveType.Walk) {
@@ -172,6 +180,8 @@ function Player(viewport, chunkStore) {
         else if(moveMode == MoveType.Fly) {
             camera.speed           = 0.5;
             camera.checkCollisions = true;
+
+            railMoveMode.deactivate();
         }
         else if(moveMode == MoveType.Ghost) {
             camera.speed           = 2;
