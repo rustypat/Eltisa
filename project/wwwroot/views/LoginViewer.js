@@ -2,8 +2,8 @@
 
 function LoginViewer(serverSocket, serverOut, startGame) {
 
-    const baseDiv       = GuiTools.createBackgroundPanel();
-    const panel         = GuiTools.createTransparentPanel(baseDiv, "300px", "300px");
+    const baseDiv       = GuiTools.createOverlay().setImage(LGT_BlueSky);
+    const panel         = GuiTools.createCenteredPanel(baseDiv, "300px", "300px");
 
     const nameField     = GuiTools.createEditField(panel, 30, "250px", "name");
                           GuiTools.createLineBreak(panel);

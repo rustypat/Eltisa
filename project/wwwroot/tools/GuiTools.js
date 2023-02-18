@@ -1,9 +1,13 @@
 'use strict';
 
+// colors
 const CLR_White       = 'white';
 const CLR_Glossy      = 'rgba(255,255,255,0.6)';
 const CLR_GlossyLight = 'rgba(255,255,255,0.2)';
 const CLR_Transparent = 'transparent';
+
+// linear gradients
+const LGT_BlueSky = 'linear-gradient(rgb(148,207,232) 10%, rgb(148,207,232), rgb(255, 255, 255))';
 
 
 const GuiTools = new function() {
@@ -23,12 +27,17 @@ const GuiTools = new function() {
         div.style.textAlign            = 'center';
         div.style.backgroundColor      = color;
         if(parent) parent.appendChild(div);
+
+        div.setImage = function(image) {
+            div.style.backgroundImage = image;
+            return div;
+        }
+
         return div;        
     }
 
 
-    this.createCenteredPanel = function(parent, width, height, color) {
-        if(!color) color = 'rgba(220,220,220, 0.8)';
+    this.createCenteredPanel = function(parent, width, height, color = CLR_Transparent) {
         const div                      = document.createElement("div");
         div.style.width                = width;
         div.style.height               = height;
@@ -45,35 +54,6 @@ const GuiTools = new function() {
             div.style.backgroundImage = "linear-gradient(170deg, " + startColor + ", " + endColor + " )";
             return div;
         }
-        return div;        
-    }
-
-
-    this.createTransparentPanel = function(parent, width, height) {
-        const div                      = document.createElement("div");
-        div.style.width                = width;
-        div.style.height               = height;
-        div.style.position             = 'absolute';
-        div.style.top                  = '50%';
-        div.style.left                 = '50%';
-        div.style.transform            = 'translate(-50%,-50%)';
-        div.style.padding              = "10px";
-        div.style.textAlign            = "center";
-        if(parent) parent.appendChild(div);
-        return div;        
-    }
-
-
-    this.createBackgroundPanel = function(parent) {
-        const div                      = document.createElement("div");
-        div.style.width                = "100%";
-        div.style.height               = "100%";
-        div.style.padding              = '20px';       
-        div.style.overflow             = 'auto';
-        div.style.whiteSpace           = 'nowrap'
-        div.style.backgroundColor      = 'rgb(148,207,232)';
-        div.style.backgroundImage      = 'linear-gradient(rgb(148,207,232) 10%, rgb(148,207,232), rgb(255, 255, 255))';
-        if(parent) parent.appendChild(div);
         return div;        
     }
 
