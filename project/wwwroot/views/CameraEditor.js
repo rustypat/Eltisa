@@ -23,7 +23,7 @@ function CameraEditor(viewManager, serverIn, serverOut, player) {
 
     GuiTools.createLineBreak(panel, 2);
     const video              = GuiTools.createVideo(null, true);
-    const canvas             = GuiTools.createCanvas(panel, 320, 240,);
+    const canvas             = GuiTools.createCanvas(panel, 320, 240);
     canvas.style.borderStyle = 'double';
     GuiTools.createLineBreak(panel, 3);
     const pictureButton      = GuiTools.createButton(panel, "Take Picture", takePicture);
