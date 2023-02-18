@@ -41,14 +41,13 @@ const GuiTools = new function() {
      * @param id     {string}
      * @returns      {HTMLDivElement} 
      * */
-    this.createOverlayTransparent = function(parent, clickAction) {
+    this.createOverlayTransparent = function(parent) {
         const div                      = document.createElement("div");
         div.style.position             = 'absolute';
         div.style.width                = '100%';
         div.style.height               = '100%';
         div.style.textAlign            = 'center';        
         div.style.backgroundColor      = 'rgba(255,255,255,0.2)';
-        div.onclick                    = clickAction;
         if(parent) parent.appendChild(div);
         return div;        
     }
