@@ -1,7 +1,8 @@
 'use strict';
 
 function CarouselViewer() {
-    const carouselDiv             = document.createElement("div")
+    const carouselDiv             = GuiTools.createPanel(null, '70px', '100%', null, null, '0px', '0px', CLR_GlossyLight)
+                                            .setPadding('10px').setOverflow('hidden');
     const gondolasHeight          = 100;
     let   distanceToTarget        = 0;
 
@@ -24,10 +25,7 @@ function CarouselViewer() {
     initialize();
 
 
-
     function initialize() {
-        carouselDiv.id = "carousel";
-
         let index     = 0;
         let lineInfo  = CarouselInfo.getLineInfo(index++);
         while( lineInfo ) {

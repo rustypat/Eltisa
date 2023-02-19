@@ -3,7 +3,7 @@
 // colors
 const CLR_White       = 'white';
 const CLR_Glossy      = 'rgba(255,255,255,0.6)';
-const CLR_GlossyLight = 'rgba(255,255,255,0.2)';
+const CLR_GlossyLight = 'rgba(255,255,255,0.3)';
 const CLR_Transparent = 'transparent';
 
 // linear gradients
@@ -28,15 +28,21 @@ const GuiTools = new function() {
         div.style.backgroundColor      = color;
         if(parent) parent.appendChild(div);
 
-        div.setImage = function(image) {
-            div.style.backgroundImage = image;
-            return div;
-        }
+        div.setImage =  image => { div.style.backgroundImage = image; return div; }
 
         return div;        
     }
 
 
+    /** 
+     * Creates a div with rounded corners, that is absolutly placed in the center of its parent.
+     * 
+     * @param parent {HTMLElement} 
+     * @param width  {string} 
+     * @param height {string} 
+     * @param color  {string} a CSS color for the background
+     * @returns      {HTMLDivElement} 
+     * */
     this.createCenteredPanel = function(parent, width, height, color = CLR_Transparent) {
         const div                      = document.createElement("div");
         div.style.width                = width;
@@ -54,6 +60,37 @@ const GuiTools = new function() {
             div.style.backgroundImage = "linear-gradient(170deg, " + startColor + ", " + endColor + " )";
             return div;
         }
+        return div;        
+    }
+
+
+    /** 
+     * Creates a div with rounded corners, that is absolutly placed in the center of its parent.
+     * 
+     * @param parent {HTMLElement} 
+     * @param width  {string} 
+     * @param height {string} 
+     * @param color  {string} a CSS color for the background
+     * @returns      {HTMLDivElement} 
+     * */
+    this.createPanel = function(parent, width, height, top, left, bottom, right, color = CLR_Transparent) {
+        const div                      = document.createElement("div");
+        div.style.width                = width;
+        div.style.height               = height;
+        div.style.position             = 'absolute';
+        div.style.backgroundColor      = color;
+        if(top) div.style.top          = top;
+        if(left) div.style.left        = left;
+        if(bottom) div.style.bottom    = bottom;
+        if(right) div.style.right      = right;
+        if(parent) parent.appendChild(div);
+
+        div.setDisplay =        display => { div.style.display = display; return div; }
+        div.setVerticalAlign =  align   => { div.style.verticalAlign = align; return div; }
+        div.setPadding =        padding => { div.style.padding = padding; return div; }
+        div.setPaddingLeft =    padLeft => { div.style.paddingLeft = padLeft; return div; }
+        div.setOverflow =       overflow=> { div.style.overflow = overflow; return div; }
+
         return div;        
     }
 
@@ -703,9 +740,6 @@ const GuiTools = new function() {
             context.fillRect(0, 0, width, height);
         }
 
-        /** 
-         * @param image {HTMLImageElement}
-         * */
         canvas.drawImage = function(image) {
             canvas.getContext('2d').drawImage(image, 0, 0);
         }

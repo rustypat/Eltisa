@@ -12,14 +12,14 @@ function ChatViewer(serverIn, serverOut, player) {
     this.getHtmlElement  = () => chatRoot;
 
     // gui elements
-    const chatRoot      = document.createElement("div");
+    const chatRoot      = GuiTools.createPanel(null, '400px', '100%', null, '0px', '0px', null)
+                                  .setDisplay('table-cell').setVerticalAlign('bottom');
     const chatMessages  = document.createElement("div");
     const chatInput     = document.createElement("input");
 
     initialize();
 
     function initialize() {
-        chatRoot.id     = "chatRoot";
         chatMessages.id = "chatMessages";
         chatInput.id    = "chatInput";
         chatInput.type  = "text";
