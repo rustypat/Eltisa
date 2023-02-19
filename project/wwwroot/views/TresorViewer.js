@@ -16,7 +16,7 @@ function TresorViewer(viewManager, serverIn, serverOut, player) {
     const baseDiv            = GuiTools.createOverlay(null, CLR_GlossyLight);
     const panel              = GuiTools.createCenteredPanel(baseDiv, "700px", "615px").setGradient('#ababab', '#4b4b4b');
 
-    const textAreaPass       = GuiTools.createTextInput(panel, null, "600px", "30px", "left", "Passwort", eventHandlersTextareaPass);
+    const textAreaPass       = GuiTools.createEditField(panel, null, "600px", "30px", "Passwort", eventHandlersTextareaPass);
     GuiTools.createLineBreak(panel);
     const textArea           = GuiTools.createTextArrea(panel, "600px", "500px");
     GuiTools.createLineBreak(panel);  

@@ -31,7 +31,7 @@ function PortalEditor(viewManager, serverIn, serverOut, player) {
     const targetZ            = GuiTools.createNumberInput(panel, -524280, 524280, changeAction);
     GuiTools.createLineBreak(panel);
     GuiTools.createLabel(panel, "description:", '100px');
-    const description        = GuiTools.createTextInput(panel, '150', '290px');
+    const description        = GuiTools.createEditField(panel, '150', '290px');
     GuiTools.createLineBreak(panel);
     const teleportButton     = GuiTools.createButton(panel, "teleport", teleportAction);
     const saveButton         = GuiTools.createButton(panel, "save",     saveAction);

@@ -5,9 +5,9 @@ function LoginViewer(serverSocket, serverOut, startGame) {
     const baseDiv       = GuiTools.createOverlay().setImage(LGT_BlueSky);
     const panel         = GuiTools.createCenteredPanel(baseDiv, "300px", "300px");
 
-    const nameField     = GuiTools.createEditField(panel, 30, "250px", "name");
+    const nameField     = GuiTools.createEditField(panel, 30, "250px", "30px", "name").setTextAlign('center');
                           GuiTools.createLineBreak(panel);
-    const passwordField = GuiTools.createPasswordField(panel, 30, "250px", "password");
+    const passwordField = GuiTools.createPasswordField(panel, 30, "250px", "30px", "password").setTextAlign('center');
                           GuiTools.createLineBreak(panel);
     const startLocation = GuiTools.createDropDown(panel, "265px");
                           startLocation.setOptions("", "Forest", "Lake", "Ice Lake", "River Delta", "Plain", "Pillar Mountains", "Center", "Space");

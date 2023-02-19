@@ -461,37 +461,14 @@ const GuiTools = new function() {
     }
 
 
-    this.createTextInput = function(parent, maxLength, width, height, textAlign, placeholder, keyDownAction) {
+    this.createEditField = function(parent, maxLength, width, height, placeholder, keyDownAction) {
         const input                         = document.createElement("input");
-        input.style.margin                  = '10px';   
         if(maxLength) input.maxLength       = maxLength;
         if(width)  input.style.width        = width;
         if(height) input.style.height       = height;
-        if(textAlign) input.style.textAlign = textAlign;
         if(placeholder) input.placeholder   = placeholder;
-        if(parent) parent.appendChild(input);
         if(keyDownAction) input.addEventListener("keydown", keyDownAction); 
-        input.style.fontSize           = "15px";        
-        input.style.borderRadius       = "10px";
-        input.style.borderStyle        = "solid";
-        input.style.paddingLeft        = '5px';
-        input.style.paddingRight       = '5px';
-        input.type                     = 'text';
-        input.setText =  (text) => input.value = (text ? text : "");
-        input.getText =  ()     => input.value; 
-        input.clear   =  ()     => input.value = "";
-       return input;        
-    }
-
-
-    this.createEditField = function(parent, maxLength, width, placeholder) {
-        const input                         = document.createElement("input");
-        input.style.margin                  = '10px';   
-        if(maxLength) input.maxLength       = maxLength;
-        if(width)  input.style.width        = width;
-        if(placeholder) input.placeholder   = placeholder;
-        input.style.height                  = "30px";
-        input.style.textAlign               = "center";
+        input.style.margin             = '10px';   
         input.style.fontSize           = "15px";    
         input.style.fontWeight         = "normal";
         input.style.borderRadius       = "10px";
@@ -503,19 +480,19 @@ const GuiTools = new function() {
         input.setText =  (text) => input.value = (text ? text : "");
         input.getText =  ()     => input.value; 
         input.clear   =  ()     => input.value = "";
+        input.setTextAlign =  align => { input.style.textAlign = align; return input; };
         if(parent) parent.appendChild(input);
        return input;        
     }
 
 
-    this.createPasswordField = function(parent, maxLength, width, placeholder) {
+    this.createPasswordField = function(parent, maxLength, width, height, placeholder) {
         const input                         = document.createElement("input");
         input.style.margin                  = '10px';   
         if(maxLength) input.maxLength       = maxLength;
         if(width)  input.style.width        = width;
+        if(height) input.style.height       = height;
         if(placeholder) input.placeholder   = placeholder;
-        input.style.height                  = "30px";
-        input.style.textAlign               = "center";
         input.style.fontSize           = "15px";        
         input.style.fontWeight         = "normal";
         input.style.borderRadius       = "10px";
@@ -527,6 +504,7 @@ const GuiTools = new function() {
         input.setText =  (text) => input.value = (text ? text : "");
         input.getText =  ()     => input.value; 
         input.clear   =  ()     => input.value = "";
+        input.setTextAlign =  align => { input.style.textAlign = align; return input; };
         if(parent) parent.appendChild(input);
        return input;        
     }

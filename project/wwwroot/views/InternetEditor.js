@@ -13,9 +13,9 @@ function InternetEditor(viewManager, serverIn, serverOut, player) {
     const baseDiv            = GuiTools.createOverlay(null, CLR_GlossyLight);    
     const panel              = GuiTools.createCenteredPanel(baseDiv, '70%', '70%').setGradient('#fdfdfd', '#41806e');
 
-    const url                = GuiTools.createTextInput(panel, 256, "50%");  
-    const width              = GuiTools.createTextInput(panel, 256, "7%");  
-    const height             = GuiTools.createTextInput(panel, 256, "7%");  
+    const url                = GuiTools.createEditField(panel, 256, "50%");  
+    const width              = GuiTools.createEditField(panel, 256, "7%");  
+    const height             = GuiTools.createEditField(panel, 256, "7%");  
     const saveButton         = GuiTools.createButton(panel, "save",   saveAction, "7%");
     const cancelButton       = GuiTools.createButton(panel, "cancel", cancelAction, "7%");
     GuiTools.createLineBreak(panel);    
