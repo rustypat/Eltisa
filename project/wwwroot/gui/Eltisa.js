@@ -590,7 +590,7 @@ const viewManager            = new ViewManager();
 
 const crosshairViewer        = new CrosshairViewer();
 const statusbar              = new Statusbar();
-const chatViewer             = new ChatViewer(serverIn, serverOut, player);
+const chatViewer             = new ChatViewer(serverIn, serverOut);
 const carouselViewer         = new CarouselViewer();
 const blockSelector          = new BlockSelector(viewManager, carouselViewer);
 const helpViewer             = new HelpViewer(viewManager, serverOut, stopGame);

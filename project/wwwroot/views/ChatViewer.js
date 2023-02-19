@@ -1,7 +1,7 @@
 'use strict';
 
 
-function ChatViewer(serverIn, serverOut, player) {
+function ChatViewer(serverIn, serverOut) {
     const self               = this;
 
     // event handler
