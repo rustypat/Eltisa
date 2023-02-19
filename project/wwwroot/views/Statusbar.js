@@ -7,7 +7,7 @@ function Statusbar() {
     this.getHtmlElement  = () => statusbarDiv;
 
     // gui elements
-    const statusbarDiv  = GuiTools.createPanel(null, null, '20px', null, '395px', '0px', '90px', CLR_GlossyLight)
+    const statusbarDiv  = GuiTools.createPanel(null, null, '20px', null, '395px', '0px', '80px', CLR_GlossyLight)
                                   .setPadding('2px').setPaddingLeft('15px');
 
     // available info texts

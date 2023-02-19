@@ -14,19 +14,18 @@ function ChatViewer(serverIn, serverOut) {
     // gui elements
     const chatRoot      = GuiTools.createPanel(null, '400px', '100%', null, '0px', '0px', null)
                                   .setDisplay('table-cell').setVerticalAlign('bottom');
-    const chatMessages  = document.createElement("div");
+    const chatMessages  = GuiTools.createPanel(chatRoot, '400px', 'auto', null, '0px', '30px', null)
+                                  .setOverflow('hidden').setPaddingLeft('2px');
     const chatInput     = document.createElement("input");
 
     initialize();
 
     function initialize() {
-        chatMessages.id = "chatMessages";
         chatInput.id    = "chatInput";
         chatInput.type  = "text";
         chatInput.maxLength = "" + Config.maxChatMessageLength;
         chatInput.value = "";   
         
-        chatRoot.appendChild(chatMessages);
         chatRoot.appendChild(chatInput);
 
         serverIn.receiveChatHandler = receiveMessageHandler

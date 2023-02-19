@@ -65,7 +65,7 @@ const GuiTools = new function() {
 
 
     /** 
-     * Creates a div with rounded corners, that is absolutly placed in the center of its parent.
+     * Creates an absolute positioned div.
      * 
      * @param parent {HTMLElement} 
      * @param width  {string} 
@@ -79,6 +79,7 @@ const GuiTools = new function() {
         div.style.height               = height;
         div.style.position             = 'absolute';
         div.style.backgroundColor      = color;
+        div.style.margin               = '0px';
         if(top) div.style.top          = top;
         if(left) div.style.left        = left;
         if(bottom) div.style.bottom    = bottom;
@@ -704,7 +705,6 @@ const GuiTools = new function() {
 
     this.createGameCanvas = function(parent, width, height) {
         const canvas                   = document.createElement("canvas");
-        canvas.style.borderRadius      = "10px";
         canvas.style.position          = "absolute";
         canvas.style.touchAction       = "none";
         canvas.style.backgroundColor   = "rgb(148, 206, 232)";

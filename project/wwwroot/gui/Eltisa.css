@@ -21,16 +21,6 @@ body {
 }
 
 
-#chatMessages {
-    position:      absolute;
-    left:          0px;
-    bottom:        30px;    
-    width:         400px;
-    height:        auto;
-    overflow:      hidden;
-}
-
-
 #chatParagraph {
     width:         400px;
     padding:       0px;
