@@ -11,16 +11,6 @@ body {
 }
 
 
-#chatInput {
-    position:      absolute;
-    background-color: rgba(255, 255, 255, 0.3);
-    left:          0px;
-    bottom:        0px;    
-    width:         390px;
-    padding-bottom: 2px;
-}
-
-
 #chatParagraph {
     width:         400px;
     padding:       0px;

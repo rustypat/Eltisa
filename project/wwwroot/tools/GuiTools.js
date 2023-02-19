@@ -447,6 +447,26 @@ const GuiTools = new function() {
     }
 
 
+    this.createTextInput = function(parent, maxLength, width, height, top, left, bottom, right, color) {
+        const input                    = document.createElement("input");
+        input.type                     = 'text';
+        input.maxLength                = "" + maxLength;
+        input.style.width              = width;
+        input.style.height             = height;
+        input.style.position           = 'absolute';
+        input.style.margin             = '0px';
+        if(top) input.style.top        = top;
+        if(left) input.style.left      = left;
+        if(bottom) input.style.bottom  = bottom;
+        if(right) input.style.right    = right;
+        if(color) input.style.backgroundColor = color;
+        if(parent) parent.appendChild(input);
+
+        input.setPaddingBottom =   padding => {input.style.paddingBottom = padding; return input; }
+        return input;        
+    }
+
+
     this.createNumberInput = function(parent, min, max, changeAction) {
         const input                    = document.createElement("input");
         input.type                     = 'number';

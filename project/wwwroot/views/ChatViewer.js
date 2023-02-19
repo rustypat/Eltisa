@@ -16,20 +16,10 @@ function ChatViewer(serverIn, serverOut) {
                                   .setDisplay('table-cell').setVerticalAlign('bottom');
     const chatMessages  = GuiTools.createPanel(chatRoot, '400px', 'auto', null, '0px', '30px', null)
                                   .setOverflow('hidden').setPaddingLeft('2px');
-    const chatInput     = document.createElement("input");
+    const chatInput     = GuiTools.createTextInput(chatRoot, Config.maxChatMessageLength, '390px', 'auto', null, '0px', '0px', null, CLR_GlossyLight)
+                                  .setPaddingBottom('2px');
 
-    initialize();
-
-    function initialize() {
-        chatInput.id    = "chatInput";
-        chatInput.type  = "text";
-        chatInput.maxLength = "" + Config.maxChatMessageLength;
-        chatInput.value = "";   
-        
-        chatRoot.appendChild(chatInput);
-
-        serverIn.receiveChatHandler = receiveMessageHandler
-    }
+    serverIn.receiveChatHandler = receiveMessageHandler
 
     
     this.addText = function(text) {
