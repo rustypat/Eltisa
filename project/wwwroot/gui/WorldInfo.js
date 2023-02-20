@@ -74,11 +74,11 @@ const WorldInfo = new function() {
     this.addTurnableBlock = function(block, leftTextureIndex, rightTextureIndex, backTextureIndex, frontTextureIndex, bottomTextureIndex, topTextureIndex) {
         viewInfos[block+0]   = createSolidBlockInfo(leftTextureIndex, rightTextureIndex, backTextureIndex, frontTextureIndex, bottomTextureIndex, topTextureIndex,
                                                          Orientation.Normal, Orientation.Normal, Orientation.Normal, Orientation.Normal, Orientation.Normal, Orientation.Normal);
-        viewInfos[block+1]   = createSolidBlockInfo(leftTextureIndex, rightTextureIndex, backTextureIndex, frontTextureIndex, bottomTextureIndex, topTextureIndex,
+        viewInfos[block+1]   = createSolidBlockInfo(frontTextureIndex, backTextureIndex, leftTextureIndex, rightTextureIndex, bottomTextureIndex, topTextureIndex,
                                                          Orientation.Normal, Orientation.Normal, Orientation.Normal, Orientation.Normal, Orientation.Turn90, Orientation.Turn90);
-        viewInfos[block+2]   = createSolidBlockInfo(leftTextureIndex, rightTextureIndex, backTextureIndex, frontTextureIndex, bottomTextureIndex, topTextureIndex,
+        viewInfos[block+2]   = createSolidBlockInfo(rightTextureIndex, leftTextureIndex, frontTextureIndex, backTextureIndex, bottomTextureIndex, topTextureIndex,
                                                          Orientation.Normal, Orientation.Normal, Orientation.Normal, Orientation.Normal, Orientation.Turn180, Orientation.Turn180);
-        viewInfos[block+3]   = createSolidBlockInfo(leftTextureIndex, rightTextureIndex, backTextureIndex, frontTextureIndex, bottomTextureIndex, topTextureIndex,
+        viewInfos[block+3]   = createSolidBlockInfo(backTextureIndex, frontTextureIndex, rightTextureIndex, leftTextureIndex, bottomTextureIndex, topTextureIndex,
                                                          Orientation.Normal, Orientation.Normal, Orientation.Normal, Orientation.Normal, Orientation.Turn270, Orientation.Turn270);
     }
 

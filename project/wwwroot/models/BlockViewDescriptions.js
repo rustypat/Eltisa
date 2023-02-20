@@ -172,7 +172,6 @@ function initializeBlockViewDescriptions() {
     WorldInfo.addVerticalBlock(Block.Radio_1,       121, 121, 121);
     WorldInfo.addVerticalBlock(Block.Radio_2,       122, 122, 122);
     WorldInfo.addVerticalBlock(Block.Radio_3,       123, 123, 123);
-    WorldInfo.addVerticalBlock(Block.Stove,         203, 204, 205);
     WorldInfo.addVerticalBlock(Block.Waterlily,      26,  26, 154);
     WorldInfo.addVerticalBlock(Block.Dirt_5,        178,  14, 179);
     WorldInfo.addVerticalBlock(Block.Caldron,       180, 181, 182); 
@@ -301,7 +300,8 @@ function initializeBlockViewDescriptions() {
 
     
     WorldInfo.addTurnableBlock(Block.RailSwitch, 135, 135, 135, 135, 135, 144);  
-    WorldInfo.addTurnableBlock(Block.RailSwitch_Switched, 135, 135, 135, 135, 135, 145);  
+    WorldInfo.addTurnableBlock(Block.RailSwitch_Switched, 135, 135, 135, 135, 135, 145); 
+    WorldInfo.addTurnableBlock(Block.Stove, 203, 204, 204, 204, 204, 205);
     
     WorldInfo.addTurnableWedge(Block.RailsUp, 64, 65, 67, 67);          
     WorldInfo.addTurnableHighWedge(Block.RailsUpHigh, 64, 66, 67, 67, 67);          

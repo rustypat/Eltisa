@@ -18,6 +18,7 @@ function initializeBlockBehaviorDescriptions() {
     BehaviorInfo.variants(Block.ArrowLateral,    8);
     BehaviorInfo.variants(Block.ArrowLongitudinal, 8);
     BehaviorInfo.variants(Block.Radio,           4);
+    BehaviorInfo.variants(Block.Stove,           4);
     
     BehaviorInfo.variants(Block.RailsLeftRight,  6);
     BehaviorInfo.variants(Block.RailSwitch,      4);
