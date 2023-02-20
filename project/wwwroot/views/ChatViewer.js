@@ -1,7 +1,7 @@
 'use strict';
 
 
-function ChatViewer(serverIn, serverOut, player) {
+function ChatViewer(serverIn, serverOut) {
     const self               = this;
 
     // event handler
@@ -12,25 +12,14 @@ function ChatViewer(serverIn, serverOut, player) {
     this.getHtmlElement  = () => chatRoot;
 
     // gui elements
-    const chatRoot      = document.createElement("div");
-    const chatMessages  = document.createElement("div");
-    const chatInput     = document.createElement("input");
+    const chatRoot      = GuiTools.createPanel(null, '400px', '100%', null, '0px', '0px', null)
+                                  .setDisplay('table-cell').setVerticalAlign('bottom');
+    const chatMessages  = GuiTools.createPanel(chatRoot, '400px', 'auto', null, '0px', '30px', null)
+                                  .setOverflow('hidden').setPaddingLeft('2px');
+    const chatInput     = GuiTools.createTextInput(chatRoot, Config.maxChatMessageLength, '390px', 'auto', null, '0px', '0px', null, CLR_GlossyLight)
+                                  .setPaddingBottom('2px');
 
-    initialize();
-
-    function initialize() {
-        chatRoot.id     = "chatRoot";
-        chatMessages.id = "chatMessages";
-        chatInput.id    = "chatInput";
-        chatInput.type  = "text";
-        chatInput.maxLength = "" + Config.maxChatMessageLength;
-        chatInput.value = "";   
-        
-        chatRoot.appendChild(chatMessages);
-        chatRoot.appendChild(chatInput);
-
-        serverIn.receiveChatHandler = receiveMessageHandler
-    }
+    serverIn.receiveChatHandler = receiveMessageHandler
 
     
     this.addText = function(text) {

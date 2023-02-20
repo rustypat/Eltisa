@@ -12,7 +12,7 @@ function HelpViewer(viewManager, serverOut, exitAction) {
 
     // gui elements
 
-    const baseDiv            = GuiTools.createOverlay();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_Glossy);
     baseDiv.style.paddingTop = '20px';       
     baseDiv.style.overflow   = 'auto';
     baseDiv.style.whiteSpace = 'nowrap'

@@ -1,7 +1,8 @@
 'use strict';
 
 function CarouselViewer() {
-    const carouselDiv             = document.createElement("div")
+    const carouselDiv             = GuiTools.createPanel(null, '64px', '100%', null, null, '0px', '0px', CLR_GlossyLight)
+                                            .setPadding('8px').setOverflow('hidden');
     const gondolasHeight          = 100;
     let   distanceToTarget        = 0;
 
@@ -24,10 +25,7 @@ function CarouselViewer() {
     initialize();
 
 
-
     function initialize() {
-        carouselDiv.id = "carousel";
-
         let index     = 0;
         let lineInfo  = CarouselInfo.getLineInfo(index++);
         while( lineInfo ) {
@@ -159,6 +157,8 @@ function CarouselViewer() {
         gondolaLine.position           = 5 + index * gondolasHeight;
         gondolaLine.style.position     = "absolute";
         gondolaLine.style.bottom       = gondolaLine.position + "px";
+        gondolaLine.style.margin       = '0px';
+        gondolaLine.style.padding      = '0px';
         gondolaLine.gondolas           = [];
         gondolaLine.selectedGondola    = null;
         gondolaLine.index              = index;
@@ -193,6 +193,8 @@ function CarouselViewer() {
             const gondola                  = document.createElement("div");
             gondola.index                  = gondolaLine.gondolas.length;
             gondola.id                     = id;
+            gondola.style.margin           = '0px';
+            gondola.style.padding          = '0px';
     
             const label = GuiTools.createLabel(gondola, name.substring(0, 15));
             label.style.margin    = '0px';

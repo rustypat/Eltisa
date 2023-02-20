@@ -14,7 +14,7 @@ function ScriptureEditor(viewManager, serverIn, serverOut, player) {
     this.getHtmlElement  = () => baseDiv;
 
     // gui elements
-    const baseDiv            = GuiTools.createOverlay();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_Glossy);
     GuiTools.createLineBreak(baseDiv, 3);    
     const textArea           = GuiTools.createTextArrea(baseDiv, "75%", "75%", changeAction);
     GuiTools.createLineBreak(baseDiv);    

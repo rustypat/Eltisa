@@ -14,13 +14,13 @@ function OracleEditor(viewManager, serverIn, serverOut, player) {
     this.getHtmlElement  = () => baseDiv;
 
     // gui elements
-    const baseDiv            = GuiTools.createOverlayTransparent();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_GlossyLight);
     const panel              = GuiTools.createCenteredPanel(baseDiv, "500px", "300px").setGradient("#cec7bf", "#5c5650");
     const closeDiv           = GuiTools.createCloseButtonDiv(panel);    
     const closeButton        = GuiTools.createCloseButton(closeDiv, closeAction);
 
     GuiTools.createLineBreak(panel, 4);
-    const textField          = GuiTools.createTextInput(panel, 150, '400px', '30px');
+    const textField          = GuiTools.createEditField(panel, 150, '400px', '30px');
     GuiTools.createLineBreak(panel, 4);
     const saveButton         = GuiTools.createButton(panel, "save",     saveAction);
     const cancelButton       = GuiTools.createButton(panel, "cancel",   closeAction);

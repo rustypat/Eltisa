@@ -12,7 +12,7 @@ function ScriptureViewer(viewManager, serverIn, serverOut, player) {
     this.getHtmlElement  = () => baseDiv;
 
     // gui elements
-    const baseDiv            = GuiTools.createOverlayTransparent();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_GlossyLight);
     const textArea           = GuiTools.createCenteredTextArrea(baseDiv, "400px", "400px", true);
 
 

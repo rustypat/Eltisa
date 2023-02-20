@@ -4,7 +4,7 @@
 function InternetViewer(viewManager, serverIn, serverOut, player) {
 
     const self               = this;
-    const baseDiv            = GuiTools.createOverlayTransparent();    
+    const baseDiv            = GuiTools.createOverlay(null, CLR_GlossyLight);    
     const iframe             = GuiTools.createCenteredIframe(baseDiv, "", "100px", "100px");
 
     const eventHandlers    = new Array(EV_Max);

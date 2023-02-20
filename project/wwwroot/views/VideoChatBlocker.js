@@ -6,7 +6,7 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
     const localSmallVideoDiv = createLocalSmallVideoDiv()
     const remoteSmallVideoDiv= createRemoteSmallVideoDiv()
     
-    const div                = GuiTools.createOverlay();
+    const div                = GuiTools.createOverlay(null, CLR_Glossy);
     const panel              = GuiTools.createTabletDiv(div);
     panel.style.width        = '90%';
     panel.style.textAlign    = 'left';
@@ -103,7 +103,7 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
         remote.bigVideoDiv.style.height= '240px';
         remote.video                   = GuiTools.createVideo(remote.bigVideoDiv);    
         GuiTools.createLineBreak(remote.div);
-        remote.name                    = GuiTools.createTextInput(remote.div, 30, "194px", "25px");
+        remote.name                    = GuiTools.createEditField(remote.div, 30, "194px", "25px");
         remote.name.style.marginTop    = '0px';
         remote.name.style.paddingLeft  = '5px';
         remote.button                  = GuiTools.createButtonSmall(remote.div, "call", callAction);

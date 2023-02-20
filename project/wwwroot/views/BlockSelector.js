@@ -9,7 +9,7 @@ function BlockSelector(viewManager, carousel) {
     this.getEventHandler = (eventType) => eventHandlers[eventType];
     this.getHtmlElement  = () => baseDiv;
     
-    const baseDiv            = GuiTools.createOverlay();
+    const baseDiv            = GuiTools.createOverlay(null, CLR_Glossy);
     baseDiv.style.paddingTop = '15px';             
     baseDiv.style.textAlign  = 'left';
     baseDiv.style.overflow   = 'auto';

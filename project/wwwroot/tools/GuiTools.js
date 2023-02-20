@@ -1,60 +1,49 @@
 'use strict';
 
+// colors
+const CLR_White       = 'white';
+const CLR_Glossy      = 'rgba(255,255,255,0.6)';
+const CLR_GlossyLight = 'rgba(255,255,255,0.3)';
+const CLR_Transparent = 'transparent';
+
+// linear gradients
+const LGT_BlueSky = 'linear-gradient(rgb(148,207,232) 10%, rgb(148,207,232), rgb(255, 255, 255))';
+
+
 const GuiTools = new function() {
-
+    
     /** 
-     * @param parent {HTMLElement}
-     * @param id     {string}
+     * Creates a div that covers the whole area.
+     * 
+     * @param parent {HTMLElement} 
+     * @param color  {string} a CSS color for the background
      * @returns      {HTMLDivElement} 
      * */
-    this.createOverlayOpaque = function(parent) {
+    this.createOverlay = function(parent, color = CLR_Transparent) {
         const div                      = document.createElement("div");
         div.style.position             = 'absolute';
         div.style.width                = '100%';
         div.style.height               = '100%';
         div.style.textAlign            = 'center';
-        div.style.backgroundColor      = 'rgba(255,255,255,1)';
+        div.style.backgroundColor      = color;
         if(parent) parent.appendChild(div);
+
+        div.setImage =  image => { div.style.backgroundImage = image; return div; }
+
         return div;        
     }
 
 
     /** 
-     * @param parent {HTMLElement}
-     * @param id     {string}
+     * Creates a div with rounded corners, that is absolutly placed in the center of its parent.
+     * 
+     * @param parent {HTMLElement} 
+     * @param width  {string} 
+     * @param height {string} 
+     * @param color  {string} a CSS color for the background
      * @returns      {HTMLDivElement} 
      * */
-    this.createOverlay = function(parent) {
-        const div                      = document.createElement("div");
-        div.style.position             = 'absolute';
-        div.style.width                = '100%';
-        div.style.height               = '100%';
-        div.style.textAlign            = 'center';
-        div.style.backgroundColor      = 'rgba(255,255,255,0.6)';
-        if(parent) parent.appendChild(div);
-        return div;        
-    }
-
-
-    /** 
-     * @param parent {HTMLElement}
-     * @param id     {string}
-     * @returns      {HTMLDivElement} 
-     * */
-    this.createOverlayTransparent = function(parent) {
-        const div                      = document.createElement("div");
-        div.style.position             = 'absolute';
-        div.style.width                = '100%';
-        div.style.height               = '100%';
-        div.style.textAlign            = 'center';        
-        div.style.backgroundColor      = 'rgba(255,255,255,0.2)';
-        if(parent) parent.appendChild(div);
-        return div;        
-    }
-
-
-    this.createCenteredPanel = function(parent, width, height, color) {
-        if(!color) color = 'rgba(220,220,220, 0.8)';
+    this.createCenteredPanel = function(parent, width, height, color = CLR_Transparent) {
         const div                      = document.createElement("div");
         div.style.width                = width;
         div.style.height               = height;
@@ -75,31 +64,34 @@ const GuiTools = new function() {
     }
 
 
-    this.createTransparentPanel = function(parent, width, height) {
+    /** 
+     * Creates an absolute positioned div.
+     * 
+     * @param parent {HTMLElement} 
+     * @param width  {string} 
+     * @param height {string} 
+     * @param color  {string} a CSS color for the background
+     * @returns      {HTMLDivElement} 
+     * */
+    this.createPanel = function(parent, width, height, top, left, bottom, right, color = CLR_Transparent) {
         const div                      = document.createElement("div");
         div.style.width                = width;
         div.style.height               = height;
         div.style.position             = 'absolute';
-        div.style.top                  = '50%';
-        div.style.left                 = '50%';
-        div.style.transform            = 'translate(-50%,-50%)';
-        div.style.padding              = "10px";
-        div.style.textAlign            = "center";
+        div.style.backgroundColor      = color;
+        div.style.margin               = '0px';
+        if(top) div.style.top          = top;
+        if(left) div.style.left        = left;
+        if(bottom) div.style.bottom    = bottom;
+        if(right) div.style.right      = right;
         if(parent) parent.appendChild(div);
-        return div;        
-    }
 
+        div.setDisplay =        display => { div.style.display = display; return div; }
+        div.setVerticalAlign =  align   => { div.style.verticalAlign = align; return div; }
+        div.setPadding =        padding => { div.style.padding = padding; return div; }
+        div.setPaddingLeft =    padLeft => { div.style.paddingLeft = padLeft; return div; }
+        div.setOverflow =       overflow=> { div.style.overflow = overflow; return div; }
 
-    this.createBackgroundPanel = function(parent) {
-        const div                      = document.createElement("div");
-        div.style.width                = "100%";
-        div.style.height               = "100%";
-        div.style.padding              = '20px';       
-        div.style.overflow             = 'auto';
-        div.style.whiteSpace           = 'nowrap'
-        div.style.backgroundColor      = 'rgb(148,207,232)';
-        div.style.backgroundImage      = 'linear-gradient(rgb(148,207,232) 10%, rgb(148,207,232), rgb(255, 255, 255))';
-        if(parent) parent.appendChild(div);
         return div;        
     }
 
@@ -455,6 +447,26 @@ const GuiTools = new function() {
     }
 
 
+    this.createTextInput = function(parent, maxLength, width, height, top, left, bottom, right, color) {
+        const input                    = document.createElement("input");
+        input.type                     = 'text';
+        input.maxLength                = "" + maxLength;
+        input.style.width              = width;
+        input.style.height             = height;
+        input.style.position           = 'absolute';
+        input.style.margin             = '0px';
+        if(top) input.style.top        = top;
+        if(left) input.style.left      = left;
+        if(bottom) input.style.bottom  = bottom;
+        if(right) input.style.right    = right;
+        if(color) input.style.backgroundColor = color;
+        if(parent) parent.appendChild(input);
+
+        input.setPaddingBottom =   padding => {input.style.paddingBottom = padding; return input; }
+        return input;        
+    }
+
+
     this.createNumberInput = function(parent, min, max, changeAction) {
         const input                    = document.createElement("input");
         input.type                     = 'number';
@@ -469,37 +481,14 @@ const GuiTools = new function() {
     }
 
 
-    this.createTextInput = function(parent, maxLength, width, height, textAlign, placeholder, keyDownAction) {
+    this.createEditField = function(parent, maxLength, width, height, placeholder, keyDownAction) {
         const input                         = document.createElement("input");
-        input.style.margin                  = '10px';   
         if(maxLength) input.maxLength       = maxLength;
         if(width)  input.style.width        = width;
         if(height) input.style.height       = height;
-        if(textAlign) input.style.textAlign = textAlign;
         if(placeholder) input.placeholder   = placeholder;
-        if(parent) parent.appendChild(input);
         if(keyDownAction) input.addEventListener("keydown", keyDownAction); 
-        input.style.fontSize           = "15px";        
-        input.style.borderRadius       = "10px";
-        input.style.borderStyle        = "solid";
-        input.style.paddingLeft        = '5px';
-        input.style.paddingRight       = '5px';
-        input.type                     = 'text';
-        input.setText =  (text) => input.value = (text ? text : "");
-        input.getText =  ()     => input.value; 
-        input.clear   =  ()     => input.value = "";
-       return input;        
-    }
-
-
-    this.createEditField = function(parent, maxLength, width, placeholder) {
-        const input                         = document.createElement("input");
-        input.style.margin                  = '10px';   
-        if(maxLength) input.maxLength       = maxLength;
-        if(width)  input.style.width        = width;
-        if(placeholder) input.placeholder   = placeholder;
-        input.style.height                  = "30px";
-        input.style.textAlign               = "center";
+        input.style.margin             = '10px';   
         input.style.fontSize           = "15px";    
         input.style.fontWeight         = "normal";
         input.style.borderRadius       = "10px";
@@ -511,19 +500,19 @@ const GuiTools = new function() {
         input.setText =  (text) => input.value = (text ? text : "");
         input.getText =  ()     => input.value; 
         input.clear   =  ()     => input.value = "";
+        input.setTextAlign =  align => { input.style.textAlign = align; return input; };
         if(parent) parent.appendChild(input);
        return input;        
     }
 
 
-    this.createPasswordField = function(parent, maxLength, width, placeholder) {
+    this.createPasswordField = function(parent, maxLength, width, height, placeholder) {
         const input                         = document.createElement("input");
         input.style.margin                  = '10px';   
         if(maxLength) input.maxLength       = maxLength;
         if(width)  input.style.width        = width;
+        if(height) input.style.height       = height;
         if(placeholder) input.placeholder   = placeholder;
-        input.style.height                  = "30px";
-        input.style.textAlign               = "center";
         input.style.fontSize           = "15px";        
         input.style.fontWeight         = "normal";
         input.style.borderRadius       = "10px";
@@ -535,6 +524,7 @@ const GuiTools = new function() {
         input.setText =  (text) => input.value = (text ? text : "");
         input.getText =  ()     => input.value; 
         input.clear   =  ()     => input.value = "";
+        input.setTextAlign =  align => { input.style.textAlign = align; return input; };
         if(parent) parent.appendChild(input);
        return input;        
     }
@@ -713,7 +703,6 @@ const GuiTools = new function() {
 
     this.createGameCanvas = function(parent, width, height) {
         const canvas                   = document.createElement("canvas");
-        canvas.style.borderRadius      = "10px";
         canvas.style.position          = "absolute";
         canvas.style.touchAction       = "none";
         canvas.style.backgroundColor   = "rgb(148, 206, 232)";
@@ -749,9 +738,6 @@ const GuiTools = new function() {
             context.fillRect(0, 0, width, height);
         }
 
-        /** 
-         * @param image {HTMLImageElement}
-         * */
         canvas.drawImage = function(image) {
             canvas.getContext('2d').drawImage(image, 0, 0);
         }
