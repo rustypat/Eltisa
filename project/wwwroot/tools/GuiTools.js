@@ -486,8 +486,8 @@ const GuiTools = new function() {
         if(maxLength) input.maxLength       = maxLength;
         if(width)  input.style.width        = width;
         if(height) input.style.height       = height;
-        if(placeholder) input.placeholder   = placeholder;
-        if(keyDownAction) input.addEventListener("keydown", keyDownAction); 
+        if(placeholder) input.placeholder   = placeholder; 
+        if(keyDownAction) input.addEventListener("keydown", keyDownAction);
         input.style.margin             = '10px';   
         input.style.fontSize           = "15px";    
         input.style.fontWeight         = "normal";
@@ -506,13 +506,14 @@ const GuiTools = new function() {
     }
 
 
-    this.createPasswordField = function(parent, maxLength, width, height, placeholder) {
+    this.createPasswordField = function(parent, maxLength, width, height, placeholder, keyDownAction) {
         const input                         = document.createElement("input");
         input.style.margin                  = '10px';   
         if(maxLength) input.maxLength       = maxLength;
         if(width)  input.style.width        = width;
         if(height) input.style.height       = height;
         if(placeholder) input.placeholder   = placeholder;
+        if(keyDownAction) input.addEventListener("keydown", keyDownAction);
         input.style.fontSize           = "15px";        
         input.style.fontWeight         = "normal";
         input.style.borderRadius       = "10px";

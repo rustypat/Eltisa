@@ -33,8 +33,9 @@ function TresorViewer(viewManager, serverIn, serverOut, player) {
         blockPos      = player.getTargetPos();
         if( blockPos == null ) return;
 
-        textArea.value       = "";
-        textAreaPass.value   = "";
+        textArea.value        = "";
+        textAreaPass.value    = "";
+        textAreaPass.disabled = false;
 
         
         serverIn.receiveResourceHandler = updateText;   
@@ -48,8 +49,11 @@ function TresorViewer(viewManager, serverIn, serverOut, player) {
     
 
     function updateText(messageType, blockType, resourceResponse, text) {
-        if(resourceResponse === SR_Ok)              textArea.value    = text;
-        if(resourceResponse === SR_PasswordInvalid) textArea.value    = "Password Invalid";
+        if(resourceResponse === SR_PasswordInvalid) textArea.value = "Password Invalid";
+        if(resourceResponse === SR_Ok) {
+            textArea.value        = text;
+            textAreaPass.disabled = true;
+        }
     }
 
     function eventHandlersTextareaPass(event) {
