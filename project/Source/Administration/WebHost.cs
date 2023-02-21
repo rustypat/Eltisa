@@ -25,6 +25,7 @@ public static class WebHost {
         host = new WebHostBuilder()
             .UseStartup<WebHostConfig>()
             .UseKestrel(options => ConfigureServerOptions(options) )                
+            .UseWebRoot(Configuration.WwwDirectory)
             .UseContentRoot(Directory.GetCurrentDirectory())
             .Build();
         host.Run();

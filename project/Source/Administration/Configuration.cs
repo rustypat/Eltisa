@@ -15,9 +15,11 @@ public static class Configuration {
 
     public const string Version              = "0.27";
 
-    public const string DataDirectoryName    = "worldData";
+    public const string WorldDirectoryName   = "worldData";
+    public const string WwwDirectoryName     = "wwwroot";
 
-    public static readonly string DataDirectory        = FindWorldDataDirectory();
+    public static readonly string WwwDirectory         = FindWwwDirectory();
+    public static readonly string DataDirectory        = FindWorldDirectory();
     public static readonly string RegionDirectory      = DataDirectory + "regions\\";
     public static readonly string ResourceDirectory    = DataDirectory + "resources\\";
     public static readonly string LogFile              = DataDirectory + "rundata\\log.txt";
@@ -87,21 +89,40 @@ public static class Configuration {
     }
 
 
-    public static string FindWorldDataDirectory()
+    public static string FindWorldDirectory()
     {
         var path = Environment.CurrentDirectory;
 
         do
         {
-            if(EnumerateDirectories(path).Any(d => d.EndsWith(DataDirectoryName))) 
+            if(EnumerateDirectories(path).Any(d => d.EndsWith(WorldDirectoryName))) 
             {
                 Console.Out.WriteLine("found worldData directory in " + path);
-                return path + "\\" + DataDirectoryName + "\\";
+                return path + "\\" + WorldDirectoryName + "\\";
             }
             path = GetParent(path).FullName;
         }while(path.IsDefined());
 
         Console.Out.WriteLine("could not find worldData directory!");
+        Environment.Exit(1);
+        return null;
+    }
+
+    public static string FindWwwDirectory()
+    {
+        var path = Environment.CurrentDirectory;
+
+        do
+        {
+            if(EnumerateDirectories(path).Any(d => d.EndsWith(WwwDirectoryName))) 
+            {
+                Console.Out.WriteLine("found wwwroot directory in " + path);
+                return path + "\\" + WwwDirectoryName + "\\";
+            }
+            path = GetParent(path).FullName;
+        }while(path.IsDefined());
+
+        Console.Out.WriteLine("could not find wwwroot directory!");
         Environment.Exit(1);
         return null;
     }
