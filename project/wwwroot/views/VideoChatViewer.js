@@ -1,7 +1,15 @@
 'use strict';
 
 
-function VideoChatBlocker(body, activateGame, deactivateGame, server) {
+function VideoChatViewer(viewManager, serverIn, serverOut, player) {
+    const self = this;
+    
+    // event handler
+    const eventHandlers    = new Array(EV_Max);
+    eventHandlers[EV_Keyboard_F4]   = close;
+    this.getEventHandler = (eventType) => eventHandlers[eventType];
+    this.getHtmlElement  = () => div;
+
 
     const localSmallVideoDiv = createLocalSmallVideoDiv()
     const remoteSmallVideoDiv= createRemoteSmallVideoDiv()
@@ -30,7 +38,7 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
 
     function createHeader(panel) {
         const closeDiv           = GuiTools.createCloseButtonDiv(panel);
-        const closeButton        = GuiTools.createCloseButton(closeDiv, hideAction);
+        const closeButton        = GuiTools.createCloseButton(closeDiv, close);
     
         GuiTools.createTitle(panel, "Video chat", "10px");
         GuiTools.createLineBreak(panel);
@@ -93,7 +101,7 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
         remote.ringTone                = new Audio("/resources/sounds/telephoneRing.mp3");
         remote.ringTone.loop           = true;
         remote.hangupTimer             = null;
-        remote.videoRTC                = new VideoRTC(server, remoteVideoChangeHandler, id);
+        remote.videoRTC                = new VideoRTC(serverOut, remoteVideoChangeHandler, id);
 
         remote.div                     = GuiTools.createDiv(panel);
         remote.bigVideoDiv             = GuiTools.createDiv(remote.div);
@@ -337,20 +345,6 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     
 
-    function keydownHandler(event) {
-        const keyCode = KeyCode.getFromEvent(event);
-    
-        if( keyCode == KeyCode.F4 ) {
-            event.preventDefault();            
-            hideAction();        
-            return false; 
-        }
-        else {
-            return true;
-        }
-    }
-    
-
     function showSmallVideo() {
         if( !body.contains(localSmallVideoDiv) ) {
             body.appendChild(localSmallVideoDiv);
@@ -402,12 +396,9 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
     }
 
 
-    function hideAction(event)  {
-        if(event) event.stopPropagation();
-        body.removeChild(div);       
-        document.removeEventListener("keydown", keydownHandler);
-        activateGame();    
-        
+    function close()  {
+        viewManager.unshow(self);
+
         for(const remote of remotes) {
             if(remoteIsAnswering(remote)) {
                 server.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
@@ -435,28 +426,23 @@ function VideoChatBlocker(body, activateGame, deactivateGame, server) {
     }
     
 
-    this.show = function(_localName, _remoteName) {
-        server.requestListActors();
-        deactivateGame();
-        hideSmallVideo();
+    this.enable = function() {
+        let localName = player.getName();
+        let remoteName = player.getTargetPlayerName();
+
+        serverOut.requestListActors();
+        //hideSmallVideo();
         local.videoLocal.start();
         
-        if( !body.contains(div) ) body.appendChild(div);
-        document.addEventListener("keydown", keydownHandler);
-        local.name.setText(_localName);
+        local.name.setText(localName);
         remotes[0].name.focus();
 
         const id = getRemoteIdFirstIdle();
-        if(_remoteName && id >= 0) {
-            remotes[id].name.setText(_remoteName);
+        if(remoteName && id >= 0) {
+            remotes[id].name.setText(remoteName);
         }
 
         return true;
-    }
-
-
-    this.isVisible = function() {
-        return body.contains(div);
     }
 
 

@@ -7,6 +7,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
     eventHandlers[EV_Keyboard_F1]      = toggleMoveMode;
     eventHandlers[EV_Keyboard_F2]      = showBlockSelector;
     eventHandlers[EV_Keyboard_F3]      = editBlock;
+    eventHandlers[EV_Keyboard_F4]      = showVideoChat;
     eventHandlers[EV_Keyboard_F5]      = toggleEnvironmentRadius;
     eventHandlers[EV_Keyboard_Escape]  = showHelp;
     eventHandlers[EV_Window_Resize]    = resizeWindow;
@@ -35,6 +36,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
     const tetrisViewer           = new TetrisViewer(viewManager);
     const tresorEditor           = new TresorEditor(viewManager, serverIn, serverOut, player);
     const tresorViewer           = new TresorViewer(viewManager, serverIn, serverOut, player);
+    const videoChatViewer        = new VideoChatViewer(viewManager, serverIn, serverOut, player);
 
     this.enable = function() {
         player.activateControls();
@@ -165,6 +167,11 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         else if( BlockData.isTresor(blockData) )    viewManager.showModal(tresorViewer);
         else if( BlockData.isPortal(blockData))     serverOut.requestReadResource(targetPos, Block.Portal, "", ST_Act); 
         else chatViewer.addText(" ");
+    }
+
+
+    function showVideoChat() {
+        viewManager.showModal(videoChatViewer);
     }
 
 

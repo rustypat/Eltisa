@@ -30,7 +30,7 @@ function Statusbar() {
         const playerPos  = player.getPosition();
         const positionInfo = Math.floor(playerPos.x) + "|" + Math.floor(playerPos.y) + "|" + Math.floor(playerPos.z);
 
-        const targetInfo = player.getTargetInfo();
+        const targetInfo = player.getTargetPlayerName();
         const fpsInfo    = worldport.getFramesPerSecond() + " fps";
         const moveInfo   = player.getMoveModeDescription();
     

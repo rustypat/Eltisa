@@ -412,14 +412,14 @@ function Player(viewport, chunkStore) {
     }
 
 
-    this.getTargetInfo = function() {
+    this.getTargetPlayerName = function() {
         const pickInfo = viewport.pickCenterInfo();
         if (pickInfo.hit && pickInfo.distance < Config.maxTargetDistance) {
             if(pickInfo.pickedMesh.actor != null) {
                 return pickInfo.pickedMesh.actor.name;
             }
         }
-        return '';
+        return "";
     }
 
 
