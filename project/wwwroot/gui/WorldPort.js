@@ -410,26 +410,27 @@ function WorldPort(body) {
 
 
     this.createActorMesh = function(actor) {
-        actorFaceColors[1]        = intToColor(actor.color);                    // individual side color
+        console.log("createActorMesh   " + actor.x);
+        actorFaceColors[1]        = intToColor(actor.look);                    // individual side color
         
         let mesh = BABYLON.MeshBuilder.CreateCylinder("actor", actorCylinderOptions, scene);
         mesh.material             = actorMaterial;        
-        mesh.position.x           = actor.positionX;
-        mesh.position.y           = actor.positionY - 0.51;
-        mesh.position.z           = actor.positionZ;
-        mesh.rotation.y           = actor.rotationY + Math.PI / 2;
+        mesh.position.x           = actor.x;
+        mesh.position.y           = actor.y - 0.51;
+        mesh.position.z           = actor.z;
+        mesh.rotation.y           = actor.rotation + Math.PI / 2;
         mesh.checkCollisions      = true;
         actor.mesh                = mesh;
         mesh.actor                = actor;
     }
 
 
-    this.updateActorMesh = function(actor, actorMessage) {
+    this.updateActorMesh = function(actor, x, y, z, orientation) {
         needsRendering = true;
-        actor.mesh.position.x           = actorMessage.positionX;
-        actor.mesh.position.y           = actorMessage.positionY - 0.51;
-        actor.mesh.position.z           = actorMessage.positionZ;
-        actor.mesh.rotation.y           = actorMessage.rotationY + Math.PI / 2;
+        actor.mesh.position.x           = x;
+        actor.mesh.position.y           = y - 0.51;
+        actor.mesh.position.z           = z;
+        actor.mesh.rotation.y           = orientation + Math.PI / 2;
     }
 
 

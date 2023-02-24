@@ -610,6 +610,11 @@ function startGame(actorId, actorType, actorName, startLocation) {
     serverIn.receiveChunksHandler =  (chunksMessage) => chunkStore.handleChunkMessage(chunksMessage);
     serverIn.updateBlock          =  (x, y, z, blockData) => chunkStore.updateBlock(x, y, z, blockData);
     serverIn.updateChunk          =  (chunk) => chunkStore.updateChunk(chunk);
+    serverIn.receiveActorMovedHandler =  (id, x, y, z, orientation) => actorStore.handleActorMove(id, x,y ,z, orientation);
+    serverIn.actorJoinedObserver.add(actorStore.handleActorJoined);
+    serverIn.receiveActorListHandler.add(actorStore.handleActorList);
+    serverIn.actorLeftObserver.add(actorStore.handleActorLeft);
+    serverOut.requestListActors();
 
     player.init(actorId, actorType, actorName);
     const startingPoint = StartingPoints.getStartingPoint(startLocation, player);
