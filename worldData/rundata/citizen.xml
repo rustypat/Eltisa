@@ -17,4 +17,10 @@
     <ActorType>Administrator</ActorType>
     <Color>16777215</Color>
   </Citizen>
+  <Citizen>
+    <Name>a</Name>
+    <Password>a</Password>
+    <ActorType>Administrator</ActorType>
+    <Color>16777215</Color>
+  </Citizen>
 </ArrayOfCitizen>
