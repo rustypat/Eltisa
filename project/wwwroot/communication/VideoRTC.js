@@ -24,7 +24,7 @@ function VideoLocal(changeHandler) {
     const self               = this;
 
     function setStatus(_status, _statusMessage) {
-        if( status==_status && statusMessage==_statusMessage) return;
+        if( status == _status && statusMessage == _statusMessage) return;
         status        = _status;
         statusMessage = _statusMessage;        
         changeHandler(self);
@@ -47,14 +47,20 @@ function VideoLocal(changeHandler) {
 
     
     this.start = async function() {
-        if(localVideo) return;
-        try {
+        if(localVideo) {
+            return;
+        }
+        else if(!navigator.mediaDevices) {
+            setStatus(Status.Idle, "Error: not allowed to access camera without https!");
+        }
+        else try {
             localVideo  = await navigator.mediaDevices.getUserMedia( mediaConstraints );
             setStatus(Status.Connected);
         } catch(e) {
             if( e.name == "NotFoundError" )         setStatus(Status.Idle, "Error: no camera found");
             else if( e.name == "NotAllowedError" )  setStatus(Status.Idle, "Error: no access to camera");
             else if( e.name == "NotReadableError" ) setStatus(Status.Idle, "Error: no access to camera");
+            else if( e.name == "TypeError" )        setStatus(Status.Idle, "Error: no access to camera (missing certificate?) ");
             else                                    setStatus(Status.Idle, e.name);
         }
     }
@@ -79,7 +85,7 @@ function VideoLocal(changeHandler) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function VideoRTC(server, changeHandler, id) {
+function VideoRTC(serverOut, changeHandler, id) {
     
     this.id  = id;
     
@@ -179,7 +185,7 @@ function VideoRTC(server, changeHandler, id) {
             setStatus(Status.Calling, "answering to " + remoteName);
             let sdpOffer          = await peerConnection.createOffer();
             peerConnection.setLocalDescription(sdpOffer);
-            server.requestVideoChat(localName, remoteName, VideoMessageType.SendSdpOffer, sdpOffer);
+            serverOut.requestVideoChat(localName, remoteName, VideoMessageType.SendSdpOffer, sdpOffer);
         } catch(e) {
             setStatus(Status.Idle, e.name);
             Log.error(e);
@@ -239,7 +245,7 @@ function VideoRTC(server, changeHandler, id) {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
             let sdpAnswer         = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(sdpAnswer);
-            server.requestVideoChat(localName, remoteName, VideoMessageType.SendSdpAnswer, sdpAnswer);
+            serverOut.requestVideoChat(localName, remoteName, VideoMessageType.SendSdpAnswer, sdpAnswer);
         } catch(e) {
             Log.error(e);
         }
@@ -261,7 +267,7 @@ function VideoRTC(server, changeHandler, id) {
         let connection       = new RTCPeerConnection(connectionConfig);
 
         connection.onicecandidate = function(event){
-            server.requestVideoChat(localName, remoteName, VideoMessageType.SendIce, event.candidate);
+            serverOut.requestVideoChat(localName, remoteName, VideoMessageType.SendIce, event.candidate);
         };
 
         connection.ontrack = function(event){

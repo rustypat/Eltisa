@@ -48,7 +48,7 @@ public static class WebHost {
         #if DEBUG
             options.Listen(IPAddress.Loopback, 5000);  // http:localhost:5000
             if(HasCertificate() ){
-                options.Listen(IPAddress.Any, 5001, listenOptions => listenOptions.UseHttps(certificate) );
+                options.Listen(IPAddress.Loopback, 5001, listenOptions => listenOptions.UseHttps(certificate) );
             }
         #else
             options.Listen(IPAddress.Any, 80);  
@@ -60,16 +60,18 @@ public static class WebHost {
 
 
     private static X509Certificate2 GetCertificate(string certificateName) {
-        var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
-        store.Open(OpenFlags.ReadOnly);
-        var certificates = store.Certificates.Find( X509FindType.FindBySubjectName, certificateName, validOnly: false);
-        if (certificates.Count == 0) {
-            Log.Warn("certificate " + certificateName + " not found on local machine");
-            return null;
-        }
-        else {
-            return certificates[0];
-        }
+        using var storeCU = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+        storeCU.Open(OpenFlags.ReadOnly);
+        var certificates = storeCU.Certificates.Find( X509FindType.FindBySubjectName, certificateName, validOnly: false);
+        if (certificates.Count > 0) return certificates[0];
+
+        using var storeLM = new X509Store(StoreName.CertificateAuthority, StoreLocation.LocalMachine);
+        storeLM.Open(OpenFlags.ReadOnly);
+        certificates = storeLM.Certificates.Find( X509FindType.FindBySubjectName, certificateName, validOnly: false);
+        if (certificates.Count > 0) return certificates[0];
+
+        Log.Warn("certificate " + certificateName + " not found on local machine");
+        return null;
     }
 
     public static bool HasCertificate() {

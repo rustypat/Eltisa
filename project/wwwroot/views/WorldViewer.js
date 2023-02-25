@@ -38,6 +38,9 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
     const tresorViewer           = new TresorViewer(viewManager, serverIn, serverOut, player);
     const videoChatViewer        = new VideoChatViewer(viewManager, serverIn, serverOut, player);
 
+    serverIn.receiveVideoChatHandler = handleVideoChat;
+
+
     this.enable = function() {
         player.activateControls();
         worldport.lockPointer();
@@ -222,6 +225,18 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
     function handleActorLeft(id, name) {
         statusbar.setSystemInfo(name + " has left");
     }
-    
+
+
+    function handleVideoChat(message) {
+        if(message.type==VideoMessageType.RequestChat ) {
+            statusbar.setSystemInfo( message.sender + " wants to video chat, press F4 to accept");
+        }
+
+        if(message.type==VideoMessageType.StopChat ) {
+            statusbar.clearSystemInfo();
+        }
+
+        videoChatBlocker.handleVideoChatMessage(message);
+    }    
 
 }

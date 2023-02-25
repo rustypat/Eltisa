@@ -3,6 +3,7 @@
 
 function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     const self = this;
+    const body = document.getElementsByTagName("body")[0];
     
     // event handler
     const eventHandlers    = new Array(EV_Max);
@@ -182,7 +183,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
             messageField.setMessage("video camera ist not turned on");
             return;
         }
-        server.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.RequestChat, null);        
+        serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.RequestChat, null);        
         remote.videoRTC.openConnection(local.name.getText(), remote.name.getText(), local.videoLocal.getVideoStream());
     }
 
@@ -200,7 +201,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         if(event) id  = event.target.id;          // take id from triggering button
         const remote  = remotes[id];        
         if( !remote.videoRTC.isIdle() ) {
-            server.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
+            serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
             remote.videoRTC.closeConnection();
         }     
         else {
@@ -401,11 +402,11 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
 
         for(const remote of remotes) {
             if(remoteIsAnswering(remote)) {
-                server.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
+                serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
                 remoteSetIdle(remote);
             }            
             else if(remote.videoRTC.isCalling()) {
-                server.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
+                serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
                 remote.videoRTC.closeConnection();
                 remoteSetIdle(remote);
             }            
@@ -414,7 +415,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
             }
         }
 
-        if( remotes.some( function(remote) { return remote.videoRTC.isConnected(); } ) ) { 
+        if( remotes.some(  remote => remote.videoRTC.isConnected() ) ) { 
             showSmallVideo();
         }
         else {

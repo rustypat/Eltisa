@@ -12,14 +12,12 @@ function Statusbar() {
 
     // available info texts
     let playerInfo;
-    let chatInfo;
     let blockInfo;
     let blockType;
     let systemInfo;
     let systemInfoTime;
 
     const playerColor    = "rgba(255, 255, 255, 0.2)";
-    const chatColor      = "rgba(255, 255, 255, 0.2)";
     const oracleColor    = "rgba(150, 150, 150, 1)";
     const portalColor    = "rgba(0, 160, 190, 1)";
     const systemColor    = "rgba(255, 255, 0, 0.2)";
@@ -61,6 +59,11 @@ function Statusbar() {
     }
 
 
+    this.clearSystemInfo = function() {
+        systemInfo = null;
+    }
+
+
     this.updateInfo = function() {
         let text;
         let bgColor;
@@ -74,10 +77,6 @@ function Statusbar() {
             if(blockType == Block.Oracle) bgColor = oracleColor;
             else if(blockType == Block.Portal) bgColor = portalColor;
             else bgColor = playerColor;
-        }
-        else if(chatInfo)  {
-            text = chatInfo;
-            bgColor = chatColor;
         }
         else {
             text = playerInfo;
