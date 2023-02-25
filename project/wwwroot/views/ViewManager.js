@@ -107,7 +107,18 @@ function ViewManager() {
             else               eventType = EV_Wheel_Up;
         }
         const eventHandler = searchEventHandler(eventType);
-        return callEventHandler(event, eventHandler);
+        if(eventHandler) {
+            event.stopPropagation();
+            try {
+                eventHandler();
+            } catch(e) {
+                Log.error(e);
+            }
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
 

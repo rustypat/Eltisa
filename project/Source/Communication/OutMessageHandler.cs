@@ -47,7 +47,14 @@ public static class OutMessageHandler {
         builder.WriteInt(   messageCounter);
         builder.WriteInt(   count);
         foreach(var actor in actors) {
-            builder.WriteString(actor.Name);         
+            builder.WriteInt(actor.ID);
+            builder.WriteString(actor.Name);
+            builder.WriteInt((int)actor.ActorType);
+            builder.WriteInt(actor.Color);
+            builder.WriteFloat(actor.PositionX);
+            builder.WriteFloat(actor.PositionY);
+            builder.WriteFloat(actor.PositionZ);
+            builder.WriteFloat(actor.RotationY);     
         }
         builder.WriteInt(   EndTag);
 

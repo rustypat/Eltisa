@@ -41,7 +41,7 @@ function ServerIn(serversocket) {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     this.receiveLoginHandler           = function(message) {};
-    this.receiveActorListHandler       = function(names) {};
+    this.receiveActorListHandler       = new Observer(); //(actors)
     this.receiveActorMovedHandler      = function(id, x, y, z, orientation) {};
     this.actorJoinedObserver           = new Observer();    // (id, name, type, look) 
     this.actorLeftObserver             = new Observer();    // (id, name)
@@ -106,13 +106,21 @@ function ServerIn(serversocket) {
 
     function receiveActorListMessage(reader) {
         const actorCount   = reader.readInteger();
-        const names        = new Array(actorCount);
-        for(let x=0; x < actorCount; x++) {
-            names[x] = reader.readString();
+        const actors       = new Array(actorCount);
+        for(let a=0; a < actorCount; a++) {
+            const id    = reader.readInteger();
+            const name  = reader.readString();
+            const type  = reader.readInteger();
+            const look  = reader.readInteger();
+            const x     = reader.readFloat();
+            const y     = reader.readFloat();
+            const z     = reader.readFloat();
+            const rotation = reader.readFloat();
+            actors[a] = new Actor(id, name, type, look, x, y, z, rotation);
         }
         assert(SMT_EndTag       == reader.readInteger());
         
-        self.receiveActorListHandler(names);
+        self.receiveActorListHandler.call(actors);
     }
 
 

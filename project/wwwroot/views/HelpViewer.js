@@ -135,7 +135,7 @@ function HelpViewer(viewManager, serverOut, exitAction) {
 
 
     this.enable = function() {
-        serverIn.receiveActorListHandler = updateActorList;
+        serverIn.receiveActorListHandler.add(updateActorList);
         serverIn.actorJoinedObserver.add(handleActorJoined);
         serverIn.actorLeftObserver.add(handleActorLeft);
         serverOut.requestListActors();                
@@ -145,7 +145,7 @@ function HelpViewer(viewManager, serverOut, exitAction) {
     this.disable = function() {
         serverIn.actorJoinedObserver.remove(handleActorJoined);
         serverIn.actorLeftObserver.remove(handleActorLeft);
-        serverIn.receiveActorListHandler = updateActorList;
+        serverIn.receiveActorListHandler.add(updateActorList);
     }
 
 
@@ -154,10 +154,10 @@ function HelpViewer(viewManager, serverOut, exitAction) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     
 
-    function updateActorList(names) {
+    function updateActorList(actors) {
         nameList.clearEntries();
-        for(const name of names) {
-            nameList.addEntry(name);
+        for(const actor of actors) {
+            nameList.addEntry(actor.name);
         }
     }
     
