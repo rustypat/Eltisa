@@ -553,10 +553,10 @@ function RailMoveMode(chunkStore, camera) {
         let possibilities  = getPossibleNextRailBlock(posRailJet);
         let optionToReturn = selectNextBlockFromTwoOption(possibilities.option1, possibilities.option2, lastRailBlock, posRailJet);
 
+        if(optionToReturn === null)                  {nextTarget = null; return;}
         if(!checkIfBlockIsOkAsTarget(optionToReturn)) nextTarget = null;
         else                                          nextTarget = optionToReturn;
 
-        console.log(nextTarget);
         if(nextTarget === null) return;
 
         //set Things
