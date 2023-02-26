@@ -41,13 +41,13 @@ function ServerIn(serversocket) {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     this.receiveLoginHandler           = function(message) {};
-    this.receiveActorListHandler       = new Observer(); //(actors)
+    this.receiveActorListObserver      = new Observer(); //(actors)
     this.receiveActorMovedHandler      = function(id, x, y, z, orientation) {};
     this.actorJoinedObserver           = new Observer();    // (id, name, type, look) 
     this.actorLeftObserver             = new Observer();    // (id, name)
     this.receiveChatHandler            = function(chatText, sender) {};
     this.receiveChunksHandler          = function(message) {};
-    this.receiveVideoChatHandler       = function(message) {};
+    this.receiveVideoChatObserver      = new Observer();    // (sender, receiver, type, data)
     this.updateBlock                   = function(x, y, z, blockData) {};
     this.updateChunk                   = function(chunk) {};
     this.receiveResourceHandler        = function(messageType, blockType, response, resourceText) {};
@@ -120,7 +120,7 @@ function ServerIn(serversocket) {
         }
         assert(SMT_EndTag       == reader.readInteger());
         
-        self.receiveActorListHandler.call(actors);
+        self.receiveActorListObserver.call(actors);
     }
 
 
@@ -154,15 +154,14 @@ function ServerIn(serversocket) {
 
 
     function receiveVideoChatMessage(reader) {
-        const message        = {};
-        message.sender       = reader.readString();
-        message.receiver     = reader.readString();
-        message.type         = reader.readInteger();
-        const messageText    = reader.readString();
-        message.object       = JSON.parse(messageText);
-        assert(SMT_EndTag       == reader.readInteger());
+        const sender       = reader.readString();
+        const receiver     = reader.readString();
+        const type         = reader.readInteger();
+        const jsonText     = reader.readString();
+        const data         = JSON.parse(jsonText);
+        assert(SMT_EndTag == reader.readInteger());
         
-        self.receiveVideoChatHandler(message);
+        self.receiveVideoChatObserver.call(sender, receiver, type, data);
     }
         
 

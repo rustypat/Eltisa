@@ -320,24 +320,22 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     }
     
 
-    this.handleActorListMessage = function(message) {
-        if( !this.isVisible() ) return;
+    function updateActorList(actors) {
         nameList.clearEntries();
-        for(const name of message.names) {
-            nameList.addEntry(name);
+        for(const actor of actors) {
+            nameList.addEntry(actor.name);
         }
     }
 
 
-    this.handleActorChangedMessage = function(message) {
-        if( !this.isVisible() ) return;
+    function handleActorJoined(id, name, type, look) {
+        if( nameList.containsEntry(name) ) return;
+        nameList.addEntry(name);
+    }
 
-        if( message.change == ActorChangeType.Login && !nameList.containsEntry(message.name) ) {
-            nameList.addEntry(message.name);
-        }
-        if( message.change == ActorChangeType.Logout ) {
-            nameList.removeEntry(message.name);
-        }
+
+    function handleActorLeft(id, name) {
+        nameList.removeEntry(name);
     }
     
     
@@ -443,7 +441,20 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
             remotes[id].name.setText(remoteName);
         }
 
+        serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
+        serverIn.receiveActorListObserver.add(updateActorList);
+        serverIn.actorJoinedObserver.add(handleActorJoined);
+        serverIn.actorLeftObserver.add(handleActorLeft);
+
         return true;
+    }
+
+
+    this.disable = function() {
+        serverIn.receiveVideoChatObserver.remove(handleVideoChatMessage);
+        serverIn.receiveActorListObserver.remove(updateActorList);
+        serverIn.actorJoinedObserver.remove(handleActorJoined);
+        serverIn.actorLeftObserver.remove(handleActorLeft);
     }
 
 
@@ -451,37 +462,36 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     // message handling
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     
-    this.handleVideoChatMessage = function(message) {
-        Log.trace("      video chat message is of type " + message.type);     
+    function handleVideoChatMessage(sender, receiver, type, data) {
+        Log.trace("      video chat message is of type " + type);     
         
-        if( message.type == VideoMessageType.RequestChat) {
+        if( type == VideoMessageType.RequestChat) {
             const id = getRemoteIdFirstIdle();
             if(id >= 0) {
-                remotes[id].name.setText(message.sender);
+                remotes[id].name.setText(sender);
                 remoteSetAnswering(remotes[id]);
-                messageField.setMessage(message.sender + " wants to video chat with you");    
+                messageField.setMessage(sender + " wants to video chat with you");    
             }
         }
 
-        else if( message.type == VideoMessageType.StopChat ) {
-            const id = getRemoteIdByName(message.sender);
+        else if( type == VideoMessageType.StopChat ) {
+            const id = getRemoteIdByName(sender);
             if(id >= 0) {
                 remotes[id].videoRTC.closeConnection();
                 remoteSetIdle(remotes[id]); 
-                if(message.object) messageField.setMessage(message.object);   
+                if(data) messageField.setMessage(data);   
             }
         }
 
         else {
-            const id = getRemoteIdByName(message.sender);
+            const id = getRemoteIdByName(sender);
             if(id >= 0) {
-                remotes[id].videoRTC.handleVideoChatMessage(message);
+                remotes[id].videoRTC.handleVideoChatMessage(sender, receiver, type, data);
             }
             else {
-                Log.error("discarding message for wrong peer " + message.sender);
+                Log.error("discarding message for wrong peer " + sender);
             }
         }
-
     }
 
 

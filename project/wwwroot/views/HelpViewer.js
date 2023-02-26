@@ -135,7 +135,7 @@ function HelpViewer(viewManager, serverOut, exitAction) {
 
 
     this.enable = function() {
-        serverIn.receiveActorListHandler.add(updateActorList);
+        serverIn.receiveActorListObserver.add(updateActorList);
         serverIn.actorJoinedObserver.add(handleActorJoined);
         serverIn.actorLeftObserver.add(handleActorLeft);
         serverOut.requestListActors();                
@@ -145,7 +145,7 @@ function HelpViewer(viewManager, serverOut, exitAction) {
     this.disable = function() {
         serverIn.actorJoinedObserver.remove(handleActorJoined);
         serverIn.actorLeftObserver.remove(handleActorLeft);
-        serverIn.receiveActorListHandler.add(updateActorList);
+        serverIn.receiveActorListObserver.remove(updateActorList);
     }
 
 

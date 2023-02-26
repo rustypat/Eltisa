@@ -612,7 +612,7 @@ function startGame(actorId, actorType, actorName, startLocation) {
     serverIn.updateChunk          =  (chunk) => chunkStore.updateChunk(chunk);
     serverIn.receiveActorMovedHandler =  (id, x, y, z, orientation) => actorStore.handleActorMove(id, x,y ,z, orientation);
     serverIn.actorJoinedObserver.add(actorStore.handleActorJoined);
-    serverIn.receiveActorListHandler.add(actorStore.handleActorList);
+    serverIn.receiveActorListObserver.add(actorStore.handleActorList);
     serverIn.actorLeftObserver.add(actorStore.handleActorLeft);
     serverOut.requestListActors();
 

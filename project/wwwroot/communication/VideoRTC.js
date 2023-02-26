@@ -207,25 +207,25 @@ function VideoRTC(serverOut, changeHandler, id) {
     // peer message handling
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     
-    this.handleVideoChatMessage = function(message) {
+    this.handleVideoChatMessage = function(sender, receiver, type, data) {
         if(!peerConnection) {
             Log.error("received video chat message while peer connection is closed");
         }
 
-        else if( message.type == VideoMessageType.SendSdpOffer ) {
-            acceptSdpOffer(message.object);            
+        else if( type == VideoMessageType.SendSdpOffer ) {
+            acceptSdpOffer(data);            
         }
 
-        else if( message.type == VideoMessageType.SendSdpAnswer ) {
-            acceptSdpAnswer(message.object);            
+        else if( type == VideoMessageType.SendSdpAnswer ) {
+            acceptSdpAnswer(data);            
         }
 
-        else if( message.type == VideoMessageType.SendIce ) {
-            acceptIceCandidat(message.object);            
+        else if( type == VideoMessageType.SendIce ) {
+            acceptIceCandidat(data);            
         }
 
         else {
-            Log.error("got unknown video chat message of type "+ message.type);
+            Log.error("got unknown video chat message of type "+ type);
         }
     }
 

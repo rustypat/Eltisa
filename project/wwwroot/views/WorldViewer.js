@@ -38,8 +38,6 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
     const tresorViewer           = new TresorViewer(viewManager, serverIn, serverOut, player);
     const videoChatViewer        = new VideoChatViewer(viewManager, serverIn, serverOut, player);
 
-    serverIn.receiveVideoChatHandler = handleVideoChat;
-
 
     this.enable = function() {
         player.activateControls();
@@ -48,6 +46,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         serverIn.receiveResourceHandler = receiveResource;
         serverIn.actorJoinedObserver.add(handleActorJoined);
         serverIn.actorLeftObserver.add(handleActorLeft);
+        serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
     }
     
     
@@ -55,6 +54,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
         serverIn.receiveResourceHandler = null;
         serverIn.actorJoinedObserver.remove(handleActorJoined);
         serverIn.actorLeftObserver.remove(handleActorLeft);
+        serverIn.receiveVideoChatObserver.remove(handleVideoChatMessage);
         document.exitPointerLock();
         player.deactivateControls();
     }
@@ -227,16 +227,13 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
     }
 
 
-    function handleVideoChat(message) {
-        if(message.type==VideoMessageType.RequestChat ) {
-            statusbar.setSystemInfo( message.sender + " wants to video chat, press F4 to accept");
+    function handleVideoChatMessage(sender, receiver, type, data) {
+        if(type==VideoMessageType.RequestChat ) {
+            statusbar.setSystemInfo( sender + " wants to video chat, press F4 to accept");
         }
-
-        if(message.type==VideoMessageType.StopChat ) {
+        else if(type==VideoMessageType.StopChat ) {
             statusbar.clearSystemInfo();
         }
-
-        videoChatBlocker.handleVideoChatMessage(message);
-    }    
+    }        
 
 }
