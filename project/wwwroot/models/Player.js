@@ -58,7 +58,7 @@ function Player(viewport, chunkStore) {
         name     = _name;
         id       = _id;
         type     = _type;
-        moveMode = MoveType.Walk;
+        setMoveModeToWalk();
     }
 
 
@@ -194,6 +194,13 @@ function Player(viewport, chunkStore) {
             
             railMoveMode.activate();
         }
+    }
+
+    function setMoveModeToWalk() {
+        if(moveMode == MoveType.Train) railMoveMode.deactivate();
+        camera.speed           = 0.1;
+        camera.checkCollisions = true;
+        moveMode = MoveType.Walk;
     }
 
 
