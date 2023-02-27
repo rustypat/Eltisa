@@ -228,10 +228,10 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
 
 
     function handleVideoChatMessage(sender, receiver, type, data) {
-        if(type==VideoMessageType.RequestChat ) {
+        if(type==VMT_RequestChat ) {
             statusbar.setSystemInfo( sender + " wants to video chat, press F4 to accept");
         }
-        else if(type==VideoMessageType.StopChat ) {
+        else if(type==VMT_StopChat ) {
             statusbar.clearSystemInfo();
         }
     }        

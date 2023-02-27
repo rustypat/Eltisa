@@ -478,11 +478,11 @@ const eltisa = new function() {
 
 
     serverIn.receiveVideoChatHandler = function(message) {
-        if(message.type==VideoMessageType.RequestChat && !videoChatBlocker.isVisible() ) {
+        if(message.type==VMT_RequestChat && !videoChatBlocker.isVisible() ) {
             statusbar.setInfoMessage( message.sender + " wants to video chat, press F4 to accept", Config.videoChatTimeOut);
         }
 
-        if(message.type==VideoMessageType.StopChat ) {
+        if(message.type==VMT_StopChat ) {
             statusbar.clearMessage();
         }
 

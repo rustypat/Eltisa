@@ -1,7 +1,18 @@
 'use strict';
 
 
-const VideoMessageType = { RequestChat: 1, StopChat:2,  SendSdpOffer: 3, SendSdpAnswer: 4, SendIce: 5 };
+
+// video message sub types
+const VMT_RequestChat        = 1;
+const VMT_StopChat           = 2;
+const VMT_SendSdpOffer       = 3;
+const VMT_SendSdpAnswer      = 4;
+const VMT_SendIce            = 5;
+
+// video chat status
+const VCS_Idle               = 'idle';
+const VCS_Connected          = 'connected';
+const VCS_Calling            = 'calling';
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17,10 +28,8 @@ function VideoLocal(changeHandler) {
         video: { mandatory: { maxWidth: 320, maxHeight: 240 } }
     };
 
-    const Status             = { Idle: "off", Connected: "on" };
-    this.Status              = Status;
     let statusMessage;
-    let status               = Status.Idle;
+    let status               = VCS_Idle;
     const self               = this;
 
     function setStatus(_status, _statusMessage) {
@@ -32,12 +41,12 @@ function VideoLocal(changeHandler) {
 
 
     this.isIdle = function() {
-        return status == Status.Idle;
+        return status == VCS_Idle;
     }
     
     
     this.isConnected = function() {
-        return status == Status.Connected;
+        return status == VCS_Connected;
     }
     
     
@@ -51,17 +60,17 @@ function VideoLocal(changeHandler) {
             return;
         }
         else if(!navigator.mediaDevices) {
-            setStatus(Status.Idle, "Error: not allowed to access camera without https!");
+            setStatus(VCS_Idle, "Error: not allowed to access camera without https!");
         }
         else try {
             localVideo  = await navigator.mediaDevices.getUserMedia( mediaConstraints );
-            setStatus(Status.Connected);
+            setStatus(VCS_Connected);
         } catch(e) {
-            if( e.name == "NotFoundError" )         setStatus(Status.Idle, "Error: no camera found");
-            else if( e.name == "NotAllowedError" )  setStatus(Status.Idle, "Error: no access to camera");
-            else if( e.name == "NotReadableError" ) setStatus(Status.Idle, "Error: no access to camera");
-            else if( e.name == "TypeError" )        setStatus(Status.Idle, "Error: no access to camera (missing certificate?) ");
-            else                                    setStatus(Status.Idle, e.name);
+            if( e.name == "NotFoundError" )         setStatus(VCS_Idle, "Error: no camera found");
+            else if( e.name == "NotAllowedError" )  setStatus(VCS_Idle, "Error: no access to camera");
+            else if( e.name == "NotReadableError" ) setStatus(VCS_Idle, "Error: no access to camera");
+            else if( e.name == "TypeError" )        setStatus(VCS_Idle, "Error: no access to camera (missing certificate?) ");
+            else                                    setStatus(VCS_Idle, e.name);
         }
     }
 
@@ -69,7 +78,7 @@ function VideoLocal(changeHandler) {
     this.stop = function() {
         if(localVideo)  localVideo.getTracks().forEach( function(track) {track.stop() } );
         localVideo           = null;
-        setStatus(Status.Idle);
+        setStatus(VCS_Idle);
     }
 
 
@@ -92,24 +101,17 @@ function VideoRTC(serverOut, changeHandler, id) {
     // type definitions
     const mediaConstraints = {
         audio: true,
-        //video: { mandatory: { maxWidth: 160, maxHeight: 120 } }
         video: { mandatory: { maxWidth: 320, maxHeight: 240 } }
     };
-
-    const Status = { Idle: "idle", Calling: "calling", Connected: "connected" };
-    this.Status  = Status;
-
 
     // connection data
     let localName;
     let remoteName;
     let remoteVideo;
     let statusMessage;
-    let status               = Status.Idle;
+    let status               = VCS_Idle;
     let peerConnection;
     const self               = this;
-
-
 
     
     function setStatus(_status, _statusMessage) {
@@ -141,17 +143,17 @@ function VideoRTC(serverOut, changeHandler, id) {
     
 
     this.isIdle = function() {
-        return status == Status.Idle;
+        return status == VCS_Idle;
     }
 
 
     this.isCalling = function() {
-        return status == Status.Calling;
+        return status == VCS_Calling;
     }
 
 
     this.isConnected = function() {
-        return status == Status.Connected;
+        return status == VCS_Connected;
     }
 
 
@@ -167,9 +169,9 @@ function VideoRTC(serverOut, changeHandler, id) {
 
             peerConnection        = createPeerConnection();
             localVideoStream.getTracks().forEach(track => peerConnection.addTrack(track, localVideoStream));            
-            setStatus(Status.Calling, "waiting for " + remoteName);
+            setStatus(VCS_Calling, "waiting for " + remoteName);
         } catch(e) {
-            setStatus(Status.Idle, e.name);
+            setStatus(VCS_Idle, e.name);
             Log.error(e);
         }
     }
@@ -182,12 +184,12 @@ function VideoRTC(serverOut, changeHandler, id) {
 
             peerConnection        = createPeerConnection();
             localVideoStream.getTracks().forEach(track => peerConnection.addTrack(track, localVideoStream));            
-            setStatus(Status.Calling, "answering to " + remoteName);
+            setStatus(VCS_Calling, "answering to " + remoteName);
             let sdpOffer          = await peerConnection.createOffer();
             peerConnection.setLocalDescription(sdpOffer);
-            serverOut.requestVideoChat(localName, remoteName, VideoMessageType.SendSdpOffer, sdpOffer);
+            serverOut.requestVideoChat(localName, remoteName, VMT_SendSdpOffer, sdpOffer);
         } catch(e) {
-            setStatus(Status.Idle, e.name);
+            setStatus(VCS_Idle, e.name);
             Log.error(e);
         }
     }
@@ -199,7 +201,7 @@ function VideoRTC(serverOut, changeHandler, id) {
         if(peerConnection) peerConnection.close();
         remoteVideo          = null;
         peerConnection       = null;
-        setStatus(Status.Idle);
+        setStatus(VCS_Idle);
     }
 
 
@@ -212,15 +214,15 @@ function VideoRTC(serverOut, changeHandler, id) {
             Log.error("received video chat message while peer connection is closed");
         }
 
-        else if( type == VideoMessageType.SendSdpOffer ) {
+        else if( type == VMT_SendSdpOffer ) {
             acceptSdpOffer(data);            
         }
 
-        else if( type == VideoMessageType.SendSdpAnswer ) {
+        else if( type == VMT_SendSdpAnswer ) {
             acceptSdpAnswer(data);            
         }
 
-        else if( type == VideoMessageType.SendIce ) {
+        else if( type == VMT_SendIce ) {
             acceptIceCandidat(data);            
         }
 
@@ -245,7 +247,7 @@ function VideoRTC(serverOut, changeHandler, id) {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
             let sdpAnswer         = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(sdpAnswer);
-            serverOut.requestVideoChat(localName, remoteName, VideoMessageType.SendSdpAnswer, sdpAnswer);
+            serverOut.requestVideoChat(localName, remoteName, VMT_SendSdpAnswer, sdpAnswer);
         } catch(e) {
             Log.error(e);
         }
@@ -267,19 +269,19 @@ function VideoRTC(serverOut, changeHandler, id) {
         let connection       = new RTCPeerConnection(connectionConfig);
 
         connection.onicecandidate = function(event){
-            serverOut.requestVideoChat(localName, remoteName, VideoMessageType.SendIce, event.candidate);
+            serverOut.requestVideoChat(localName, remoteName, VMT_SendIce, event.candidate);
         };
 
         connection.ontrack = function(event){
             remoteVideo = event.streams[0];
-            setStatus(Status.Connected, "");
+            setStatus(VCS_Connected, "");
         };
 
         connection.onremovestream                = function() {};
         connection.oniceconnectionstatechange    = function() {
             if(connection.iceConnectionState == 'disconnected') {
                 remoteVideo = null;
-                setStatus(Status.Idle, "lost connection to " + remoteName);
+                setStatus(VCS_Idle, "lost connection to " + remoteName);
             }                        
         };
         connection.onicegatheringstatechange     = function() {};

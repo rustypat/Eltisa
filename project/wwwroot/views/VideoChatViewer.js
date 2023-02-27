@@ -216,7 +216,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
             messageField.setMessage("video camera ist not turned on");
             return;
         }
-        serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.RequestChat, null);        
+        serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VMT_RequestChat, null);        
         remote.videoRTC.openConnection(local.name.getText(), remote.name.getText(), local.videoLocal.getVideoStream());
     }
 
@@ -234,7 +234,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         if(event) id  = event.target.id;          // take id from triggering button
         const remote  = remotes[id];        
         if( !remote.videoRTC.isIdle() ) {
-            serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
+            serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VMT_StopChat, null);        
             remote.videoRTC.closeConnection();
         }     
         else {
@@ -433,11 +433,11 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
 
         for(const remote of remotes) {
             if(remoteIsAnswering(remote)) {
-                serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
+                serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VMT_StopChat, null);        
                 remoteSetIdle(remote);
             }            
             else if(remote.videoRTC.isCalling()) {
-                serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VideoMessageType.StopChat, null);        
+                serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VMT_StopChat, null);        
                 remote.videoRTC.closeConnection();
                 remoteSetIdle(remote);
             }            
@@ -467,7 +467,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     function handleVideoChatMessage(sender, receiver, type, data) {
         Log.trace("      video chat message is of type " + type);     
         
-        if( type == VideoMessageType.RequestChat) {
+        if( type == VMT_RequestChat) {
             const id = getRemoteIdFirstIdle();
             if(id >= 0) {
                 remotes[id].name.setText(sender);
@@ -476,7 +476,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
             }
         }
 
-        else if( type == VideoMessageType.StopChat ) {
+        else if( type == VMT_StopChat ) {
             const id = getRemoteIdByName(sender);
             if(id >= 0) {
                 remotes[id].videoRTC.closeConnection();

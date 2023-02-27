@@ -2,5 +2,19 @@
 
 
 function VideoChatStore() {
+
+
+
+}
+
+
+
+
+function LocalVideo() {
+        
+}
+
+
+function RemoteVideo() {
     
 }
