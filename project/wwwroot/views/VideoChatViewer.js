@@ -33,6 +33,39 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     const nameList           = GuiTools.createList(panel, '5', selectRemoteNameAction, callRemoteNameAction);
 
 
+    this.enable = function() {
+        let localName = player.getName();
+        let remoteName = player.getTargetPlayerName();
+
+        serverOut.requestListActors();
+        //hideSmallVideo();
+        local.videoLocal.start();
+        
+        local.name.setText(localName);
+        remotes[0].name.focus();
+
+        const id = getRemoteIdFirstIdle();
+        if(remoteName && id >= 0) {
+            remotes[id].name.setText(remoteName);
+        }
+
+        serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
+        serverIn.receiveActorListObserver.add(updateActorList);
+        serverIn.actorJoinedObserver.add(handleActorJoined);
+        serverIn.actorLeftObserver.add(handleActorLeft);
+
+        return true;
+    }
+
+
+    this.disable = function() {
+        serverIn.receiveVideoChatObserver.remove(handleVideoChatMessage);
+        serverIn.receiveActorListObserver.remove(updateActorList);
+        serverIn.actorJoinedObserver.remove(handleActorJoined);
+        serverIn.actorLeftObserver.remove(handleActorLeft);
+    }
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // gui helper
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -425,37 +458,6 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     }
     
 
-    this.enable = function() {
-        let localName = player.getName();
-        let remoteName = player.getTargetPlayerName();
-
-        serverOut.requestListActors();
-        //hideSmallVideo();
-        local.videoLocal.start();
-        
-        local.name.setText(localName);
-        remotes[0].name.focus();
-
-        const id = getRemoteIdFirstIdle();
-        if(remoteName && id >= 0) {
-            remotes[id].name.setText(remoteName);
-        }
-
-        serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
-        serverIn.receiveActorListObserver.add(updateActorList);
-        serverIn.actorJoinedObserver.add(handleActorJoined);
-        serverIn.actorLeftObserver.add(handleActorLeft);
-
-        return true;
-    }
-
-
-    this.disable = function() {
-        serverIn.receiveVideoChatObserver.remove(handleVideoChatMessage);
-        serverIn.receiveActorListObserver.remove(updateActorList);
-        serverIn.actorJoinedObserver.remove(handleActorJoined);
-        serverIn.actorLeftObserver.remove(handleActorLeft);
-    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
