@@ -1,7 +1,6 @@
 'use strict';
 
 
-
 // video message sub types
 const VMT_RequestChat        = 1;
 const VMT_StopChat           = 2;
@@ -21,13 +20,12 @@ const VCS_Calling            = 'calling';
 
 function VideoLocal(changeHandler) {
 
-    let localVideo;
-
     const mediaConstraints = {
         audio: true,
         video: { mandatory: { maxWidth: 320, maxHeight: 240 } }
     };
 
+    let videoStream;
     let statusMessage;
     let status               = VCS_Idle;
     const self               = this;
@@ -56,14 +54,14 @@ function VideoLocal(changeHandler) {
 
     
     this.start = async function() {
-        if(localVideo) {
+        if(videoStream) {
             return;
         }
         else if(!navigator.mediaDevices) {
             setStatus(VCS_Idle, "Error: not allowed to access camera without https!");
         }
         else try {
-            localVideo  = await navigator.mediaDevices.getUserMedia( mediaConstraints );
+            videoStream  = await navigator.mediaDevices.getUserMedia( mediaConstraints );
             setStatus(VCS_Connected);
         } catch(e) {
             if( e.name == "NotFoundError" )         setStatus(VCS_Idle, "Error: no camera found");
@@ -76,14 +74,14 @@ function VideoLocal(changeHandler) {
 
 
     this.stop = function() {
-        if(localVideo)  localVideo.getTracks().forEach( function(track) {track.stop() } );
-        localVideo           = null;
+        if(videoStream)  videoStream.getTracks().forEach( function(track) {track.stop() } );
+        videoStream           = null;
         setStatus(VCS_Idle);
     }
 
 
     this.getVideoStream = function() {
-        return localVideo
+        return videoStream
     }
     
 }
@@ -107,7 +105,7 @@ function VideoRTC(serverOut, changeHandler, id) {
     // connection data
     let localName;
     let remoteName;
-    let remoteVideo;
+    let videoStream;
     let statusMessage;
     let status               = VCS_Idle;
     let peerConnection;
@@ -128,7 +126,7 @@ function VideoRTC(serverOut, changeHandler, id) {
 
 
     this.getVideoStream = function() { 
-        return remoteVideo;
+        return videoStream;
     }
 
 
@@ -197,9 +195,9 @@ function VideoRTC(serverOut, changeHandler, id) {
 
 
     this.closeConnection = function() {
-        if(remoteVideo) remoteVideo.getTracks().forEach( function(track) {track.stop() } );
+        if(videoStream) videoStream.getTracks().forEach( function(track) {track.stop() } );
         if(peerConnection) peerConnection.close();
-        remoteVideo          = null;
+        videoStream          = null;
         peerConnection       = null;
         setStatus(VCS_Idle);
     }
@@ -273,14 +271,14 @@ function VideoRTC(serverOut, changeHandler, id) {
         };
 
         connection.ontrack = function(event){
-            remoteVideo = event.streams[0];
+            videoStream = event.streams[0];
             setStatus(VCS_Connected, "");
         };
 
         connection.onremovestream                = function() {};
         connection.oniceconnectionstatechange    = function() {
             if(connection.iceConnectionState == 'disconnected') {
-                remoteVideo = null;
+                videoStream = null;
                 setStatus(VCS_Idle, "lost connection to " + remoteName);
             }                        
         };
