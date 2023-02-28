@@ -64,7 +64,7 @@ function VideoStreamRemote(serverOut, changeHandler, id) {
             setStatus(VCS_Calling, "answering to " + remoteName);
             let sdpOffer          = await peerConnection.createOffer();
             peerConnection.setLocalDescription(sdpOffer);
-            serverOut.requestVideoChat(localName, remoteName, VMT_SendSdpOffer, sdpOffer);
+            serverOut.requestVideoChat(VMT_SendSdpOffer, remoteName,sdpOffer);
         } catch(e) {
             setStatus(VCS_Idle, e.name);
             Log.error(e);
@@ -82,7 +82,7 @@ function VideoStreamRemote(serverOut, changeHandler, id) {
     }
 
 
-    this.handleVideoChatMessage = function(sender, receiver, type, data) {
+    this.handleVideoChatMessage = function(type, senderId, senderName, data) {
         if(!peerConnection) {
             Log.error("received video chat message while peer connection is closed");
         }
@@ -138,7 +138,7 @@ function VideoStreamRemote(serverOut, changeHandler, id) {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
             let sdpAnswer         = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(sdpAnswer);
-            serverOut.requestVideoChat(localName, remoteName, VMT_SendSdpAnswer, sdpAnswer);
+            serverOut.requestVideoChat(VMT_SendSdpAnswer, remoteName, sdpAnswer);
         } catch(e) {
             Log.error(e);
         }
@@ -159,7 +159,7 @@ function VideoStreamRemote(serverOut, changeHandler, id) {
         let connection       = new RTCPeerConnection(connectionConfig);
 
         connection.onicecandidate = function(event){
-            serverOut.requestVideoChat(localName, remoteName, VMT_SendIce, event.candidate);
+            serverOut.requestVideoChat(VMT_SendIce, remoteName, event.candidate);
         };
 
         connection.ontrack = function(event){

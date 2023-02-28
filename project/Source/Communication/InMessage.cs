@@ -64,30 +64,4 @@ public static class InMessage {
         return message;
     }    
 
-
-    public class VideoChatMessage {
-        public enum Type  {RequestChat= 1, StopChat= 2, SendSdpOffer= 3, SendSdpAnswer= 4, SendIce= 5};
-
-        public string         Sender;
-        public string         Receiver;
-        public int            MessageType;
-        public string         JsonMessage;
-    }
-
-    static public VideoChatMessage ToVideoChatMessage(byte[] inBuffer) {
-        var reader                 = new ArrayReader(inBuffer);
-        var message                = new VideoChatMessage();
-
-        int messageId              = reader.ReadInt();
-        Assert(messageId == (int)MessageId.VideoChatMessageRequest);
-        message.Sender             = reader.ReadString();
-        message.Receiver           = reader.ReadString();
-        message.MessageType        = reader.ReadInt();
-        message.JsonMessage            = reader.ReadString();
-        int endTag                 = reader.ReadInt();
-        Assert(endTag    == EndTag);            
-
-        return message;
-    }
-   
 }

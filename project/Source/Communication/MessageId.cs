@@ -39,3 +39,13 @@ public enum MessageId {
 }
 
 
+public enum VideoChatMessageType {
+    RequestChat                   = 1, 
+    StopChat                      = 2, 
+    SendSdpOffer                  = 3, 
+    SendSdpAnswer                 = 4, 
+    SendIce                       = 5
+};
+
+
+

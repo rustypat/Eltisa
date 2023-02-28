@@ -234,25 +234,29 @@ public static class InMessageHandler {
 
 
     static void HandleVideoChatMessage(HomeSocket socket, byte[] inBuffer) {
-        var inMessage    = InMessage.ToVideoChatMessage(inBuffer);
+        var reader                 = new ArrayReader(inBuffer);
+        int messageId              = reader.ReadInt();
+        Assert(messageId == (int)MessageId.VideoChatMessageRequest);
+        var messageType            = reader.ReadInt();
+        var receiverName           = reader.ReadString();
+        var jsonMessage            = reader.ReadString();
+        int endTag                 = reader.ReadInt();
+        Assert(endTag    == EndTag);            
+
         var sender       = socket.GetActor();
-        var receiver     = ActorStore.GetActor(inMessage.Receiver);
+        var receiver     = ActorStore.GetActor(receiverName);
 
-        if(sender == null) return;
-        Assert(sender.Name == inMessage.Sender);
-        Assert(receiver == null || receiver.Name == inMessage.Receiver);
-
-        if(receiver == null) {
-            var chatMessage  = OutMessage.createVideoChatMessage(inMessage.Receiver, inMessage.Sender, (int)InMessage.VideoChatMessage.Type.StopChat, "\"can't find " + inMessage.Receiver + "\"");
-            sender.Socket.SendMessageAsync(chatMessage);
+        if(sender == null) {
+            return;
+        }
+        else if(receiver == null) {
+            OutMessageHandler.SendVideoChatMessageTo(socket, (int)VideoChatMessageType.StopChat, sender.ID, sender.Name, "\"can't find " + receiverName + "\"");
         }
         else if( !Policy.CanVideoChat(sender, receiver) ) {
-            var chatMessage  = OutMessage.createVideoChatMessage(inMessage.Receiver, inMessage.Sender, (int)InMessage.VideoChatMessage.Type.StopChat, "\"to protect children, visitors may not video chat with citizen\"");
-            sender.Socket.SendMessageAsync(chatMessage);
+            OutMessageHandler.SendVideoChatMessageTo(socket, (int)VideoChatMessageType.StopChat, sender.ID, sender.Name, "\"to protect children, visitors may not video chat with citizen\"");
         }
         else {
-            var chatMessage  = OutMessage.createVideoChatMessage(inMessage.Sender, inMessage.Receiver, inMessage.MessageType, inMessage.JsonMessage);
-            receiver.Socket.SendMessageAsync(chatMessage);
+            OutMessageHandler.SendVideoChatMessageTo(receiver.Socket, messageType, sender.ID, sender.Name, jsonMessage);
         }
     }
 

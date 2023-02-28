@@ -216,7 +216,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
             messageField.setMessage("video camera ist not turned on");
             return;
         }
-        serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VMT_RequestChat, null);        
+        serverOut.requestVideoChat(VMT_RequestChat, remote.name.getText(), null);        
         remote.videoRTC.openConnection(local.name.getText(), remote.name.getText(), local.videoLocal.getVideoStream());
     }
 
@@ -234,7 +234,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         if(event) id  = event.target.id;          // take id from triggering button
         const remote  = remotes[id];        
         if( !remote.videoRTC.isIdle() ) {
-            serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VMT_StopChat, null);        
+            serverOut.requestVideoChat(VMT_StopChat, remote.name.getText(), null);        
             remote.videoRTC.closeConnection();
         }     
         else {
@@ -433,11 +433,11 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
 
         for(const remote of remotes) {
             if(remoteIsAnswering(remote)) {
-                serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VMT_StopChat, null);        
+                serverOut.requestVideoChat(VMT_StopChat, remote.name.getText(), null);        
                 remoteSetIdle(remote);
             }            
             else if(remote.videoRTC.isCalling()) {
-                serverOut.requestVideoChat(local.name.getText(), remote.name.getText(), VMT_StopChat, null);        
+                serverOut.requestVideoChat(VMT_StopChat, remote.name.getText(), null);        
                 remote.videoRTC.closeConnection();
                 remoteSetIdle(remote);
             }            
@@ -464,20 +464,20 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     // message handling
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     
-    function handleVideoChatMessage(sender, receiver, type, data) {
+    function handleVideoChatMessage(type, senderId, senderName, data) {
         Log.trace("      video chat message is of type " + type);     
         
         if( type == VMT_RequestChat) {
             const id = getRemoteIdFirstIdle();
             if(id >= 0) {
-                remotes[id].name.setText(sender);
+                remotes[id].name.setText(senderName);
                 remoteSetAnswering(remotes[id]);
-                messageField.setMessage(sender + " wants to video chat with you");    
+                messageField.setMessage(senderName + " wants to video chat with you");    
             }
         }
 
         else if( type == VMT_StopChat ) {
-            const id = getRemoteIdByName(sender);
+            const id = getRemoteIndexByName(senderName);
             if(id >= 0) {
                 remotes[id].videoRTC.closeConnection();
                 remoteSetIdle(remotes[id]); 
@@ -486,9 +486,9 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         }
 
         else {
-            const id = getRemoteIdByName(sender);
+            const id = getRemoteIndexByName(senderName);
             if(id >= 0) {
-                remotes[id].videoRTC.handleVideoChatMessage(sender, receiver, type, data);
+                remotes[id].videoRTC.handleVideoChatMessage(type, senderId, senderName, data);
             }
             else {
                 Log.error("discarding message for wrong peer " + sender);
@@ -508,7 +508,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     }
 
 
-    function getRemoteIdByName(name) {
+    function getRemoteIndexByName(name) {
         for(let id=0; id < remotes.length; id++) {
             const remote = remotes[id];
             if(remote.videoRTC.getRemoteName() == name || remote.name.getText() == name) {

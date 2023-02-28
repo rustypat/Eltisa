@@ -16,7 +16,7 @@ public static class OutMessageHandler {
     public static void SendChatMessageTo(HomeSocket socket, string sender, string text) {
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((byte)MessageId.ChatMessageResponse);
-        builder.WriteInt(messageCounter);
+        builder.WriteInt(messageCounter++);
         builder.WriteString(text);
         builder.WriteString(sender);
         builder.WriteInt(EndTag);
@@ -29,7 +29,7 @@ public static class OutMessageHandler {
     public static void SendChatMessageToAll(string sender, string text) {
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((byte)MessageId.ChatMessageResponse);
-        builder.WriteInt(messageCounter);
+        builder.WriteInt(messageCounter++);
         builder.WriteString(text);
         builder.WriteString(sender);
         builder.WriteInt(EndTag);
@@ -39,12 +39,25 @@ public static class OutMessageHandler {
     }
 
 
-    public static void SendActorListResponse(HomeSocket socket, IEnumerable<Actor> actors, int count) {
-        messageCounter += 1;
+    public static void SendVideoChatMessageTo(HomeSocket socket, int messageType, int senderId, string senderName, string jsonMessage) {
+        ArrayWriter builder = new ArrayWriter();   
+        builder.WriteInt((byte)MessageId.VideoChatMessageResponse);
+        builder.WriteInt(messageCounter++);
+        builder.WriteInt(messageType);
+        builder.WriteInt(senderId);
+        builder.WriteString(senderName);
+        builder.WriteString(jsonMessage);
+        builder.WriteInt(EndTag);
 
+        byte[] message = builder.ToArray();
+        SendMessageTo(socket, message);
+    }
+
+
+    public static void SendActorListResponse(HomeSocket socket, IEnumerable<Actor> actors, int count) {
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt(   (int)MessageId.ListActorsResponse);
-        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   messageCounter++);
         builder.WriteInt(   count);
         foreach(var actor in actors) {
             builder.WriteInt(actor.ID);
@@ -64,11 +77,9 @@ public static class OutMessageHandler {
 
 
     public static void SendActorMovedNotificationToRange(Actor actor) {
-        messageCounter += 1;
-
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt(   (int)MessageId.ActorMoved);
-        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   messageCounter++);
         builder.WriteInt(   actor.ID);
         builder.WriteFloat( actor.PositionX);
         builder.WriteFloat( actor.PositionY);
@@ -83,11 +94,9 @@ public static class OutMessageHandler {
 
 
     public static void SendActorJoinedNotification(Actor actor) {
-        messageCounter += 1;
-
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt(   (int)MessageId.ActorJoined);
-        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   messageCounter++);
         builder.WriteInt(   actor.ID);
         builder.WriteInt(   (int)actor.ActorType);
         builder.WriteInt(   actor.Color);
@@ -100,11 +109,9 @@ public static class OutMessageHandler {
 
 
     public static void SendActorLeftNotification(Actor actor) {
-        messageCounter += 1;
-
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt(   (int)MessageId.ActorLeft);
-        builder.WriteInt(   messageCounter);
+        builder.WriteInt(   messageCounter++);
         builder.WriteInt(   actor.ID);
         builder.WriteString(actor.Name);         
         builder.WriteInt(   EndTag);
@@ -115,11 +122,9 @@ public static class OutMessageHandler {
 
 
     public static void SendBlocksChangedNotification(WorldPoint position, Change[] changes) {
-        messageCounter += 1;
-
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((int)MessageId.BlocksChangedNotification);
-        builder.WriteInt(messageCounter);
+        builder.WriteInt(messageCounter++);
         builder.WriteInt(changes.Length);
         foreach(var change in changes) {
             builder.WriteInt(change.Position.X);
@@ -136,11 +141,9 @@ public static class OutMessageHandler {
 
 
     public static void SendCreateResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResponse result) {
-        messageCounter += 1;
-
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((int)MessageId.CreateResourceResponse);
-        builder.WriteInt(messageCounter);
+        builder.WriteInt(messageCounter++);
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
@@ -155,11 +158,9 @@ public static class OutMessageHandler {
 
 
     public static void SendReadResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResult result, int targetId) {
-        messageCounter += 1;
-
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((int)MessageId.ReadResourceResponse);
-        builder.WriteInt(messageCounter);
+        builder.WriteInt(messageCounter++);
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
@@ -177,11 +178,9 @@ public static class OutMessageHandler {
 
 
     public static void SendWriteResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResponse result) {
-        messageCounter += 1;
-
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((int)MessageId.WriteResourceResponse);
-        builder.WriteInt(messageCounter);
+        builder.WriteInt(messageCounter++);
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
@@ -195,11 +194,9 @@ public static class OutMessageHandler {
 
 
     public static void SendUpdateResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResponse result) {
-        messageCounter += 1;
-
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((int)MessageId.UpdateResourceResponse);
-        builder.WriteInt(messageCounter);
+        builder.WriteInt(messageCounter++);
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);
@@ -213,11 +210,9 @@ public static class OutMessageHandler {
 
 
     public static void SendDeleteResourceResponse(HomeSocket socket, WorldPoint position, ushort blockType, ResourceResponse result) {
-        messageCounter += 1;
-
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((int)MessageId.DeleteResourceResponse);
-        builder.WriteInt(messageCounter);
+        builder.WriteInt(messageCounter++);
         builder.WriteInt(position.X);
         builder.WriteInt(position.Y);
         builder.WriteInt(position.Z);

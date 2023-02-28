@@ -47,7 +47,7 @@ function ServerIn(serversocket) {
     this.actorLeftObserver             = new Observer();    // (id, name)
     this.receiveChatHandler            = function(chatText, sender) {};
     this.receiveChunksHandler          = function(message) {};
-    this.receiveVideoChatObserver      = new Observer();    // (sender, receiver, type, data)
+    this.receiveVideoChatObserver      = new Observer();    // (messageType, senderId, senderName, data)
     this.updateBlock                   = function(x, y, z, blockData) {};
     this.updateChunk                   = function(chunk) {};
     this.receiveResourceHandler        = function(messageType, blockType, response, resourceText) {};
@@ -154,14 +154,14 @@ function ServerIn(serversocket) {
 
 
     function receiveVideoChatMessage(reader) {
-        const sender       = reader.readString();
-        const receiver     = reader.readString();
         const type         = reader.readInteger();
+        const senderId     = reader.readInteger();
+        const senderName   = reader.readString();
         const jsonText     = reader.readString();
-        const data         = JSON.parse(jsonText);
         assert(SMT_EndTag == reader.readInteger());
         
-        self.receiveVideoChatObserver.call(sender, receiver, type, data);
+        const jsonObject   = JSON.parse(jsonText);
+        self.receiveVideoChatObserver.call(type, senderId, senderName, jsonObject);
     }
         
 

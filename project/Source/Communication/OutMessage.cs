@@ -13,8 +13,6 @@ public static class OutMessage {
     private static int messageCounter;
 
 
-
-
     public enum LoginResponse {
         Ok,
         LoginFailed,
@@ -105,23 +103,5 @@ public static class OutMessage {
         byte[] message = builder.ToArray();
         return message;
     }
-
-
-    public static byte[] createVideoChatMessage(string sender, string receiver, int messageType, string jsonMessage) {
-        messageCounter += 1;
-
-        ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)MessageId.VideoChatMessageResponse);
-        builder.WriteInt(messageCounter);
-        builder.WriteString(sender);
-        builder.WriteString(receiver);            
-        builder.WriteInt(messageType);
-        builder.WriteString(jsonMessage);
-        builder.WriteInt(EndTag);
-
-        byte[] videoChatMessage = builder.ToArray();
-        return videoChatMessage;
-    }
-
 
 }

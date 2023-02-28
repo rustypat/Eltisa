@@ -135,15 +135,14 @@ function ServerOut(serverSocket) {
     }
 
 
-    this.requestVideoChat = function(sender, receiver, messageType, messageObject) {
-        const messageText = JSON.stringify(messageObject);
+    this.requestVideoChat = function(messageType, receiver, messageObject) {
+        const messageJSON = JSON.stringify(messageObject);
 
         writer.reset();
         writer.writeInteger(SM_VideoChatMessageRequest);
-        writer.writeString(sender);
-        writer.writeString(receiver);
         writer.writeInteger(messageType);
-        writer.writeString(messageText);
+        writer.writeString(receiver);
+        writer.writeString(messageJSON);
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();
