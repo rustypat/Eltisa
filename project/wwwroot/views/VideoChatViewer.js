@@ -123,7 +123,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         local.name.style.width         = "200px";
         local.button.style.marginTop   = '0px';
 
-        local.videoLocal               = new VideoLocal(localVideoChangeHandler);
+        local.videoLocal               = new VideoStreamLocal(localVideoChangeHandler);
         
         return local;
     }
@@ -135,7 +135,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         remote.ringTone                = new Audio("/resources/sounds/telephoneRing.mp3");
         remote.ringTone.loop           = true;
         remote.hangupTimer             = null;
-        remote.videoRTC                = new VideoRTC(serverOut, remoteVideoChangeHandler, id);
+        remote.videoRTC                = new VideoStreamRemote(serverOut, remoteVideoChangeHandler, id);
 
         remote.div                     = GuiTools.createDiv(panel);
         remote.bigVideoDiv             = GuiTools.createDiv(remote.div);
@@ -243,14 +243,14 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     }
 
 
-    function remoteVideoChangeHandler(remoteVideoRTC) {
-        messageField.setMessage(remoteVideoRTC.getStatusMessage());
+    function remoteVideoChangeHandler(remoteVideoStream) {
+        messageField.setMessage(remoteVideoStream.getStatusMessage());
 
-        const id        = remoteVideoRTC.id;
+        const id        = remoteVideoStream.getId();
         const remote    = remotes[id];
-        if(remoteVideoRTC.isIdle())           remoteSetIdle(remote);
-        else if(remoteVideoRTC.isCalling())   remoteSetCalling(remote);
-        else if(remoteVideoRTC.isConnected()) remoteSetConnected(remote);
+        if(remoteVideoStream.isIdle())           remoteSetIdle(remote);
+        else if(remoteVideoStream.isCalling())   remoteSetCalling(remote);
+        else if(remoteVideoStream.isConnected()) remoteSetConnected(remote);
         else                                  Log.error("invalid remoteVideo status ");
     }
 

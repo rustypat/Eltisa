@@ -14,87 +14,9 @@ const VCS_Connected          = 'connected';
 const VCS_Calling            = 'calling';
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// local video
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
-function VideoLocal(changeHandler) {
-
-    const mediaConstraints = {
-        audio: true,
-        video: { mandatory: { maxWidth: 320, maxHeight: 240 } }
-    };
-
-    let videoStream;
-    let statusMessage;
-    let status               = VCS_Idle;
-    const self               = this;
-
-    function setStatus(_status, _statusMessage) {
-        if( status == _status && statusMessage == _statusMessage) return;
-        status        = _status;
-        statusMessage = _statusMessage;        
-        changeHandler(self);
-    }
-
-
-    this.isIdle = function() {
-        return status == VCS_Idle;
-    }
-    
-    
-    this.isConnected = function() {
-        return status == VCS_Connected;
-    }
-    
-    
-    this.getStatusMessage = function() {
-        return statusMessage;
-    }
-
-    
-    this.start = async function() {
-        if(videoStream) {
-            return;
-        }
-        else if(!navigator.mediaDevices) {
-            setStatus(VCS_Idle, "Error: not allowed to access camera without https!");
-        }
-        else try {
-            videoStream  = await navigator.mediaDevices.getUserMedia( mediaConstraints );
-            setStatus(VCS_Connected);
-        } catch(e) {
-            if( e.name == "NotFoundError" )         setStatus(VCS_Idle, "Error: no camera found");
-            else if( e.name == "NotAllowedError" )  setStatus(VCS_Idle, "Error: no access to camera");
-            else if( e.name == "NotReadableError" ) setStatus(VCS_Idle, "Error: no access to camera");
-            else if( e.name == "TypeError" )        setStatus(VCS_Idle, "Error: no access to camera (missing certificate?) ");
-            else                                    setStatus(VCS_Idle, e.name);
-        }
-    }
-
-
-    this.stop = function() {
-        if(videoStream)  videoStream.getTracks().forEach( function(track) {track.stop() } );
-        videoStream           = null;
-        setStatus(VCS_Idle);
-    }
-
-
-    this.getVideoStream = function() {
-        return videoStream
-    }
-    
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// remote video connection
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-function VideoRTC(serverOut, changeHandler, id) {
-    
-    this.id  = id;
+// administrates a remote video stream connection over RTC
+function VideoStreamRemote(serverOut, changeHandler, id) {
     
     // type definitions
     const mediaConstraints = {
@@ -112,49 +34,6 @@ function VideoRTC(serverOut, changeHandler, id) {
     const self               = this;
 
     
-    function setStatus(_status, _statusMessage) {
-        if( status==_status && statusMessage==_statusMessage) return;
-        status        = _status;
-        statusMessage = _statusMessage;        
-        changeHandler(self);
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // access and configuration
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    this.getVideoStream = function() { 
-        return videoStream;
-    }
-
-
-    this.getRemoteName = function() {
-        return remoteName;
-    }
-
-
-    this.getStatusMessage = function() {
-        return statusMessage;
-    }
-    
-
-    this.isIdle = function() {
-        return status == VCS_Idle;
-    }
-
-
-    this.isCalling = function() {
-        return status == VCS_Calling;
-    }
-
-
-    this.isConnected = function() {
-        return status == VCS_Connected;
-    }
-
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // video chat connection
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,10 +82,6 @@ function VideoRTC(serverOut, changeHandler, id) {
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // peer message handling
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    
     this.handleVideoChatMessage = function(sender, receiver, type, data) {
         if(!peerConnection) {
             Log.error("received video chat message while peer connection is closed");
@@ -229,6 +104,24 @@ function VideoRTC(serverOut, changeHandler, id) {
         }
     }
 
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // access and configuration
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    this.getId =  () => id;
+    this.getVideoStream =  () => videoStream;
+    this.getRemoteName  =  () => remoteName;
+    this.getStatusMessage =  () => statusMessage;
+    this.isIdle =  () => status == VCS_Idle;
+    this.isCalling =  () => status == VCS_Calling;
+    this.isConnected =  () => status == VCS_Connected;
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // private methods
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    
 
     async function acceptIceCandidat(iceCandidat) {
         try {
@@ -261,7 +154,6 @@ function VideoRTC(serverOut, changeHandler, id) {
     }
 
 
-
     function createPeerConnection() {
         let connectionConfig = { iceServers: [ {urls: 'stun:stun.l.google.com:19302'} ]};
         let connection       = new RTCPeerConnection(connectionConfig);
@@ -286,6 +178,14 @@ function VideoRTC(serverOut, changeHandler, id) {
         connection.onsignalingstatechange        = function() {};
         connection.onnegotiationneeded           = function() {};
         return connection;
+    }
+
+
+    function setStatus(_status, _statusMessage) {
+        if( status==_status && statusMessage==_statusMessage) return;
+        status        = _status;
+        statusMessage = _statusMessage;        
+        changeHandler(self);
     }
 
 }
