@@ -49,13 +49,6 @@ const Config = new function() {
     }
 
 
-    this.runMode = function() {
-        if( self.debug                              ) return RunMode.Develop;
-        if( window.location.hostname == "eltisa.ch" ) return RunMode.Eltisa;
-        return RunMode.Server;
-    }
-
-    
     this.toggleEnvironmentRadius = function() {
         if(mutables.environmentChunkRadius == this.environmentChunkRadiusMin) {
             mutables.environmentChunkRadius  = this.environmentChunkRadiusMax;
@@ -71,7 +64,6 @@ const Config = new function() {
     this.info = function() {
         console.log("Config Info");
         console.log("    version:                " + this.version );
-        console.log("    run mode:               " + this.runMode() );
         console.log("    environmentChunkRadius: " + this.getEnvironmentChunkRadius() );
     }
 
