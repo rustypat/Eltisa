@@ -49,10 +49,6 @@ function initializeBlockCarouselDescriptions() {
     lineInfo( Special, "Letters 2",  b.LetterN, b.LetterO, b.LetterP, b.LetterQ, b.LetterR, b.LetterS, b.LetterT, b.LetterU, b.LetterV, b.LetterW, b.LetterX, b.LetterY, b.LetterZ);
     lineInfo( Special, "Numbers",  b.Letter1, b.Letter2, b.Letter3, b.Letter4, b.Letter5, b.Letter6, b.Letter7, b.Letter8, b.Letter9, b.Letter0, b.LetterEqual, b.LetterMinus, b.LetterPlus, b.LetterSlash);
 
-    if(Config.debug) {
-        lineInfo( Special, "Development",  b.SnowCover, b.StoneCover, b.WoodCover, b.IronCover, b.SandCover, b.ObsidianCover);
-    }
-
     blockInfo( b.Banner1,          "banner",            "banner1.png" );
     blockInfo( b.Banner2,          "banner",            "banner2.png" );
     blockInfo( b.Banner3,          "banner",            "banner3.png" );

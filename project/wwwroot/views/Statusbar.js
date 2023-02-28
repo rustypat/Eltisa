@@ -33,12 +33,7 @@ function Statusbar() {
         const moveInfo   = player.getMoveModeDescription();
     
         const distance = "&nbsp;&nbsp;&nbsp;&nbsp;";
-        if(Config.debug) {
-            playerInfo = playerName + distance + positionInfo + distance + moveInfo + distance + fpsInfo + distance + targetInfo;
-        }
-        else {
-            playerInfo = playerName + distance + positionInfo + distance + moveInfo + distance + targetInfo;
-        }
+        playerInfo = playerName + distance + positionInfo + distance + moveInfo + distance + fpsInfo + distance + targetInfo;
     }
 
 

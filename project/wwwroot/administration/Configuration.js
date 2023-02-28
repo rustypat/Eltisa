@@ -4,9 +4,10 @@
 const RunMode = { Develop:'Develop', Server:'Server', Eltisa:'Eltisa' };
 
 const Config = new function() {
+    const self                       = this;
     
     this.version                     = "0.28";    
-    this.debug                       = true;
+    this.debug                       = false;
 
     this.chunkSize                   = 16;
     this.regionSize                  = 16;
@@ -36,8 +37,6 @@ const Config = new function() {
     const mutables                   = {};
     mutables.environmentChunkRadius  = this.environmentChunkRadiusMin;
     mutables.environmentBlockRadius  = this.environmentChunkRadiusMin * this.chunkSize;
-
-    const self                       = this;
 
     this.getEnvironmentChunkRadius = function() {
         return mutables.environmentChunkRadius;
