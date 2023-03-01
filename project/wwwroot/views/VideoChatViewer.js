@@ -44,7 +44,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         local.name.setText(localName);
         remotes[0].name.focus();
 
-        const id = getRemoteIdFirstIdle();
+        const id = getRemoteIndexFirstIdle();
         if(remoteName && id >= 0) {
             remotes[id].name.setText(remoteName);
         }
@@ -135,7 +135,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         remote.ringTone                = new Audio("/resources/sounds/telephoneRing.mp3");
         remote.ringTone.loop           = true;
         remote.hangupTimer             = null;
-        remote.videoRTC                = new VideoStreamRemote(serverOut, remoteVideoChangeHandler, id);
+        remote.videoRTC                = new VideoStreamRemote(serverIn, serverOut, remoteVideoChangeHandler, id);
 
         remote.div                     = GuiTools.createDiv(panel);
         remote.bigVideoDiv             = GuiTools.createDiv(remote.div);
@@ -468,7 +468,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         Log.trace("      video chat message is of type " + type);     
         
         if( type == VMT_RequestChat) {
-            const id = getRemoteIdFirstIdle();
+            const id = getRemoteIndexFirstIdle();
             if(id >= 0) {
                 remotes[id].name.setText(senderName);
                 remoteSetAnswering(remotes[id]);
@@ -497,7 +497,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     }
 
 
-    function getRemoteIdFirstIdle() {
+    function getRemoteIndexFirstIdle() {
         for(let id=0; id < remotes.length; id++) {
             const remote = remotes[id];
             if(remote.videoRTC.isIdle()) {

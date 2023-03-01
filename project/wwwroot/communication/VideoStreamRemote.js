@@ -16,7 +16,7 @@ const VCS_Calling            = 'calling';
 
 
 // administrates a remote video stream connection over RTC
-function VideoStreamRemote(serverOut, changeHandler, id) {
+function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
     
     // type definitions
     const mediaConstraints = {
