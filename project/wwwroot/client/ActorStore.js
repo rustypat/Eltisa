@@ -16,7 +16,7 @@ function ActorStore(_worldport) {
     this.handleActorMove = function(id, x, y, z, orientation) {
         const actor    = actors.get(id);        
         if(!actor) console.log("ERROR Actor not defined");
-        worldport.updateActorMesh(actor, x, y, z, orientation);
+        else worldport.updateActorMesh(actor, x, y, z, orientation);
     }
 
 

@@ -38,7 +38,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         let remoteName = player.getTargetPlayerName();
 
         serverOut.requestListActors();
-        //hideSmallVideo();
+        hideSmallVideo();
         local.videoLocal.start();
         
         local.name.setText(localName);
