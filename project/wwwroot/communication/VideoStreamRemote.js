@@ -44,6 +44,7 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
             localName   = _localName;
             remoteName  = _remoteName;
 
+            serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
             peerConnection        = createPeerConnection();
             localVideoStream.getTracks().forEach(track => peerConnection.addTrack(track, localVideoStream));            
             setStatus(VCS_Calling, "waiting for " + remoteName);
@@ -59,6 +60,7 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
             localName   = _localName;
             remoteName  = _remoteName;
 
+            serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
             peerConnection        = createPeerConnection();
             localVideoStream.getTracks().forEach(track => peerConnection.addTrack(track, localVideoStream));            
             setStatus(VCS_Calling, "answering to " + remoteName);
@@ -79,26 +81,32 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
         videoStream          = null;
         peerConnection       = null;
         setStatus(VCS_Idle);
+        serverIn.receiveVideoChatObserver.remove(handleVideoChatMessage);
     }
 
 
-    this.handleVideoChatMessage = function(type, senderId, senderName, data) {
-        if(!peerConnection) {
+    function handleVideoChatMessage(type, senderId, senderName, data) {
+        if(senderName != remoteName) {
+            Log.warn("got message from " + senderName);
+        }
+        else if(!peerConnection) {
             Log.error("received video chat message while peer connection is closed");
         }
-
+        else if( type == VMT_RequestChat ) {
+            // should not happen            
+        }
+        else if( type == VMT_StopChat ) {
+            self.closeConnection();            
+        }
         else if( type == VMT_SendSdpOffer ) {
             acceptSdpOffer(data);            
         }
-
         else if( type == VMT_SendSdpAnswer ) {
             acceptSdpAnswer(data);            
         }
-
         else if( type == VMT_SendIce ) {
             acceptIceCandidat(data);            
         }
-
         else {
             Log.error("got unknown video chat message of type "+ type);
         }

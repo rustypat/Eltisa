@@ -476,24 +476,24 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
             }
         }
 
-        else if( type == VMT_StopChat ) {
-            const id = getRemoteIndexByName(senderName);
-            if(id >= 0) {
-                remotes[id].videoRTC.closeConnection();
-                remoteSetIdle(remotes[id]); 
-                if(data) messageField.setMessage(data);   
-            }
-        }
+        // else if( type == VMT_StopChat ) {
+        //     const id = getRemoteIndexByName(senderName);
+        //     if(id >= 0) {
+        //         remotes[id].videoRTC.closeConnection();
+        //         remoteSetIdle(remotes[id]); 
+        //         if(data) messageField.setMessage(data);   
+        //     }
+        // }
 
-        else {
-            const id = getRemoteIndexByName(senderName);
-            if(id >= 0) {
-                remotes[id].videoRTC.handleVideoChatMessage(type, senderId, senderName, data);
-            }
-            else {
-                Log.error("discarding message for wrong peer " + sender);
-            }
-        }
+        // else {
+        //     const id = getRemoteIndexByName(senderName);
+        //     if(id >= 0) {
+        //         remotes[id].videoRTC.handleVideoChatMessage(type, senderId, senderName, data);
+        //     }
+        //     else {
+        //         Log.error("discarding message for wrong peer " + sender);
+        //     }
+        // }
     }
 
 
