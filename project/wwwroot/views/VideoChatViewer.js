@@ -129,13 +129,13 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     }
 
 
-    function createRemote(id, panel) {
+    function createRemote(index, panel) {
         const remote                   = {};
 
         remote.ringTone                = new Audio("/resources/sounds/telephoneRing.mp3");
         remote.ringTone.loop           = true;
         remote.hangupTimer             = null;
-        remote.videoRTC                = new VideoStreamRemote(serverIn, serverOut, remoteVideoChangeHandler, id);
+        remote.videoRTC                = new VideoStreamRemote(serverIn, serverOut, remoteVideoChangeHandler, index);
 
         remote.div                     = GuiTools.createDiv(panel);
         remote.bigVideoDiv             = GuiTools.createDiv(remote.div);
@@ -151,8 +151,8 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         remote.button                  = GuiTools.createButtonSmall(remote.div, "call", callAction);
         remote.button.disable();
         remote.button.style.marginTop  = '0px';
-        remote.button.id               = id;
-        remote.id                      = id;
+        remote.button.id               = index;
+        remote.id                      = index;
         
         return remote;            
     }
