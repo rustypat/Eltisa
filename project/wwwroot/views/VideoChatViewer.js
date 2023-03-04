@@ -217,7 +217,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
             return;
         }
         serverOut.requestVideoChat(VMT_RequestChat, remote.name.getText(), null);        
-        remote.videoRTC.openConnection(local.name.getText(), remote.name.getText(), local.videoLocal.getVideoStream());
+        remote.videoRTC.openConnection(remote.name.getText(), local.videoLocal.getVideoStream());
     }
 
 
@@ -226,7 +226,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         const id        = button.id;
         const remote    = remotes[id];
 
-        remote.videoRTC.answerConnection(local.name.getText(), remote.name.getText(), local.videoLocal.getVideoStream());
+        remote.videoRTC.answerConnection(remote.name.getText(), local.videoLocal.getVideoStream());
     }
 
 

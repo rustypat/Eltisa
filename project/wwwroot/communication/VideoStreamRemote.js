@@ -25,7 +25,6 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
     };
 
     // connection data
-    let localName;
     let remoteName;
     let videoStream;
     let statusMessage;
@@ -39,9 +38,8 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     
 
-    this.openConnection = async function(_localName, _remoteName, localVideoStream) {
+    this.openConnection = async function(_remoteName, localVideoStream) {
         try {
-            localName   = _localName;
             remoteName  = _remoteName;
 
             serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
@@ -55,9 +53,8 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
     }
 
 
-    this.answerConnection = async function(_localName, _remoteName, localVideoStream) {
+    this.answerConnection = async function(_remoteName, localVideoStream) {
         try {
-            localName   = _localName;
             remoteName  = _remoteName;
 
             serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
@@ -72,7 +69,6 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
             Log.error(e);
         }
     }
-
 
 
     this.closeConnection = function() {
