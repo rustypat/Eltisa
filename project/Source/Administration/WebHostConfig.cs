@@ -35,13 +35,8 @@ public class WebHostConfig {
         //loggerFactory.AddDebug();
 
         if(WebHost.HasCertificate() ) {
-            #if DEBUG
-                var rewriteOptions = new RewriteOptions().AddRedirectToHttps(301, 5001);
-                app.UseRewriter(rewriteOptions);
-            #else
-                var rewriteOptions = new RewriteOptions().AddRedirectToHttpsPermanent();
-                app.UseRewriter(rewriteOptions);
-            #endif
+            var rewriteOptions = new RewriteOptions().AddRedirectToHttpsPermanent();
+            app.UseRewriter(rewriteOptions);
         }
         
         app.UseExceptionHandler("/Home/Error");

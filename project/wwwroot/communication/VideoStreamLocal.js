@@ -13,22 +13,27 @@ function VideoStreamLocal(changeHandler) {
     const self               = this;
 
 
-    this.start = async function() {
+    this.start = function(afterConnectionAction) {
         if(videoStream) {
             return;
         }
         else if(!navigator.mediaDevices) {
             setStatus(VCS_Idle, "Error: not allowed to access camera without https!");
         }
-        else try {
-            videoStream  = await navigator.mediaDevices.getUserMedia( mediaConstraints );
-            setStatus(VCS_Connected);
-        } catch(e) {
-            if( e.name == "NotFoundError" )         setStatus(VCS_Idle, "Error: no camera found");
-            else if( e.name == "NotAllowedError" )  setStatus(VCS_Idle, "Error: no access to camera");
-            else if( e.name == "NotReadableError" ) setStatus(VCS_Idle, "Error: no access to camera");
-            else if( e.name == "TypeError" )        setStatus(VCS_Idle, "Error: no access to camera (missing certificate?) ");
-            else                                    setStatus(VCS_Idle, e.name);
+        else {
+            navigator.mediaDevices.getUserMedia( mediaConstraints)
+            .then((stream) => {
+                videoStream = stream;
+                setStatus(VCS_Connected);
+                try{ afterConnectionAction?.(); }catch(e){ Log.error(e); }
+            }) 
+            .catch((err) => {
+                if( err.name == "NotFoundError" )         setStatus(VCS_Idle, "Error: no camera found");
+                else if( err.name == "NotAllowedError" )  setStatus(VCS_Idle, "Error: no access to camera");
+                else if( err.name == "NotReadableError" ) setStatus(VCS_Idle, "Error: no access to camera");
+                else if( err.name == "TypeError" )        setStatus(VCS_Idle, "Error: no access to camera (missing certificate?) ");
+                else                                      setStatus(VCS_Idle, err.name);
+            });
         }
     }
 
@@ -43,14 +48,14 @@ function VideoStreamLocal(changeHandler) {
     this.isIdle           =   () => status == VCS_Idle;
     this.isConnected      =   () => status == VCS_Connected;
     this.getStatusMessage =   () => statusMessage;
-    this.getVideoStream   =   () => videoStream;
+    this.getStream        =   () => videoStream;
 
     
     function setStatus(_status, _statusMessage) {
         if( status == _status && statusMessage == _statusMessage) return;
         status        = _status;
         statusMessage = _statusMessage;        
-        changeHandler(self);
+        changeHandler?.(self);
     }
 
 }

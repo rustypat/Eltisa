@@ -36,7 +36,9 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
     const tetrisViewer           = new TetrisViewer(viewManager);
     const tresorEditor           = new TresorEditor(viewManager, serverIn, serverOut, player);
     const tresorViewer           = new TresorViewer(viewManager, serverIn, serverOut, player);
-    const videoChatViewer        = new VideoChatViewer(viewManager, serverIn, serverOut, player);
+    const videoStreamStore       = new VideoStreamStore(serverIn, serverOut);
+    const videoChatSmallViewer   = new VideoChatSmallViewer(viewManager, serverIn, videoStreamStore);
+    const videoChatViewer        = new VideoChatViewer(viewManager, serverIn, serverOut, player, videoStreamStore, videoChatSmallViewer);
 
 
     this.enable = function() {
@@ -174,6 +176,7 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
 
 
     function showVideoChat() {
+        viewManager.unshow(videoChatSmallViewer);
         viewManager.showModal(videoChatViewer);
     }
 
@@ -227,9 +230,9 @@ function WorldViewer(viewManager, serverIn, serverOut, player, chunkStore, world
     }
 
 
-    function handleVideoChatMessage(type, senderId, senderName, data) {
+    function handleVideoChatMessage(type, senderName, data) {
         if(type==VMT_RequestChat ) {
-            statusbar.setSystemInfo( sendeName + " wants to video chat, press F4 to accept");
+            statusbar.setSystemInfo( senderName + " wants to video chat, press F4 to accept");
         }
         else if(type==VMT_StopChat ) {
             statusbar.clearSystemInfo();

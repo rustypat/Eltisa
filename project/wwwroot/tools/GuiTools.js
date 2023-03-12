@@ -312,13 +312,18 @@ const GuiTools = new function() {
 
         if(parent) parent.appendChild(div);
 
-        div.setMessage = function(message) { 
-            if(message) div.innerHTML = message;
-            else        div.innerHTML = ".";
-        }
-
         div.clearMessage = function(message) { 
             div.innerHTML = ".";
+            return div;
+        }
+
+        div.setMessage = function(message, timeout) {
+            if(message) div.innerHTML = message;
+            else        div.innerHTML = ".";
+            if(div.hangupTimer) window.clearTimeout(div.hangupTimer);
+            if(timeout) {
+                div.hangupTimer = window.setTimeout( ()=> div.innerHTML = ".", timeout);
+            }
         }
 
         return div;
@@ -535,14 +540,17 @@ const GuiTools = new function() {
         const video                    = document.createElement("video");
         video.style.margin             = '0px';   
         video.autoplay                 = true;
-        video.style.backgroundColor    = 'lightgrey';
+        video.style.backgroundColor    = 'lightblue';
         video.style.width              = '320px';
         video.style.height             = '240px';
         if(muted)  video.muted         = muted;
         if(parent) parent.appendChild(video);
 
-        video.small       = function() { video.style.width='160px'; video.style.height='120px';}
-        video.big         = function() { video.style.width='320px'; video.style.height='240px';}
+        video.small       = function() { video.style.width='160px'; video.style.height='120px'; return video; }
+        video.big         = function() { video.style.width='320px'; video.style.height='240px'; return video; }
+        video.transparent = function() { video.style.backgroundColor = "transparent"; return video; }
+        video.solid       = function() { video.style.backgroundColor = "lightblue"; return video; }
+        video.attention   = function() { video.style.backgroundColor = "yellow"; return video; }
         
         return video;        
     }
@@ -562,7 +570,7 @@ const GuiTools = new function() {
             clickAction(event.target.innerHTML); 
         } );
         
-        if(clickAction) list.addEventListener("dblclick", function(event) { 
+        if(doubleClickAction) list.addEventListener("dblclick", function(event) { 
             if(event.target == list) return;
             doubleClickAction(event.target.innerHTML); 
         } );

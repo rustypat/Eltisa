@@ -72,6 +72,7 @@ public static class ActorStore {
 
 
     public static Actor GetActor(string name) {
+        if(!name.IsDefined()) return null;
         Actor actor;
         actors.TryGetValue(name, out actor);   
         return actor;         

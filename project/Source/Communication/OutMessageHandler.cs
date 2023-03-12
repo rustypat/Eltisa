@@ -39,12 +39,11 @@ public static class OutMessageHandler {
     }
 
 
-    public static void SendVideoChatMessageTo(HomeSocket socket, int messageType, int senderId, string senderName, string jsonMessage) {
+    public static void SendVideoChatMessageTo(HomeSocket socket, int messageType, string senderName, string jsonMessage) {
         ArrayWriter builder = new ArrayWriter();   
         builder.WriteInt((byte)MessageId.VideoChatMessageResponse);
         builder.WriteInt(messageCounter++);
         builder.WriteInt(messageType);
-        builder.WriteInt(senderId);
         builder.WriteString(senderName);
         builder.WriteString(jsonMessage);
         builder.WriteInt(EndTag);

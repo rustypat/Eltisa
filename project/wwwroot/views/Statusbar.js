@@ -65,7 +65,7 @@ function Statusbar() {
         if(systemInfo) {
             text = systemInfo;
             bgColor = systemColor;
-            if( Date.now() - systemInfoTime >  4000) systemInfo = null;
+            if( Date.now() - systemInfoTime >  Config.statusbarTimeout) systemInfo = null;
         }   
         else if(blockInfo) {
             text = blockInfo;

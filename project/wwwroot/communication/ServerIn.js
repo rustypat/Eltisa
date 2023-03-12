@@ -26,7 +26,7 @@ function ServerIn(serversocket) {
         const reader = new ArrayReader(event.data);
         const messageType    = reader.readInteger();
         const messageCounter = reader.readInteger();
-        Log.trace("received message " + messageType + "  (" + event.data.byteLength + " bytes)");
+        Log.trace("ServerIn: received message " + messageType + "  (" + event.data.byteLength + " bytes)");
         if(messageType < 0 || messageType >= SM_Max ) {
             Log.Error("received message with invalid message type " + messageType);
         }
@@ -47,7 +47,7 @@ function ServerIn(serversocket) {
     this.actorLeftObserver             = new Observer();    // (id, name)
     this.receiveChatHandler            = function(chatText, sender) {};
     this.receiveChunksHandler          = function(message) {};
-    this.receiveVideoChatObserver      = new Observer();    // (messageType, senderId, senderName, data)
+    this.receiveVideoChatObserver      = new Observer();    // (messageType, senderName, data)
     this.updateBlock                   = function(x, y, z, blockData) {};
     this.updateChunk                   = function(chunk) {};
     this.receiveResourceHandler        = function(messageType, blockType, response, resourceText) {};
@@ -155,13 +155,12 @@ function ServerIn(serversocket) {
 
     function receiveVideoChatMessage(reader) {
         const type         = reader.readInteger();
-        const senderId     = reader.readInteger();
         const senderName   = reader.readString();
         const jsonText     = reader.readString();
         assert(SMT_EndTag == reader.readInteger());
         
         const jsonObject   = JSON.parse(jsonText);
-        self.receiveVideoChatObserver.call(type, senderId, senderName, jsonObject);
+        self.receiveVideoChatObserver.call(type, senderName, jsonObject);
     }
         
 

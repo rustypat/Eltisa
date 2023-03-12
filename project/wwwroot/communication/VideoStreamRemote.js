@@ -9,9 +9,9 @@ const VMT_SendSdpAnswer      = 4;
 const VMT_SendIce            = 5;
 
 // video chat status
-const VCS_Idle               = 'idle';
+const VCS_Idle               = 'idle';       // used as called
+const VCS_Open               = 'calling';
 const VCS_Connected          = 'connected';
-const VCS_Calling            = 'calling';
 
 
 
@@ -25,7 +25,6 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
     };
 
     // connection data
-    let remoteName;
     let videoStream;
     let statusMessage;
     let status               = VCS_Idle;
@@ -38,14 +37,13 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     
 
-    this.openConnection = async function(_remoteName, localVideoStream) {
+    this.openConnection = async function(localVideoStream) {
         try {
-            remoteName  = _remoteName;
-
             serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
             peerConnection        = createPeerConnection();
             localVideoStream.getTracks().forEach(track => peerConnection.addTrack(track, localVideoStream));            
-            setStatus(VCS_Calling, "waiting for " + remoteName);
+            setStatus(VCS_Open, "waiting for " + id);
+            serverOut.requestVideoChat(VMT_RequestChat, id, null);    
         } catch(e) {
             setStatus(VCS_Idle, e.name);
             Log.error(e);
@@ -53,17 +51,15 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
     }
 
 
-    this.answerConnection = async function(_remoteName, localVideoStream) {
+    this.answerConnection = async function(localVideoStream) {
         try {
-            remoteName  = _remoteName;
-
             serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
             peerConnection        = createPeerConnection();
             localVideoStream.getTracks().forEach(track => peerConnection.addTrack(track, localVideoStream));            
-            setStatus(VCS_Calling, "answering to " + remoteName);
+            setStatus(VCS_Open, "answering to " + id);
             let sdpOffer          = await peerConnection.createOffer();
             peerConnection.setLocalDescription(sdpOffer);
-            serverOut.requestVideoChat(VMT_SendSdpOffer, remoteName,sdpOffer);
+            serverOut.requestVideoChat(VMT_SendSdpOffer, id, sdpOffer);
         } catch(e) {
             setStatus(VCS_Idle, e.name);
             Log.error(e);
@@ -76,35 +72,42 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
         if(peerConnection) peerConnection.close();
         videoStream          = null;
         peerConnection       = null;
-        setStatus(VCS_Idle);
         serverIn.receiveVideoChatObserver.remove(handleVideoChatMessage);
+        serverOut.requestVideoChat(VMT_StopChat, id, "connection closed");        
+        setStatus(VCS_Idle);
     }
 
 
-    function handleVideoChatMessage(type, senderId, senderName, data) {
-        if(senderName != remoteName) {
-            Log.warn("got message from " + senderName);
+    function handleVideoChatMessage(type, senderName, data) {
+        Log.trace("VideoStreamRemote: received videoChatMessage " + type + " from " + senderName + " for " + id);
+        if(senderName != id) {
+            Log.warning("VideoStreamRemote: dropped message from " + senderName);
         }
         else if(!peerConnection) {
-            Log.error("received video chat message while peer connection is closed");
+            Log.error("VideoStreamRemote: received video chat message while peer connection is closed");
         }
         else if( type == VMT_RequestChat ) {
+            Log.error("VideoStreamRemote: received VMT_RequestChat");
             // should not happen            
         }
         else if( type == VMT_StopChat ) {
+            Log.trace("VideoStreamRemote: close connection");
             self.closeConnection();            
         }
         else if( type == VMT_SendSdpOffer ) {
+            Log.trace("VideoStreamRemote: accept SDP offer");
             acceptSdpOffer(data);            
         }
         else if( type == VMT_SendSdpAnswer ) {
+            Log.trace("VideoStreamRemote: accept SDP answer");
             acceptSdpAnswer(data);            
         }
         else if( type == VMT_SendIce ) {
+            Log.trace("VideoStreamRemote: accept ICE candidat");
             acceptIceCandidat(data);            
         }
         else {
-            Log.error("got unknown video chat message of type "+ type);
+            Log.error("VideoStreamRemote: got unknown video chat message of type "+ type);
         }
     }
 
@@ -114,11 +117,10 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     this.getId =  () => id;
-    this.getVideoStream =  () => videoStream;
-    this.getRemoteName  =  () => remoteName;
+    this.getStream =  () => videoStream;
     this.getStatusMessage =  () => statusMessage;
     this.isIdle =  () => status == VCS_Idle;
-    this.isCalling =  () => status == VCS_Calling;
+    this.isOpen =  () => status == VCS_Open;
     this.isConnected =  () => status == VCS_Connected;
 
 
@@ -142,7 +144,7 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
             let sdpAnswer         = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(sdpAnswer);
-            serverOut.requestVideoChat(VMT_SendSdpAnswer, remoteName, sdpAnswer);
+            serverOut.requestVideoChat(VMT_SendSdpAnswer, id, sdpAnswer);
         } catch(e) {
             Log.error(e);
         }
@@ -163,7 +165,7 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
         let connection       = new RTCPeerConnection(connectionConfig);
 
         connection.onicecandidate = function(event){
-            serverOut.requestVideoChat(VMT_SendIce, remoteName, event.candidate);
+            serverOut.requestVideoChat(VMT_SendIce, id, event.candidate);
         };
 
         connection.ontrack = function(event){
@@ -175,7 +177,7 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
         connection.oniceconnectionstatechange    = function() {
             if(connection.iceConnectionState == 'disconnected') {
                 videoStream = null;
-                setStatus(VCS_Idle, "lost connection to " + remoteName);
+                setStatus(VCS_Idle, "lost connection to " + id);
             }                        
         };
         connection.onicegatheringstatechange     = function() {};
@@ -185,10 +187,10 @@ function VideoStreamRemote(serverIn, serverOut, changeHandler, id) {
     }
 
 
-    function setStatus(_status, _statusMessage) {
-        if( status==_status && statusMessage==_statusMessage) return;
-        status        = _status;
-        statusMessage = _statusMessage;        
+    function setStatus(newStatus, newStatusMessage) {
+        if( status==newStatus && statusMessage==newStatusMessage) return;
+        status        = newStatus;
+        statusMessage = newStatusMessage;        
         changeHandler(self);
     }
 

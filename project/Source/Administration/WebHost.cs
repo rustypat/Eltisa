@@ -45,17 +45,10 @@ public static class WebHost {
     }
 
     private static void ConfigureServerOptions(KestrelServerOptions options) {
-        #if DEBUG
-            options.Listen(IPAddress.Loopback, 5000);  // http:localhost:5000
-            if(HasCertificate() ){
-                options.Listen(IPAddress.Loopback, 5001, listenOptions => listenOptions.UseHttps(certificate) );
-            }
-        #else
-            options.Listen(IPAddress.Any, 80);  
-            if(HasCertificate() ){
-                options.Listen(IPAddress.Any, 443, listenOptions => listenOptions.UseHttps(certificate) );
-            }
-        #endif
+        options.Listen(IPAddress.Any, 80);  
+        if(HasCertificate() ){
+            options.Listen(IPAddress.Any, 443, listenOptions => listenOptions.UseHttps(certificate) );
+        }
     }
 
 

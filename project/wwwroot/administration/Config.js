@@ -7,7 +7,7 @@ const Config = new function() {
     const self                       = this;
     
     this.version                     = "0.28";    
-    this.debug                       = false;
+    this.debug                       = true;
 
     this.chunkSize                   = 16;
     this.regionSize                  = 16;
@@ -27,9 +27,9 @@ const Config = new function() {
     this.maxSwitches                 = 5;
     this.maxChatMessageLength        = 150;
     this.maxTargetDistance           = 20;
-    this.videoChatTimeOut            = 60 * 1000;
-    this.infoShowTime                = 20 * 1000;
-    this.oracleShowTime              = 30 * 1000;
+    this.videoChatTimeOut            = 30 * 1000;      // how long a phone call is ringing
+    this.statusbarTimeout            = 10 * 1000;      // how long system infos are shown in the status bar
+
     
     if(this.debug) this.randomStartRange =  0;
     else           this.randomStartRange = 20;

@@ -1,9 +1,9 @@
 'use strict';
 
 
-function VideoChatViewer(viewManager, serverIn, serverOut, player) {
-    const self = this;
-    const body = document.getElementsByTagName("body")[0];
+function VideoChatViewer(viewManager, serverIn, serverOut, player, videoStreamStore, smallViewer) {
+    const self           = this;
+    const messageTimeout = Config.videoChatTimeOut;
     
     // event handler
     const eventHandlers    = new Array(EV_Max);
@@ -12,9 +12,6 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     this.getHtmlElement  = () => div;
 
 
-    const localSmallVideoDiv = createLocalSmallVideoDiv()
-    const remoteSmallVideoDiv= createRemoteSmallVideoDiv()
-    
     const div                = GuiTools.createOverlay(null, CLR_Glossy);
     const panel              = GuiTools.createTabletDiv(div);
     panel.style.width        = '90%';
@@ -23,6 +20,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     const messageField       = createHeader(panel);
     
     const local              = createLocal(panel);
+    let localName            = "me";
 
     const remotes            = []
     remotes[0]               = createRemote(0, panel);
@@ -30,41 +28,49 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     remotes[2]               = createRemote(2, panel);
 
     GuiTools.createLineBreak(panel);
-    const nameList           = GuiTools.createList(panel, '5', selectRemoteNameAction, callRemoteNameAction);
+    const nameList           = GuiTools.createList(panel, '5', null, callRemote);
 
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // init
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     this.enable = function() {
-        let localName = player.getName();
+        localName      = player.getName();
         let remoteName = player.getTargetPlayerName();
 
         serverOut.requestListActors();
-        hideSmallVideo();
-        local.videoLocal.start();
-        
-        local.name.setText(localName);
-        remotes[0].name.focus();
-
-        const id = getRemoteIndexFirstIdle();
-        if(remoteName && id >= 0) {
-            remotes[id].name.setText(remoteName);
-        }
+        if(remoteName) videoStreamStore.startLocal(() => callRemote(remoteName));
+        else           videoStreamStore.startLocal();
 
         serverIn.receiveVideoChatObserver.add(handleVideoChatMessage);
-        serverIn.receiveActorListObserver.add(updateActorList);
+        serverIn.receiveActorListObserver.add(handleActorList);
         serverIn.actorJoinedObserver.add(handleActorJoined);
         serverIn.actorLeftObserver.add(handleActorLeft);
-
-        return true;
+        videoStreamStore.streamsChangedObserver.add(updateView);
+        updateView();
     }
 
 
     this.disable = function() {
+        videoStreamStore.streamsChangedObserver.remove(updateView);
         serverIn.receiveVideoChatObserver.remove(handleVideoChatMessage);
-        serverIn.receiveActorListObserver.remove(updateActorList);
+        serverIn.receiveActorListObserver.remove(handleActorList);
         serverIn.actorJoinedObserver.remove(handleActorJoined);
         serverIn.actorLeftObserver.remove(handleActorLeft);
     }
 
+
+    function close()  {
+        viewManager.unshow(self);
+        if(videoStreamStore.countRemotes() == 0) {
+            videoStreamStore.stopLocal();
+        }
+        else {
+            viewManager.show(smallViewer);
+        }
+    }
+    
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // gui helper
@@ -82,30 +88,6 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     }
 
 
-    function createLocalSmallVideoDiv() {
-        const smallDiv= GuiTools.createDiv();
-        smallDiv.style.position = 'absolute';
-        smallDiv.style.left     = '0px';
-        smallDiv.style.top      = '0px';
-        smallDiv.style.width    = '160px';
-        smallDiv.style.height   = '120px';
-        //smallDiv.style.backgroundColor = 'grey';
-        return smallDiv;            
-    }
-
-    
-    function createRemoteSmallVideoDiv() {
-        const smallDiv= GuiTools.createDiv();
-        smallDiv.style.position = 'absolute';
-        smallDiv.style.right    = '0px';
-        smallDiv.style.top      = '0px';
-        smallDiv.style.width    = '160px';
-        smallDiv.style.height   = '360px';
-        //smallDiv.style.backgroundColor = 'grey';
-        return smallDiv;            
-    }
-
-    
     function createLocal(panel) {
         const local                    = {};
 
@@ -118,13 +100,10 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         local.video                    = GuiTools.createVideo(local.bigVideoDiv, true);
         GuiTools.createLineBreak(local.div);
         local.name                     = GuiTools.createLabel(local.div, "me");
-        local.button                   = GuiTools.createButtonSmall(local.div, "start cam", startAction);
+        local.button                   = GuiTools.createButtonSmall(local.div, "start cam", startLocal);
         local.name.style.marginTop     = '0px';
         local.name.style.width         = "200px";
         local.button.style.marginTop   = '0px';
-
-        local.videoLocal               = new VideoStreamLocal(localVideoChangeHandler);
-        
         return local;
     }
 
@@ -132,11 +111,7 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     function createRemote(index, panel) {
         const remote                   = {};
 
-        remote.ringTone                = new Audio("/resources/sounds/telephoneRing.mp3");
-        remote.ringTone.loop           = true;
         remote.hangupTimer             = null;
-        remote.videoRTC                = new VideoStreamRemote(serverIn, serverOut, remoteVideoChangeHandler, index);
-
         remote.div                     = GuiTools.createDiv(panel);
         remote.bigVideoDiv             = GuiTools.createDiv(remote.div);
         remote.bigVideoDiv.style.margin= '10px';
@@ -159,65 +134,36 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // local video
+    // actions
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    function startAction() {
-        local.videoLocal.start();
+
+
+    function startLocal() {
+        messageField.clearMessage();
+        videoStreamStore.startLocal();
     }
 
     
-    function stopAction() {
-        local.videoLocal.stop();
-        local.video.srcObject  = null;
+    function stopLocal() {
+        messageField.clearMessage();
+        videoStreamStore.stopLocal();
     }
 
     
-    function localVideoChangeHandler() {
+    function callAction(event) {
+        const id         = event.target.id;
+        const remote     = remotes[id];
+        const remoteName = remote.name.getText();
 
-        if(local.videoLocal.isIdle()) {
-            local.button.set("start cam", startAction);
-            local.video.srcObject      = null;
-            for(const remote of remotes) {
-                remote.videoRTC.closeConnection();
-                remoteSetIdle(remote);
-                remote.button.disable();
-            }
-            messageField.setMessage(local.videoLocal.getStatusMessage());
+        if( remoteName == "" ) {
+            messageField.setMessage("enter name of peer", messageTimeout);
         }
-        else if(local.videoLocal.isConnected()) {
-            local.video.srcObject = local.videoLocal.getVideoStream();
-            local.button.set("stop cam", stopAction);
-            for(const remote of remotes) {
-                if(remote.button.disabled) remote.button.enable();
-            }
+        else if( remoteName == localName ) {
+            messageField.setMessage("you better take a mirror if you want to talk to yourself!", messageTimeout);
         }
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // remote video
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-   
-    
-    function callAction(event, id) {
-        if( event ) id = event.target.id;
-        const remote    = remotes[id];
-
-        if( remote.name.getText() == "" ) {
-            messageField.setMessage("enter name of peer");
-            return;
+        else {
+            videoStreamStore.openRemote(remoteName);
         }
-        if( remote.name.getText() == local.name.getText() ) {
-            messageField.setMessage("you better take a mirror if you want to talk to yourself!");
-            return;
-        }
-        if( !local.videoLocal.getVideoStream() ) {
-            messageField.setMessage("video camera ist not turned on");
-            return;
-        }
-        serverOut.requestVideoChat(VMT_RequestChat, remote.name.getText(), null);        
-        remote.videoRTC.openConnection(remote.name.getText(), local.videoLocal.getVideoStream());
     }
 
 
@@ -225,135 +171,30 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
         const button    = event.target;
         const id        = button.id;
         const remote    = remotes[id];
-
-        remote.videoRTC.answerConnection(remote.name.getText(), local.videoLocal.getVideoStream());
+        videoStreamStore.answerRemote(remote.name.getText());
     }
 
 
     function hangupAction(event, id) {
         if(event) id  = event.target.id;          // take id from triggering button
         const remote  = remotes[id];        
-        if( !remote.videoRTC.isIdle() ) {
-            serverOut.requestVideoChat(VMT_StopChat, remote.name.getText(), null);        
-            remote.videoRTC.closeConnection();
-        }     
-        else {
-            remoteSetIdle(remote);
-        }   
+        const remoteName = remote.name.getText();
+        videoStreamStore.closeRemote(remoteName);
     }
 
 
-    function remoteVideoChangeHandler(remoteVideoStream) {
-        messageField.setMessage(remoteVideoStream.getStatusMessage());
-
-        const id        = remoteVideoStream.getId();
-        const remote    = remotes[id];
-        if(remoteVideoStream.isIdle())           remoteSetIdle(remote);
-        else if(remoteVideoStream.isCalling())   remoteSetCalling(remote);
-        else if(remoteVideoStream.isConnected()) remoteSetConnected(remote);
-        else                                  Log.error("invalid remoteVideo status ");
-    }
-
-
-    function remoteSetIdle(remote) {
-        remote.video.srcObject  = null;
-        remote.name.readOnly    = false;
-        remote.button.set("call", callAction);
-        remote.ringTone.pause();
-        remote.button.enable();
-        stopHangupTimer(remote);                
-    } 
-
-
-    function remoteSetCalling(remote) {
-        remote.video.srcObject  = null;
-        remote.name.readOnly    = true;
-        remote.button.set("hang up", hangupAction);
-        remote.ringTone.play();
-        remote.button.activate();
-        startHangupTimer(remote);
-    }
-
-
-    function remoteSetAnswering(remote) {
-        remote.video.srcObject  = null;
-        remote.name.readOnly    = true;
-        remote.button.set("answer", answerAction);
-        remote.ringTone.play();
-        remote.button.activate();
-        startHangupTimer(remote);
-    }
-
-
-    function remoteSetConnected(remote) {
-        remote.video.srcObject  = remote.videoRTC.getVideoStream();
-        remote.name.readOnly    = true;
-        remote.button.set("hang up", hangupAction);
-        remote.ringTone.pause();
-        remote.button.enable();
-        stopHangupTimer(remote);
-    }
-
-
-    function remoteIsAnswering(remote) {
-        if(remote.videoRTC.isConnected()) return false;
-        return remote.button.innerHTML == "answer";
-    }
-
-
-    function startHangupTimer(remote) {
-        if(remote.hangupTimer) window.clearTimeout(remote.hangupTimer);
-        remote.hangupTimer = window.setTimeout(function(){
-            hangupAction(null, remote.id);
-        }, Config.videoChatTimeOut);
-    }
-
-
-    function stopHangupTimer(remote) {
-        if(remote.hangupTimer) window.clearTimeout(remote.hangupTimer);
-        remote.hangupTimer = null;
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // name list
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    function selectRemoteNameAction(_remoteName) {
-        if(_remoteName == local.name.getText()) return;
-
-        if(remotes[0].videoRTC.isIdle()) {
-            remotes[0].name.setText(_remoteName);
-        }
-        else if(remotes[1].videoRTC.isIdle()) {
-            remotes[1].name.setText(_remoteName);
-        }
-        else if(remotes[1].videoRTC.isIdle()) {
-            remotes[1].name.setText(_remoteName);
-        }        
+    function callRemote(remoteName) {
+        if(remoteName == localName) return;
+        videoStreamStore.openRemote(remoteName);
     }
     
 
-    function callRemoteNameAction(_remoteName) {
-        if(_remoteName == local.name.getText()) return;
-
-        if(remotes[0].videoRTC.isIdle()) {
-            remotes[0].name.setText(_remoteName);
-            callAction(null, 0);
-        }
-        else if(remotes[1].videoRTC.isIdle()) {
-            remotes[1].name.setText(_remoteName);
-            callAction(null, 1);
-        }
-        else if(remotes[1].videoRTC.isIdle()) {
-            remotes[1].name.setText(_remoteName);
-            callAction(null, 2);
-        }        
-    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // message handling
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
     
 
-    function updateActorList(actors) {
+    function handleActorList(actors) {
         nameList.clearEntries();
         for(const actor of actors) {
             nameList.addEntry(actor.name);
@@ -372,151 +213,70 @@ function VideoChatViewer(viewManager, serverIn, serverOut, player) {
     }
     
     
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // show and hide blocker
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    
-
-    function showSmallVideo() {
-        if( !body.contains(localSmallVideoDiv) ) {
-            body.appendChild(localSmallVideoDiv);
-        }
-
-        if( !body.contains(remoteSmallVideoDiv) ) {
-            body.appendChild(remoteSmallVideoDiv);
-        }
-
-        if( !localSmallVideoDiv.contains(local.video) ) {
-            localSmallVideoDiv.appendChild(local.video);
-            local.video.small();
-            local.video.srcObject = local.videoLocal.getVideoStream();   // needed for chrome, otherwise it freezes
-        }
-
-        for(const remote of remotes) {
-            if( !remoteSmallVideoDiv.contains(remote.video) && remote.videoRTC.isConnected()) {
-                remoteSmallVideoDiv.appendChild(remote.video);
-                remote.video.small();
-                remote.video.srcObject = remote.videoRTC.getVideoStream();   // needed for chrome, otherwise it freezes
-            }
-        }
-    }
-    
-
-    function hideSmallVideo() {
-        if( body.contains(localSmallVideoDiv) ) {
-            body.removeChild(localSmallVideoDiv);
-        }
-
-        if( body.contains(remoteSmallVideoDiv) ) {
-            body.removeChild(remoteSmallVideoDiv);
-        }
-
-
-        if( !local.bigVideoDiv.contains(local.video) ) {
-            local.bigVideoDiv.appendChild(local.video);
-            local.video.big();
-            local.video.srcObject = local.videoLocal.getVideoStream();   // needed for chrome, otherwise it freezes
-        }
-
-        for(const remote of remotes) {
-            if( !remote.bigVideoDiv.contains(remote.video) ) {
-                remote.bigVideoDiv.appendChild(remote.video);
-                remote.video.big();
-                remote.video.srcObject = remote.videoRTC.getVideoStream();   // needed for chrome, otherwise it freezes
-            }
-        }
-    }
-
-
-    function close()  {
-        viewManager.unshow(self);
-
-        for(const remote of remotes) {
-            if(remoteIsAnswering(remote)) {
-                serverOut.requestVideoChat(VMT_StopChat, remote.name.getText(), null);        
-                remoteSetIdle(remote);
-            }            
-            else if(remote.videoRTC.isCalling()) {
-                serverOut.requestVideoChat(VMT_StopChat, remote.name.getText(), null);        
-                remote.videoRTC.closeConnection();
-                remoteSetIdle(remote);
-            }            
-            else if(remote.videoRTC.isIdle()) {
-                remoteSetIdle(remote);
-            }
-        }
-
-        if( remotes.some(  remote => remote.videoRTC.isConnected() ) ) { 
-            showSmallVideo();
-        }
-        else {
-            local.videoLocal.stop();
-        }
-
-        messageField.clearMessage();       
-        return false; 
-    }
-    
-
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // message handling
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    function handleVideoChatMessage(type, senderId, senderName, data) {
-        Log.trace("      video chat message is of type " + type);     
+    function handleVideoChatMessage(type, senderName, data) {
+        Log.trace("VideoChatViewer: video chat message is of type " + type);     
         
         if( type == VMT_RequestChat) {
-            const id = getRemoteIndexFirstIdle();
-            if(id >= 0) {
-                remotes[id].name.setText(senderName);
-                remoteSetAnswering(remotes[id]);
-                messageField.setMessage(senderName + " wants to video chat with you");    
-            }
+            messageField.setMessage(senderName + " wants to video chat with you", messageTimeout);    
         }
-
-        // else if( type == VMT_StopChat ) {
-        //     const id = getRemoteIndexByName(senderName);
-        //     if(id >= 0) {
-        //         remotes[id].videoRTC.closeConnection();
-        //         remoteSetIdle(remotes[id]); 
-        //         if(data) messageField.setMessage(data);   
-        //     }
-        // }
-
-        // else {
-        //     const id = getRemoteIndexByName(senderName);
-        //     if(id >= 0) {
-        //         remotes[id].videoRTC.handleVideoChatMessage(type, senderId, senderName, data);
-        //     }
-        //     else {
-        //         Log.error("discarding message for wrong peer " + sender);
-        //     }
-        // }
+        else if( type == VMT_StopChat) {
+            messageField.setMessage(data, messageTimeout);    
+        }
     }
 
 
-    function getRemoteIndexFirstIdle() {
-        for(let id=0; id < remotes.length; id++) {
-            const remote = remotes[id];
-            if(remote.videoRTC.isIdle()) {
-                return id;
+    function updateView() {
+        const localStream = videoStreamStore.getLocalStream();
+        if(localStream) {
+            local.video.srcObject = localStream;
+            local.name.setText(localName);
+            local.button.set("stop cam", stopLocal);
+            remotes.forEach(r => r.button.enable());
+        }
+        else {
+            local.video.srcObject = null;
+            local.button.set("start cam", startLocal);
+            remotes.forEach(r => r.button.disable());
+        }
+
+        for(let i=0; i < 3; i++) {
+            const remoteVideo = videoStreamStore.getRemote(i);
+            if(!remoteVideo)
+            {
+                remotes[i].video.srcObject  = null;
+                remotes[i].video.solid();
+                remotes[i].name.readOnly    = false;
+                remotes[i].name.setText("");
+                remotes[i].button.set("call", callAction);
+                remotes[i].button.enable();                    
+            }
+            else if(remoteVideo.isIdle()) {               // call from remote
+                remotes[i].video.srcObject  = null;
+                remotes[i].video.attention();
+                remotes[i].name.setText(remoteVideo.getId());
+                remotes[i].name.readOnly    = true;
+                remotes[i].button.set("answer", answerAction);
+                remotes[i].button.enable();                                    
+            }
+            else if(remoteVideo.isOpen()) {               // call to remote
+                remotes[i].video.srcObject  = null;
+                remotes[i].video.attention();
+                remotes[i].name.setText(remoteVideo.getId());
+                remotes[i].name.readOnly    = true;
+                remotes[i].button.set("stop call", hangupAction);
+                remotes[i].button.enable();                                    
+            }
+            else if(remoteVideo.isConnected()) {          // chat with remote
+                remotes[i].video.srcObject  = remoteVideo.getStream();
+                remotes[i].name.setText(remoteVideo.getId());
+                remotes[i].name.readOnly    = true;
+                remotes[i].button.set("hang up", hangupAction);
+                remotes[i].button.enable();                                    
+            }
+            else {
+                Log.error("unknown state of remote stream");
             }
         }
-        return null;
-    }
-
-
-    function getRemoteIndexByName(name) {
-        for(let id=0; id < remotes.length; id++) {
-            const remote = remotes[id];
-            if(remote.videoRTC.getRemoteName() == name || remote.name.getText() == name) {
-               return id;
-            }
-        }
-        
-        return null;
     }
 
 }

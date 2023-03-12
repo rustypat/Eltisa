@@ -16,7 +16,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
 
         const message = writer.ToArrayBuffer();
-        Log.trace("send message request login");
+        Log.trace("ServerOut: send message request login");
         serverSocket.sendMessage(message, 50);
     }
 
@@ -31,7 +31,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
 
         const message = writer.ToArrayBuffer();
-        Log.trace("send message move actor");
+        Log.trace("ServerOut: send message move actor");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -42,7 +42,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
 
         const message = writer.ToArrayBuffer();
-        Log.trace("send message list actors");
+        Log.trace("ServerOut: send message list actors");
         serverSocket.sendMessage(message, 25);
     }
 
@@ -56,7 +56,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
 
         const message = writer.ToArrayBuffer();
-        Log.trace("send message remove block");
+        Log.trace("ServerOut: send message remove block");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -71,7 +71,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();
-        Log.trace("send message add block");
+        Log.trace("ServerOut: send message add block");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -87,7 +87,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
 
         const message = writer.ToArrayBuffer();
-        Log.trace("send message change block");
+        Log.trace("ServerOut: send message change block");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -102,7 +102,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
 
         const message = writer.ToArrayBuffer();
-        Log.trace("send message switch block");
+        Log.trace("ServerOut: send message switch block");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -117,7 +117,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
 
         const message = writer.ToArrayBuffer();
-        Log.trace("send message switch blocks");
+        Log.trace("ServerOut: send message switch blocks");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -130,7 +130,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();
-        Log.trace("send message chat");
+        Log.trace("ServerOut: send message chat");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -146,7 +146,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();
-        Log.trace("send message video chat of type " + messageType);
+        Log.trace("ServerOut: send message video chat of type " + messageType + " to " + receiver);
         serverSocket.sendMessage(message, 3);
     }
 
@@ -172,7 +172,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
 
         const message = writer.ToArrayBuffer();
-        Log.trace("send message request chunks");
+        Log.trace("ServerOut: send message request chunks");
         serverSocket.sendMessage(message, 3);        
     }
 
@@ -190,7 +190,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();
-        Log.trace("send message read resource");
+        Log.trace("ServerOut: send message read resource");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -207,7 +207,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();
-        Log.trace("send message read resource");
+        Log.trace("ServerOut: send message read resource");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -224,7 +224,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();
-        Log.trace("send message write resource");
+        Log.trace("ServerOut: send message write resource");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -242,7 +242,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();
-        Log.trace("send message write resource");
+        Log.trace("ServerOut: send message write resource");
         serverSocket.sendMessage(message, 3);
     }
 
@@ -258,7 +258,7 @@ function ServerOut(serverSocket) {
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();
-        Log.trace("send message write resource");
+        Log.trace("ServerOut: send message write resource");
         serverSocket.sendMessage(message, 3);
     }
 

@@ -250,13 +250,16 @@ public static class InMessageHandler {
             return;
         }
         else if(receiver == null) {
-            OutMessageHandler.SendVideoChatMessageTo(socket, (int)VideoChatMessageType.StopChat, sender.ID, sender.Name, "\"can't find " + receiverName + "\"");
+            Log.Debug($"relay video message {messageType} from {sender.Name} to {sender.Name}");
+            OutMessageHandler.SendVideoChatMessageTo(socket, (int)VideoChatMessageType.StopChat, receiverName, "\"can't find " + receiverName + "\"");
         }
         else if( !Policy.CanVideoChat(sender, receiver) ) {
-            OutMessageHandler.SendVideoChatMessageTo(socket, (int)VideoChatMessageType.StopChat, sender.ID, sender.Name, "\"to protect children, visitors may not video chat with citizen\"");
+            Log.Debug($"relay video message {messageType} from {sender.Name} to {sender.Name}");
+            OutMessageHandler.SendVideoChatMessageTo(socket, (int)VideoChatMessageType.StopChat, receiverName, "\"to protect children, visitors may not video chat with citizen\"");
         }
         else {
-            OutMessageHandler.SendVideoChatMessageTo(receiver.Socket, messageType, sender.ID, sender.Name, jsonMessage);
+            Log.Debug($"relay video message {messageType} from {sender.Name} to {receiver.Name}");
+            OutMessageHandler.SendVideoChatMessageTo(receiver.Socket, messageType, sender.Name, jsonMessage);
         }
     }
 
