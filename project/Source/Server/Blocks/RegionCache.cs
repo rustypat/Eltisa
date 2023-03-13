@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using Eltisa.Models;
 using Eltisa.Tools;
 
-public class RegionCache : IRegionAccess {
+class RegionCache : IRegionAccess {
 
     private readonly ConcurrentDictionary<RegionPoint, Region>   regions = new ConcurrentDictionary<RegionPoint, Region>();
     private readonly IRegionAccess regionCreator;

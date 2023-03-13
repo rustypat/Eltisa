@@ -6,7 +6,7 @@ using Eltisa.Models;
 using static Eltisa.Models.Constants;
 
 
-public class BlockNotify : IBlockAccess {
+class BlockNotify : IBlockAccess {
 
     private readonly IBlockAccess blockAccess;
 

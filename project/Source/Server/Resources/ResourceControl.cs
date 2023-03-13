@@ -5,7 +5,7 @@ using Eltisa.Administration;
 using Eltisa.Models;
 using static Eltisa.Models.ResourceResponse;
 
-public class ResourceControl {
+class ResourceControl {
 
     private readonly ResourceCache resourceCache;
 

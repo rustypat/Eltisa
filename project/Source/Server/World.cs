@@ -19,32 +19,13 @@ static public class World {
 
     private static readonly Object changeLock = new Object();
 
-    private static RegionPersister regionPersister;
-    private static RegionCreator   regionCreator;
-    private static RegionCache     regionCache;
-    private static BlockProvider   blockProvider;
-    private static BlockControl    blockController;
-    private static BlockPermit     blockPermit;
-    private static BlockNotify     blockNotify;
-
-
-    private static ResourcePersister resourcePersister;
-    private static ResourceCache     resourceCache;
-    private static ResourceControl   resourceControl;
+    private static BlockStore      blockStore;
+    private static ResourceStore   resourceStore;
 
 
     public static void Initialize(string regionDirectory, string resourceDirectory) {
-        regionPersister      = new RegionPersister(regionDirectory);
-        regionCreator        = new RegionCreator(regionPersister);
-        regionCache          = new RegionCache(regionCreator);
-        blockProvider        = new BlockProvider(regionCache);
-        blockController      = new BlockControl(blockProvider);
-        blockPermit          = new BlockPermit(blockController);
-        blockNotify          = new BlockNotify(blockPermit);
-
-        resourcePersister    = new ResourcePersister(resourceDirectory);
-        resourceCache        = new ResourceCache(resourcePersister);
-        resourceControl      = new ResourceControl(resourceCache);
+        blockStore           = new BlockStore(regionDirectory);
+        resourceStore        = new ResourceStore(resourceDirectory);
     }
 
 
@@ -61,7 +42,7 @@ static public class World {
     public static Change[] AddBlock(Actor actor, WorldPoint pos, ushort blockInfo) {    
         if(pos.IsNotAPoint())  return NoChanges;
         lock(changeLock) {
-            return blockNotify.CreateBlock(actor, pos, blockInfo);
+            return blockStore.CreateBlock(actor, pos, blockInfo);
         }
     }
 
@@ -69,7 +50,7 @@ static public class World {
     public static Change[] RemoveVisibleBlock(Actor actor, WorldPoint pos) {    
         if(pos.IsNotAPoint())  return NoChanges;
         lock(changeLock) {
-            return blockNotify.DeleteBlock(actor, pos);
+            return blockStore.DeleteBlock(actor, pos);
             // TODO if block has resource, delete it
         }
     }
@@ -78,14 +59,14 @@ static public class World {
     public static Change[] ChangeStateOfVisibleBlock(Actor actor, WorldPoint pos, ushort blockInfo) {    
         if(pos.IsNotAPoint())  return NoChanges;
         lock(changeLock) {
-            return blockNotify.UpdateBlock(actor, pos, blockInfo);
+            return blockStore.UpdateBlock(actor, pos, blockInfo);
         }
     }
 
 
     public static Change[] SwitchBlocks(Actor actor, WorldPoint[] positions) {    
         lock(changeLock) {
-            return blockNotify.SwitchBlocks(actor, positions);
+            return blockStore.SwitchBlocks(actor, positions);
         }
     }
 
@@ -98,13 +79,13 @@ static public class World {
     public static Chunk GetChunk(Actor actor, RegionPoint regionPos, ChunkPoint chunkPos) {
         if(regionPos.IsNotAPoint())  return null;
         if(chunkPos.IsNotAPoint())  return null;
-        return blockNotify.ReadChunk(actor, regionPos, chunkPos);
+        return blockStore.ReadChunk(actor, regionPos, chunkPos);
     }
 
 
     public static Block GetBlock(Actor actor, WorldPoint pos) {
         if(pos.IsNotAPoint())  return BlockDescription.NoBlock;
-        return blockNotify.ReadBlock(actor, pos);
+        return blockStore.ReadBlock(actor, pos);
     }
 
 
@@ -123,23 +104,23 @@ static public class World {
 
 
     public static ResourceResponse CreateResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
-        return resourceControl.CreateResource(actor, pos, blockType, password, data);
+        return resourceStore.CreateResource(actor, pos, blockType, password, data);
     }
 
     public static ResourceResult ReadResource(Actor actor, WorldPoint pos, ushort blockType, string password) {
-        return resourceControl.ReadResource(actor, pos, blockType, password);
+        return resourceStore.ReadResource(actor, pos, blockType, password);
     }
 
     public static ResourceResponse WriteResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
-        return resourceControl.WriteResource(actor, pos, blockType, password, data);
+        return resourceStore.WriteResource(actor, pos, blockType, password, data);
     }
 
     public static ResourceResponse UpdateResource(Actor actor, WorldPoint pos, ushort blockType, string password, string newPassword, byte[] newData) {
-        return resourceControl.UpdateResource(actor, pos, blockType, password, newPassword, newData);
+        return resourceStore.UpdateResource(actor, pos, blockType, password, newPassword, newData);
     }
 
     public static ResourceResponse DeleteResource(Actor actor, WorldPoint pos, ushort blockType, string password) {
-        return resourceControl.DeleteResource(actor, pos, blockType, password);
+        return resourceStore.DeleteResource(actor, pos, blockType, password);
     }
 
 
@@ -151,16 +132,16 @@ static public class World {
 
     public static void Persist() {
         lock(changeLock) {
-            regionCache.PersistRegions();
-            resourceCache.PersistResources();
+            blockStore.Persist();
+            resourceStore.Persist();
         }
 
     }
 
 
     public static void FreeCache() {
-        regionCache.FreeRegions(100, CacheReleaseTime);
-        resourceCache.FreeResources(100, CacheReleaseTime);
+        blockStore.FreeCache(100, CacheReleaseTime);
+        resourceStore.FreeCache(100, CacheReleaseTime);
     }        
 
 

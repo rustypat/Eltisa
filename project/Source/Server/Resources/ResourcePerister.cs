@@ -9,7 +9,7 @@ using Eltisa.Tools;
 using static System.Diagnostics.Debug;
 
 
-public class ResourcePersister {
+class ResourcePersister {
 
     public const string      FileType            =  ".rsc";
     private const ushort     storeFormatVersion  = 1;

@@ -4,7 +4,7 @@ using System;
 using Eltisa.Models;
 
 
-public class RegionCreator : IRegionAccess {
+class RegionCreator : IRegionAccess {
 
     private readonly IRegionAccess regionPersister;
 

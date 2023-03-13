@@ -6,7 +6,7 @@ using Eltisa.Models;
 using static Eltisa.Models.Constants;
 
 
-public class BlockPermit : IBlockAccess {
+class BlockPermit : IBlockAccess {
 
     private readonly IBlockAccess blockAccess;
 

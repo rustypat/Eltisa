@@ -8,7 +8,7 @@ using Eltisa.Tools;
 using Eltisa.Models;
 using static System.Diagnostics.Debug;
 
-public class RegionPersister : IRegionAccess {
+class RegionPersister : IRegionAccess {
 
     public const string      FileType =  ".rgn";
     private const int        storeFormatVerion1 = 01010101;

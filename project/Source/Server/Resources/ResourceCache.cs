@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using Eltisa.Models;
 using Eltisa.Tools;
 
-public class ResourceCache {
+class ResourceCache {
 
     private readonly ConcurrentDictionary<WorldPoint, Resource>  resources            = new();
     private readonly ResourcePersister                           resourcePersister;

@@ -6,7 +6,7 @@ using static Eltisa.Models.BlockDescription;
 using static Eltisa.Models.Constants;
 
 
-public class BlockControl : IBlockAccess {
+class BlockControl : IBlockAccess {
 
     private readonly BlockProvider blockProvider;
 

@@ -5,7 +5,7 @@ using Eltisa.Models;
 using Eltisa.Tools;
 using static Eltisa.Models.Constants;
 
-public class BlockProvider {
+class BlockProvider {
 
     private readonly IRegionAccess regionAccess;
 
