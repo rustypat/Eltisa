@@ -3,12 +3,12 @@ namespace Eltisa.Server.Resources;
 using System;
 using Eltisa.Models;
 
-public class ResourceStore {
+public class ResourceServer {
     private ResourcePersister resourcePersister;
     private ResourceCache     resourceCache;
     private ResourceControl   resourceControl;
 
-    public ResourceStore(string resourceDirectory) {
+    public ResourceServer(string resourceDirectory) {
         resourcePersister    = new ResourcePersister(resourceDirectory);
         resourceCache        = new ResourceCache(resourcePersister);
         resourceControl      = new ResourceControl(resourceCache);

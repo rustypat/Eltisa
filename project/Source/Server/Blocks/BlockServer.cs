@@ -5,7 +5,7 @@ using Eltisa.Models;
 using static Eltisa.Models.Constants;
 
 
-public class BlockStore : IBlockAccess {
+public class BlockServer : IBlockAccess {
     private static readonly Object changeLock = new Object();
 
     private RegionPersister regionPersister;
@@ -16,7 +16,7 @@ public class BlockStore : IBlockAccess {
     private BlockPermit     blockPermit;
     private BlockNotify     blockNotify;
 
-    public BlockStore(string regionDirectory) {
+    public BlockServer(string regionDirectory) {
         regionPersister      = new RegionPersister(regionDirectory);
         regionCreator        = new RegionCreator(regionPersister);
         regionCache          = new RegionCache(regionCreator);

@@ -8,24 +8,23 @@ using Eltisa.Administration;
 using Eltisa.Server.Blocks;
 using Eltisa.Server.Resources;
 using static Eltisa.Administration.Configuration;
-using static Eltisa.Models.Constants;
 
 static public class World {
 
     private static readonly PeriodicThread maintenanceThread = new PeriodicThread(CacheStoreTime, () => {
-        blockStore.Persist();
-        resourceStore.Persist();
-        blockStore.FreeCache(100, CacheReleaseTime);
-        resourceStore.FreeCache(100, CacheReleaseTime);
+        blockServer.Persist();
+        resourceServer.Persist();
+        blockServer.FreeCache(100, CacheReleaseTime);
+        resourceServer.FreeCache(100, CacheReleaseTime);
      });
 
-    private static BlockStore      blockStore;
-    private static ResourceStore   resourceStore;
+    private static BlockServer      blockServer;
+    private static ResourceServer   resourceServer;
 
 
     public static void Initialize(string regionDirectory, string resourceDirectory) {
-        blockStore           = new BlockStore(regionDirectory);
-        resourceStore        = new ResourceStore(resourceDirectory);
+        blockServer           = new BlockServer(regionDirectory);
+        resourceServer        = new ResourceServer(resourceDirectory);
     }
 
 
@@ -40,23 +39,23 @@ static public class World {
 
 
     public static Change[] AddBlock(Actor actor, WorldPoint pos, ushort blockInfo) {    
-        return blockStore.CreateBlock(actor, pos, blockInfo);
+        return blockServer.CreateBlock(actor, pos, blockInfo);
     }
 
 
     public static Change[] RemoveVisibleBlock(Actor actor, WorldPoint pos) {    
-        return blockStore.DeleteBlock(actor, pos);
+        return blockServer.DeleteBlock(actor, pos);
         // TODO if block has resource, delete it
     }
 
 
     public static Change[] ChangeStateOfVisibleBlock(Actor actor, WorldPoint pos, ushort blockInfo) {    
-        return blockStore.UpdateBlock(actor, pos, blockInfo);
+        return blockServer.UpdateBlock(actor, pos, blockInfo);
     }
 
 
     public static Change[] SwitchBlocks(Actor actor, WorldPoint[] positions) {    
-        return blockStore.SwitchBlocks(actor, positions);
+        return blockServer.SwitchBlocks(actor, positions);
     }
 
 
@@ -66,12 +65,12 @@ static public class World {
 
 
     public static Chunk GetChunk(Actor actor, RegionPoint regionPos, ChunkPoint chunkPos) {
-        return blockStore.ReadChunk(actor, regionPos, chunkPos);
+        return blockServer.ReadChunk(actor, regionPos, chunkPos);
     }
 
 
     public static Block GetBlock(Actor actor, WorldPoint pos) {
-        return blockStore.ReadBlock(actor, pos);
+        return blockServer.ReadBlock(actor, pos);
     }
 
 
@@ -81,23 +80,23 @@ static public class World {
 
 
     public static ResourceResponse CreateResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
-        return resourceStore.CreateResource(actor, pos, blockType, password, data);
+        return resourceServer.CreateResource(actor, pos, blockType, password, data);
     }
 
     public static ResourceResult ReadResource(Actor actor, WorldPoint pos, ushort blockType, string password) {
-        return resourceStore.ReadResource(actor, pos, blockType, password);
+        return resourceServer.ReadResource(actor, pos, blockType, password);
     }
 
     public static ResourceResponse WriteResource(Actor actor, WorldPoint pos, ushort blockType, string password, byte[] data) {
-        return resourceStore.WriteResource(actor, pos, blockType, password, data);
+        return resourceServer.WriteResource(actor, pos, blockType, password, data);
     }
 
     public static ResourceResponse UpdateResource(Actor actor, WorldPoint pos, ushort blockType, string password, string newPassword, byte[] newData) {
-        return resourceStore.UpdateResource(actor, pos, blockType, password, newPassword, newData);
+        return resourceServer.UpdateResource(actor, pos, blockType, password, newPassword, newData);
     }
 
     public static ResourceResponse DeleteResource(Actor actor, WorldPoint pos, ushort blockType, string password) {
-        return resourceStore.DeleteResource(actor, pos, blockType, password);
+        return resourceServer.DeleteResource(actor, pos, blockType, password);
     }
 
 
@@ -106,6 +105,10 @@ static public class World {
     // persist
     ///////////////////////////////////////////////////////////////////////////////////////////
 
+    public static void Persist() {
+        blockServer.Persist();
+        resourceServer.Persist();       
+    }
 
  
     public static void StartMaintenanceThread() {
