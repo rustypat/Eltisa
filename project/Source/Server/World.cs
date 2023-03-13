@@ -11,15 +11,16 @@ using static Eltisa.Administration.Configuration;
 
 static public class World {
 
+    private static BlockServer      blockServer;
+    private static ResourceServer   resourceServer;
+
+
     private static readonly PeriodicThread maintenanceThread = new PeriodicThread(CacheStoreTime, () => {
         blockServer.Persist();
         resourceServer.Persist();
         blockServer.FreeCache(100, CacheReleaseTime);
         resourceServer.FreeCache(100, CacheReleaseTime);
      });
-
-    private static BlockServer      blockServer;
-    private static ResourceServer   resourceServer;
 
 
     public static void Initialize(string regionDirectory, string resourceDirectory) {
