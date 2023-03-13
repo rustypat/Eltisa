@@ -84,24 +84,4 @@ public static class OutMessage {
         return message;
     }
 
-
-    public static byte[] createBlocksChangedMessage(Change[] changes) {
-        messageCounter += 1;
-
-        ArrayWriter builder = new ArrayWriter();   
-        builder.WriteInt((byte)MessageId.BlocksChangedNotification);
-        builder.WriteInt(messageCounter);
-        builder.WriteInt(changes.Length);
-        foreach(var change in changes) {
-            builder.WriteInt(change.Position.X);
-            builder.WriteInt(change.Position.Y);
-            builder.WriteInt(change.Position.Z);
-            builder.WriteUint(change.Block.GetData());
-        }
-        builder.WriteInt(EndTag);
-
-        byte[] message = builder.ToArray();
-        return message;
-    }
-
 }
