@@ -6,18 +6,18 @@ using Eltisa.Models;
 using Eltisa.Tools;
 using Eltisa.Administration;
 using Eltisa.Server.Blocks;
+using Eltisa.Server.Resources;
 using static Eltisa.Administration.Configuration;
 using static Eltisa.Models.Constants;
-using Eltisa.Server.Resources;
 
 static public class World {
 
     private static readonly PeriodicThread maintenanceThread = new PeriodicThread(CacheStoreTime, () => {
-        Persist();
-        FreeCache();
-    });
-
-    private static readonly Object changeLock = new Object();
+        blockStore.Persist();
+        resourceStore.Persist();
+        blockStore.FreeCache(100, CacheReleaseTime);
+        resourceStore.FreeCache(100, CacheReleaseTime);
+     });
 
     private static BlockStore      blockStore;
     private static ResourceStore   resourceStore;
@@ -40,34 +40,23 @@ static public class World {
 
 
     public static Change[] AddBlock(Actor actor, WorldPoint pos, ushort blockInfo) {    
-        if(pos.IsNotAPoint())  return NoChanges;
-        lock(changeLock) {
-            return blockStore.CreateBlock(actor, pos, blockInfo);
-        }
+        return blockStore.CreateBlock(actor, pos, blockInfo);
     }
 
 
     public static Change[] RemoveVisibleBlock(Actor actor, WorldPoint pos) {    
-        if(pos.IsNotAPoint())  return NoChanges;
-        lock(changeLock) {
-            return blockStore.DeleteBlock(actor, pos);
-            // TODO if block has resource, delete it
-        }
+        return blockStore.DeleteBlock(actor, pos);
+        // TODO if block has resource, delete it
     }
 
 
     public static Change[] ChangeStateOfVisibleBlock(Actor actor, WorldPoint pos, ushort blockInfo) {    
-        if(pos.IsNotAPoint())  return NoChanges;
-        lock(changeLock) {
-            return blockStore.UpdateBlock(actor, pos, blockInfo);
-        }
+        return blockStore.UpdateBlock(actor, pos, blockInfo);
     }
 
 
     public static Change[] SwitchBlocks(Actor actor, WorldPoint[] positions) {    
-        lock(changeLock) {
-            return blockStore.SwitchBlocks(actor, positions);
-        }
+        return blockStore.SwitchBlocks(actor, positions);
     }
 
 
@@ -77,24 +66,12 @@ static public class World {
 
 
     public static Chunk GetChunk(Actor actor, RegionPoint regionPos, ChunkPoint chunkPos) {
-        if(regionPos.IsNotAPoint())  return null;
-        if(chunkPos.IsNotAPoint())  return null;
         return blockStore.ReadChunk(actor, regionPos, chunkPos);
     }
 
 
     public static Block GetBlock(Actor actor, WorldPoint pos) {
-        if(pos.IsNotAPoint())  return BlockDescription.NoBlock;
         return blockStore.ReadBlock(actor, pos);
-    }
-
-
-    public static string GetDescription() {
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine();
-        sb.AppendLine("Regions loaded:  NOT IMPLEMENTED");
-        sb.AppendLine("Regions changed: NOT IMPLEMENTED");
-        return sb.ToString();
     }
 
 
@@ -130,22 +107,7 @@ static public class World {
     ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public static void Persist() {
-        lock(changeLock) {
-            blockStore.Persist();
-            resourceStore.Persist();
-        }
-
-    }
-
-
-    public static void FreeCache() {
-        blockStore.FreeCache(100, CacheReleaseTime);
-        resourceStore.FreeCache(100, CacheReleaseTime);
-    }        
-
-
-
+ 
     public static void StartMaintenanceThread() {
         maintenanceThread.Start();
     }
@@ -153,6 +115,15 @@ static public class World {
 
     public static void StopMaintenanceThread() {
         maintenanceThread.RequestStop();
+    }
+
+
+    public static string GetDescription() {
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine();
+        sb.AppendLine("Regions loaded:  NOT IMPLEMENTED");
+        sb.AppendLine("Regions changed: NOT IMPLEMENTED");
+        return sb.ToString();
     }
 
 }
