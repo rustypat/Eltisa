@@ -122,11 +122,10 @@ function ServerOut(serverSocket) {
     }
 
 
-    this.requestChat = function(chatMessage, receiver) {
+    this.requestChat = function(chatMessage) {
         writer.reset();
         writer.writeInteger(SM_ChatMessageRequest);
         writer.writeString(chatMessage);
-        writer.writeString(receiver);
         writer.writeInteger(SMT_EndTag);
         
         const message = writer.ToArrayBuffer();

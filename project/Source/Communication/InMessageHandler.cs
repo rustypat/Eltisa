@@ -211,7 +211,6 @@ public static class InMessageHandler {
         int messageId              = reader.ReadInt();
         Assert(messageId == (int)MessageId.ChatMessageRequest);
         var message                = reader.ReadString();
-        var receiver               = reader.ReadString();
         int endTag                 = reader.ReadInt();
         Assert(endTag    == EndTag);            
         
