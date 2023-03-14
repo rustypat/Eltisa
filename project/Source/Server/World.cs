@@ -20,7 +20,7 @@ static public class World {
         resourceServer.Persist();
         blockServer.FreeCache(100, CacheReleaseTime);
         resourceServer.FreeCache(100, CacheReleaseTime);
-     });
+    });
 
 
     public static void Initialize(string regionDirectory, string resourceDirectory) {

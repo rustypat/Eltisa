@@ -217,7 +217,7 @@ public static class InMessageHandler {
         
         var actor        = socket.GetActor();
 
-        if( actor == null                 ) return;
+        if( actor == null ) return;
         if( !message.IsDefined() ) return;
 
         if( message[0] == '@' ) {
