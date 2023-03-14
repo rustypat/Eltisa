@@ -9,7 +9,6 @@ using Eltisa.Server;
 using Eltisa.Server.Players;
 using Eltisa.Administration;
 using static System.Diagnostics.Debug;
-using static Eltisa.Administration.Configuration;
 using static Eltisa.Communication.Constant;
 using static Eltisa.Communication.MessageId;
 
@@ -215,20 +214,7 @@ public static class InMessageHandler {
         Assert(endTag    == EndTag);            
         
         var actor        = socket.GetActor();
-
-        if( actor == null ) return;
-        if( !message.IsDefined() ) return;
-
-        if( message[0] == '@' ) {
-            HandleDedicatedChatMessage(actor, message);
-        }
-        else if( message[0] == '$' && Policy.CanAdministrate(actor) ) {
-            HandleAdministratorCommand(actor, message);
-        }
-        else {
-            OutMessageHandler.SendChatMessageToAll(actor.Name, message);
-        }
-
+        World.SendChatMessage(actor, message);
     }
 
 
@@ -367,44 +353,6 @@ public static class InMessageHandler {
         var position    = new WorldPoint(x, y, z);
         var response    = World.DeleteResource(socket.GetActor(), position, blockType, password);
         OutMessageHandler.SendDeleteResourceResponse(socket, position, blockType, response);
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    // sub handler
-    ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-    static void HandleAdministratorCommand(Actor admin, string message) {
-        if(message == "$store regions") {
-            World.Persist();
-            OutMessageHandler.SendChatMessageTo(admin.Socket, "System", "cache stored ");
-        }
-        else if(message == "$version") {
-            OutMessageHandler.SendChatMessageTo(admin.Socket, "System", "Version " + Configuration.Version + "  " + Configuration.VersionType);
-        }
-    }
-
-
-    static void HandleDedicatedChatMessage(Actor sender, string message) {
-        string[] messageParts = message.Split(' ', 2);
-        if( messageParts.Length < 2    ) return;
-        if( messageParts[0].Length < 2 ) return;
-        if( messageParts[1].Length < 1 ) return;
-
-        string receiverName = messageParts[0].Substring(1);
-        string dedicatedMessage = messageParts[1];
-
-        Actor receiver = ActorStore.GetActor(receiverName);
-        if( receiver != null) {
-            OutMessageHandler.SendChatMessageTo(receiver.Socket, sender.Name, dedicatedMessage);
-            OutMessageHandler.SendChatMessageTo(sender.Socket, sender.Name, dedicatedMessage);
-            return;
-        }
-        else {
-            OutMessageHandler.SendChatMessageTo(sender.Socket, "System", receiverName + " is unknown");                
-            return;
-        }            
     }
 
 

@@ -13,6 +13,7 @@ static public class World {
 
     private static BlockServer      blockServer;
     private static ResourceServer   resourceServer;
+    private static ChatServer       chatServer;
 
 
     private static readonly PeriodicThread maintenanceThread = new PeriodicThread(CacheStoreTime, () => {
@@ -26,6 +27,7 @@ static public class World {
     public static void Initialize(string regionDirectory, string resourceDirectory) {
         blockServer           = new BlockServer(regionDirectory);
         resourceServer        = new ResourceServer(resourceDirectory);
+        chatServer            = new ChatServer();
     }
 
 
@@ -101,6 +103,13 @@ static public class World {
     }
 
 
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    // resource services
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+    public static void SendChatMessage(Actor sender, string message) {
+        chatServer.SendChatMessage(sender, message);
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // persist
