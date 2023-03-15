@@ -3,7 +3,6 @@ namespace Eltisa.Server;
 using System;
 using Eltisa.Administration;
 using Eltisa.Communication;
-using Eltisa.Models;
 using Eltisa.Server.Players;
 using Eltisa.Tools;
 
