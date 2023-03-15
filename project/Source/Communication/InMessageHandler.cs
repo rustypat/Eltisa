@@ -227,25 +227,7 @@ public static class InMessageHandler {
         var jsonMessage            = reader.ReadString();
         int endTag                 = reader.ReadInt();
         Assert(endTag    == EndTag);            
-
-        var sender       = socket.GetActor();
-        var receiver     = ActorStore.GetActor(receiverName);
-
-        if(sender == null) {
-            return;
-        }
-        else if(receiver == null) {
-            Log.Debug($"relay video message {messageType} from {sender.Name} to {sender.Name}");
-            OutMessageHandler.SendVideoChatMessageTo(socket, (int)VideoChatMessageType.StopChat, receiverName, "\"can't find " + receiverName + "\"");
-        }
-        else if( !Policy.CanVideoChat(sender, receiver) ) {
-            Log.Debug($"relay video message {messageType} from {sender.Name} to {sender.Name}");
-            OutMessageHandler.SendVideoChatMessageTo(socket, (int)VideoChatMessageType.StopChat, receiverName, "\"to protect children, visitors may not video chat with citizen\"");
-        }
-        else {
-            Log.Debug($"relay video message {messageType} from {sender.Name} to {receiver.Name}");
-            OutMessageHandler.SendVideoChatMessageTo(receiver.Socket, messageType, sender.Name, jsonMessage);
-        }
+        World.HandleVideoChatMessage(socket, messageType, receiverName, jsonMessage);
     }
 
 

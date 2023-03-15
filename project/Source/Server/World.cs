@@ -7,6 +7,7 @@ using Eltisa.Tools;
 using Eltisa.Administration;
 using Eltisa.Server.Blocks;
 using Eltisa.Server.Resources;
+using Eltisa.Communication;
 using static Eltisa.Administration.Configuration;
 
 static public class World {
@@ -14,6 +15,7 @@ static public class World {
     private static BlockServer      blockServer;
     private static ResourceServer   resourceServer;
     private static ChatServer       chatServer;
+    private static VideoChatServer  videoChatServer;
 
 
     private static readonly PeriodicThread maintenanceThread = new PeriodicThread(CacheStoreTime, () => {
@@ -28,6 +30,7 @@ static public class World {
         blockServer           = new BlockServer(regionDirectory);
         resourceServer        = new ResourceServer(resourceDirectory);
         chatServer            = new ChatServer();
+        videoChatServer       = new VideoChatServer();
     }
 
 
@@ -109,6 +112,11 @@ static public class World {
 
     public static void SendChatMessage(Actor sender, string message) {
         chatServer.SendChatMessage(sender, message);
+    }
+
+
+    public static void HandleVideoChatMessage(HomeSocket senderSocket, int vcMessageType, string receiverName, string jsonMessage) {
+        videoChatServer.HandleVideoChatMessage(senderSocket, vcMessageType, receiverName, jsonMessage);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
