@@ -6,7 +6,7 @@ const RunMode = { Develop:'Develop', Server:'Server', Eltisa:'Eltisa' };
 const Config = new function() {
     const self                       = this;
     
-    this.version                     = "0.28";    
+    this.version                     = "0.29";    
     this.debug                       = true;
 
     this.chunkSize                   = 16;

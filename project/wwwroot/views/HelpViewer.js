@@ -73,9 +73,9 @@ function HelpViewer(viewManager, serverOut, exitAction) {
     GuiTools.createText(helpDiv, " great work"); 
     GuiTools.createLineBreak(helpDiv);
     GuiTools.createText(helpDiv, "The textures ");
-    GuiTools.createLink(helpDiv, "1", "https://eltisa.ch/resources/solidAtlas.png");
+    GuiTools.createLink(helpDiv, "1", "http://eltisa.ch/resources/solidAtlas.png");
     GuiTools.createText(helpDiv, ", "); 
-    GuiTools.createLink(helpDiv, "2", "https://eltisa.ch/resources/transparentAtlas.png");
+    GuiTools.createLink(helpDiv, "2", "http://eltisa.ch/resources/transparentAtlas.png");
     GuiTools.createText(helpDiv, " and icons are a remix from ");
     GuiTools.createLink(helpDiv, "Ovoceans", "https://www.planetminecraft.com/texture_pack/ovos-rustic-pack/");
     GuiTools.createText(helpDiv, " awsom Rustic redemption Pack under ");
@@ -103,7 +103,7 @@ function HelpViewer(viewManager, serverOut, exitAction) {
     GuiTools.createText(helpDiv, "Version " + Config.version);
     if( Config.debug ) GuiTools.createText(helpDiv, ", debug");
     GuiTools.createLineBreak(helpDiv);
-    GuiTools.createLink(helpDiv, "eltisa.ch", "https://eltisa.ch");
+    GuiTools.createLink(helpDiv, "eltisa.ch", "http://eltisa.ch");
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -18,7 +18,7 @@ function BookmarkBlocker(body, activateGame, deactivateGame) {
     GuiTools.createLineBreak(panel, 3);
     GuiTools.createText(panel, "or  drag the following url to your desktop:");
     GuiTools.createLineBreak(panel, 2);
-    const link = GuiTools.createLink(panel, "Eltisa Link", "https://eltisa.ch" );
+    const link = GuiTools.createLink(panel, "Eltisa Link", "http://eltisa.ch" );
     GuiTools.createLineBreak(panel, 3);
     GuiTools.createText(panel, 'or send a link to your friend:');    
     GuiTools.createLineBreak(panel, 2);

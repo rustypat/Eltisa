@@ -13,7 +13,7 @@ public enum RunMode { Develop, Server, Eltisa };
 
 public static class Configuration {
 
-    public const string Version              = "0.28";
+    public const string Version              = "0.29";
 
     public const string WorldDirectoryName   = "worldData";
     public const string WwwDirectoryName     = "wwwroot";
