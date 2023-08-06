@@ -23,6 +23,8 @@ const Behavior = new function() {
         else {
             attachDefinition = blockData;
         }
+
+        if(BlockData.isRail(blockData)) attachDefinition=  getBestBlockForRail(chunkStore, addPos, attachDefinition).toString();
         
         serverOut.requestAddBlock(addPos.x, addPos.y, addPos.z, attachDefinition);
 
